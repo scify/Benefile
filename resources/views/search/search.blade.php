@@ -271,6 +271,9 @@
             <div class="col-md-12">
                 <div class="state state-results" class="row padding-bottom-30">
                     <div class="no-margin pos-relative" id="results-to-activate">
+                        <div class="text-align-center margin-top-20">
+                            <a id="download-link" class="simple-button" href="javascript:void(0)">@lang($p."download_csv")</a>
+                        </div>
                         <div class="display padding-20">
                             <table id="results" class="display" cellspacing="0" width="100%">
                                 <thead>
@@ -315,9 +318,6 @@
                                 <tbody>
                                 </tbody>
                             </table>
-                            <div class="text-align-center margin-top-60 margin-bottom-50">
-                                <a id="download-link" class="simple-button" href="javascript:void(0)">@lang($p."download_csv")</a>
-                            </div>
                         </div>
                     </div>
                 </div>
