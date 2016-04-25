@@ -17,6 +17,8 @@ class MedicalIncidentTypesSeeders extends Seeder
                 array('description' => "Δόθηκαν συστάσεις"),
                 array('description' => "Παραπομπή για διαγνωστικές"),
                 array('description' => "Παραπομπή σε ειδικευμένο γιατρό"),
+                array('description' => "Επείγουσα παραπομπή σε νοσοκομείο"),
+                array('description' => "Eσωτερική παραπομπή"),
             )
         );
     }

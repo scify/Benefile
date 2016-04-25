@@ -43,7 +43,7 @@ return array(
 
     'medical_info'         =>  'Βασικά Ιατρικά στοιχεία',
     'doctor_name'          =>  'ΟΝΟΜΑ ΙΑΤΡΟΥ',
-    'incident_type'        =>  'ΑΝΤΙΜΕΤΩΠΙΣΗ',
+    'incident_type'        =>  'ΑΝΤΙΜΕΤΩΠΙΣΗ / ΠΑΡΑΠΟΜΠΗ',
     'chronic_conditions'   =>  'ΧΡΟΝΙΕΣ ΠΑΘΗΣΕΙΣ: ',
     'height'               =>  'ΥΨΟΣ (cm)',
     'weight'               =>  'ΒΑΡΟΣ (kg)',
