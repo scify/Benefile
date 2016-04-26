@@ -1788,6 +1788,42 @@
                 </div>
             </div>
         </div>
+
+        {{-- Ενημέρωση από --}}
+        <div class="updated-by form-section no-bottom-border">
+            <div class="underline-header">
+                <h1 class="record-section-header padding-left-right-15">12. @lang($p."updated_by")</h1>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="padding-left-right-15">
+                            <div class="form-group col-xs-3">
+                                {!! Form::label('updated_by_name', Lang::get('basic_info_form.user_name')) !!}<i class="fa fa-asterisk asterisk"></i>
+                                {!! Form::text('updated_by_name', Auth::user()->name . ' ' . Auth::user()->lastname, array('class' => 'custom-input-text', 'disabled' => 'disabled')) !!}
+                            </div>
+                            <div class="form-group col-xs-3">
+                                {!! Form::label('medical_location_id', Lang::get('basic_info_form.exam_location')) !!}<i class="fa fa-asterisk asterisk"></i>
+                                {!! Form::select('medical_location_id', $medical_locations_array) !!}
+                            </div>
+                            <div class="form-group col-xs-3">
+                                {!! Form::label('updated_by_date', Lang::get('basic_info_form.date')) !!}<i class="fa fa-asterisk asterisk"></i>
+                                {!! Form::text('updated_by_date', null, array('class' => 'custom-input-text width-80-percent date-input', 'placeholder' => Lang::get('dates_common.date_placeholder'))) !!}<a href="javascript:void(0)"><span class="glyphicon glyphicon-remove color-red clear-date"></span></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="padding-left-right-15">
+                            <div class="form-group padding-left-right-15">
+                                {!! Form::label('updated_by_comments', Lang::get('basic_info_form.comments')) !!}
+                                {!! Form::textarea('updated_by_comments', null, array('class' => 'custom-input-textarea width-100-percent non-printable')) !!}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="form-section align-text-center no-bottom-border">
             @if($benefiter->id == -1)
                 {!! Form::submit(Lang::get('basic_info_form.save_basic_info'), array('class' => 'submit-button margin-bottom-0')) !!}
@@ -1807,7 +1843,7 @@
             {{-- Ιστορικό Παραπομπών --}}
             <div class="referrals-list form-section no-bottom-border">
                 <div class="underline-header">
-                    <h1 class="record-section-header padding-left-right-15">12. @lang($p."referrals")</h1>
+                    <h1 class="record-section-header padding-left-right-15">13. @lang($p."referrals")</h1>
                 </div>
                 {{-- OLDER REFERRALS LIST --}}
                 <div class="row">
@@ -1869,7 +1905,7 @@
             {{-- Καταχώρηση Νέας Παραπομπής --}}
             <div class="add-new-referral form-section no-bottom-border">
                  <div class="underline-header">
-                    <h1 class="record-section-header padding-left-right-15">13. @lang($p."new_referral")</h1>
+                    <h1 class="record-section-header padding-left-right-15">14. @lang($p."new_referral")</h1>
                 </div>
                 {!! Form::model($benefiter, array('url' => 'benefiter/'.$benefiter->id.'/basic-info/referrals')) !!}
                     {!! Form::hidden('benefiter_id', $benefiter->id) !!}

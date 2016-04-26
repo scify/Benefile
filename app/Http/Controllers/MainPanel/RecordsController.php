@@ -75,6 +75,9 @@ class RecordsController extends Controller
         $workTitle = null;
         $languages = $this->basicInfoService->getAllLanguages();
         $languageLevels = $this->basicInfoService->getAllLanguageLevels();
+        // brings the medical location array from db
+        $medical_locations = $this->medicalVisit->medicalLocationsLookup();
+        $medical_locations_array = $this->medicalVisit->reindex_array($medical_locations);
         // get legal statuses from session, else get null and afterwards forget session value
         // If validation fails, get back all previously written info
         $country_abandon_reason = session()->get('country_abandon_reason', function() { return 1; });
@@ -113,7 +116,8 @@ class RecordsController extends Controller
                                            ->with('benefiter_referrals_list', $benefiter_referrals_list)
                                            ->with('workTitle', $workTitle)
                                            ->with('success', $successMsg)
-                                           ->with('countryAbandonReasons', $countryAbandonReasons);
+                                           ->with('countryAbandonReasons', $countryAbandonReasons)
+                                           ->with('medical_locations_array', $medical_locations_array);
     }
 
     //------ post from basic info form -------------------------------//
