@@ -317,7 +317,7 @@
                                 <div class="col-md-12">
                                     <div class="form-group padding-left-right-15 col-md-3">
                                         {!! Form::label('medical_location_id', Lang::get($p.'detention_center')) !!}
-                                        {!! Form::select('medical_location_id', $medical_locations_array) !!}
+                                        {!! Form::select('medical_location_id', $medical_locations_array, $benefiter_session->medical_location_id) !!}
                                     </div>
                                 </div>
                             </div>

@@ -11,7 +11,7 @@ class PsychosocialSession extends Model
 	
     protected $table = 'psychosocial_sessions';
 	protected $dates = ['deleted_at'];
-	protected $fillable = ['session_date', 'session_comments', 'social_folder_id', 'psychosocial_theme_id', 'psychologist_id'];
+	protected $fillable = ['session_date', 'session_comments', 'social_folder_id', 'psychosocial_theme_id', 'psychologist_id', 'medical_location_id'];
 
     public function supportType(){
         return $this->hasOne('App\Models\Psychosocial_support_lookup', 'id', 'psychosocial_theme_id');

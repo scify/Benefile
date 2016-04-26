@@ -117,6 +117,7 @@ class SocialFolderService{
             'session_date' => $datesHelper->makeDBFriendlyDate($request['session_date']),
             'psychosocial_theme_id' => $request['psychosocial_theme'],
             'session_comments' => $request['session_comments'],
+            'medical_location_id' => $request['medical_location_id'],
         );
     }
 }
