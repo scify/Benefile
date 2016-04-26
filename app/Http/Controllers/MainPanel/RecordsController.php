@@ -90,6 +90,8 @@ class RecordsController extends Controller
         session()->forget('success');
         $errors = session()->get('errors' , function() { return null; });
         session()->forget('errors');
+        $medical_location_id = session()->get('medical_location_id' , function() { return null; });
+        session()->forget('medical_location_id');
         // checks if id is correct, so it could find the existent benefiter with that id
         if($id > 0){
             $benefiter = $this->basicInfoService->findExistentBenefiter($id);
@@ -117,7 +119,8 @@ class RecordsController extends Controller
                                            ->with('workTitle', $workTitle)
                                            ->with('success', $successMsg)
                                            ->with('countryAbandonReasons', $countryAbandonReasons)
-                                           ->with('medical_locations_array', $medical_locations_array);
+                                           ->with('medical_locations_array', $medical_locations_array)
+                                           ->with('medical_location_id', $medical_location_id);
     }
 
     //------ post from basic info form -------------------------------//
@@ -155,7 +158,10 @@ class RecordsController extends Controller
                             'travel_duration' => $request->travel_duration,
                             'detention_duration' => $request->detention_duration,
                             'social_history' => $request->social_history,
+                            'updated_by_date' => $request->updated_by_date,
+                            'updated_by_comments' => $request->updated_by_comments,
                         ))
+                        ->with("medical_location_id", $request->medical_location_id)
                         ->with("country_abandon_reason", $request->country_abandon_reason)
                         ->with("legalStatuses", $legal_statuses)
                         ->with("benefiter_languages", $benefiterLanguagesAndLevels)

@@ -43,6 +43,8 @@ class BasicInfoService{
             'travel_duration' => 'max:255',
             'detention_date' => 'date',
             'social_history' => 'max:2000',
+            'updated_by_date' => 'required|date',
+            'updated_by_comments' => 'max:5000',
         );
         $legal_status_texts = $request['legal_status_text'];
         foreach($legal_status_texts as $i => $legal_status_text){

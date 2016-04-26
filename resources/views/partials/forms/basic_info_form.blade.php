@@ -1804,7 +1804,7 @@
                             </div>
                             <div class="form-group col-xs-3">
                                 {!! Form::label('medical_location_id', Lang::get('basic_info_form.exam_location')) !!}<i class="fa fa-asterisk asterisk"></i>
-                                {!! Form::select('medical_location_id', $medical_locations_array) !!}
+                                {!! Form::select('medical_location_id', $medical_locations_array, $medical_location_id) !!}
                             </div>
                             <div class="form-group col-xs-3">
                                 {!! Form::label('updated_by_date', Lang::get('basic_info_form.date')) !!}<i class="fa fa-asterisk asterisk"></i>
