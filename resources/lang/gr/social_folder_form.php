@@ -19,6 +19,7 @@
         'created_by' => 'ΚΑΤΑΧΩΡΗΘΗΚΕ ΑΠΟ:',
         'session_date' => 'ΗΜ. ΣΥΝΕΔΡΙΑΣ',
         'psychosocial_theme' => 'ΘΕΜΑ',
+        'detention_center' => 'ΚΕΝΤΡΟ ΚΡΑΤΗΣΗΣ',
         'session_comments' => 'ΠΑΡΑΤΗΡΗΣΕΙΣ',
         'save_social_folder' => 'Αποθήκευση Κοινωνικού Φακέλου',
         'edit_social_folder' => 'Ενημέρωση Κοινωνικού Φακέλου',

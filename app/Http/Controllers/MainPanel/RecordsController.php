@@ -226,6 +226,9 @@ class RecordsController extends Controller
     public function getSocialFolder($id){
         $benefiter = $this->basicInfoService->findExistentBenefiter($id);
         $psychologist_id = Auth::user()->id;
+        // brings the medical location array from db
+        $medical_locations = $this->medicalVisit->medicalLocationsLookup();
+        $medical_locations_array = $this->medicalVisit->reindex_array($medical_locations);
         // get psychosocial theme from session, else get null and afterwards forget session value
         $session_theme = session()->get('psychosocialTheme', function() { return null; });
         session()->forget('psychosocialTheme');
@@ -236,13 +239,13 @@ class RecordsController extends Controller
         } else {
             $socialFolder = $this->socialFolderService->getSocialFolderFromBenefiterId($id);
             $psychosocialSubjects = $this->socialFolderService->getAllPsychosocialSupportSubjects();
-            if($socialFolder == null){
-                return view('benefiter.social_folder')
-                    ->with("tab", "social")
-                    ->with("psychosocialSubjects", $psychosocialSubjects)
-                    ->with("benefiter", $benefiter)
-                    ->with("psychologist_id", $psychologist_id);
-            } else {
+//            if($socialFolder == null){
+//                return view('benefiter.social_folder')
+//                    ->with("tab", "social")
+//                    ->with("psychosocialSubjects", $psychosocialSubjects)
+//                    ->with("benefiter", $benefiter)
+//                    ->with("psychologist_id", $psychologist_id);
+//            } else {
                 $benefiter_sessions = $this->socialFolderService->getAllSessionsFromBenefiterId($id);
                 $psychosocialSupport = $this->socialFolderService->getBenefiterPsychosocialSupport($id);
                 return view('benefiter.social_folder')
@@ -254,8 +257,9 @@ class RecordsController extends Controller
                     ->with("psychologist_id", $psychologist_id)
                     ->with("session_theme", $session_theme)
                     ->with('benefiter_sessions', $benefiter_sessions)
+                    ->with('medical_locations_array', $medical_locations_array)
                     ->with('success', $successMsg);
-            }
+//            }
         }
     }
 
