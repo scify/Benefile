@@ -112,6 +112,7 @@ Route::get('registrations-PER-month-Report-get-data', 'MainPanel\ReportsControll
 
 //--- NEW LOCATION
 Route::get('new-location', 'MainPanel\NewLocationController@getNewLocationView');
+Route::post('save-location', 'MainPanel\NewLocationController@postSaveNewLocation');
 //--- END NEW LOCATION
 
 //--- ΧΡΗΣΤΕΣ
