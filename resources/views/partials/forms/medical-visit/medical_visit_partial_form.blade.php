@@ -32,12 +32,6 @@
                         {!! Form::label('examination_date', Lang::get($p.'exam_date')) !!} <i class="fa fa-asterisk asterisk"></i>
                         {!! Form::text('examination_date', null, array('class' => 'custom-input-text width-80-percent date-input', 'placeholder' => Lang::get('dates_common.date_placeholder'))) !!}<a href="javascript:void(0)"><span class="glyphicon glyphicon-remove color-red clear-date"></span></a>
                     </div>
-
-                    {{-- ΤΥΠΟΣ ΠΕΡΙΣΤΑΤΙΚΟΥ - ΠΕΡΙΣΤΑΤΙΚΟ --}}
-                    {{--<div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-md-2">--}}
-                        {{--{!! Form::label('incident_type_text', 'ΤΥΠΟΣ ΠΕΡΙΣΤΑΤΙΚΟΥ') !!}--}}
-                        {{--{!! Form::textarea('incident_type_text', null, ['size' => '30x3']) !!}--}}
-                    {{--</div>--}}
                 </div>
             </div>
 
@@ -47,11 +41,6 @@
                     <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-xs-3">
                         {!! Form::label('medical_location_id', Lang::get($p.'exam_location')) !!}
                         {!! Form::select('medical_location_id', $medical_locations_array) !!}
-                    </div>
-                    {{-- ΕΙΣΑΓΩΓΗ ΝΕΑΣ ΤΟΠΟΘΕΣΙΑΣ ΕΞΕΤΑΣΗΣ --}}
-                    <div id="new_medical_location_div" class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-xs-3">
-                        {!! Form::label('new_medical_location', Lang::get($p.'new_exam_loc')) !!}
-                        {!! Form::text('new_medical_location', null, array('class' => 'custom-input-text width-80-percent')) !!}
                     </div>
                     {{-- ΤΥΠΟΣ ΠΕΡΙΣΤΑΤΙΚΟΥ --}}
                     <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-xs-3">
