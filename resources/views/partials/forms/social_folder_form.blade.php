@@ -311,9 +311,18 @@
                                             @endforeach
                                         </select>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
                                     <div class="form-group padding-left-right-15 col-md-3">
-                                        {!! Form::label('sth', Lang::get($p.'detention_center')) !!}
+                                        {!! Form::label('medical_location_id', Lang::get($p.'detention_center')) !!}
+                                        {!! Form::select('medical_location_id', $medical_locations_array) !!}
                                     </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
                                     <div class="form-group make-inline padding-left-right-15 float-left width-100-percent">
                                         {!! Form::label('session_comments', Lang::get('social_folder_form.session_comments')) !!}
                                         {!! Form::textarea('session_comments', $benefiter_session->session_comments, array('class' => 'custom-input-textarea width-100-percent')) !!}
