@@ -75,7 +75,7 @@ return array(
     'hospitalization'      =>  'Νοσηλεία',
     'hospitalization_info' =>  'ΝΟΣΗΛΕΙΑ: ',
 
-    'referrals'            =>  'Παραπομπές',
+    'referrals'            =>  'Σχόλια παραπομπών',
     'referrals_info'       =>  'ΠΑΡΑΠΟΜΠΗ: ',
     'done'                 =>  'Πραγματοποιήθηκε',
     'not_done'             =>  'Δεν πραγματοποιήθηκε',
