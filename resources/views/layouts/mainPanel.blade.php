@@ -95,6 +95,11 @@
                                     <a href="{{ url('reports') }}">@lang($p.'reports')</a>
                                 </li>
                                 @if(Auth::user()->user_role_id == 1)
+                                <li id="new-location">
+                                    <a href="{{url('new-location')}}">@lang($p.'add_location')</a>
+                                </li>
+                                @endif
+                                @if(Auth::user()->user_role_id == 1)
                                 <li id="users-list">
                                     <a  href="{{url('main-panel/users-list')}}">@lang($p.'users')</a>
                                 </li>
