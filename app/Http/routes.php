@@ -110,6 +110,10 @@ Route::get('benefites-VS-phycological-support-type', 'MainPanel\ReportsControlle
 Route::get('registrations-PER-month-Report-get-data', 'MainPanel\ReportsController@getRegistrationsVSMonthDate');
 //--- END ΑΝΑΦΟΡΑ
 
+//--- NEW LOCATION
+Route::get('new-location', 'MainPanel\NewLocationController@getNewLocationView');
+//--- END NEW LOCATION
+
 //--- ΧΡΗΣΤΕΣ
 Route::get('main-panel/users-list', 'MainPanel\UsersController@UsersList');
 Route::post('main-panel/users-list', 'MainPanel\UsersController@UserStatusUpdate');
