@@ -478,6 +478,7 @@ class TestBenefitersSeeder extends Seeder
                     'social_folder_id' => 1,
                     'psychosocial_theme_id' => 1,
                     'psychologist_id' => 4,
+                    'medical_location_id' => 1,
                 ),
                 array(
                     'session_date' => date('2015-12-13'),
@@ -485,6 +486,7 @@ class TestBenefitersSeeder extends Seeder
                     'social_folder_id' => 1,
                     'psychosocial_theme_id' => 2,
                     'psychologist_id' => 8,
+                    'medical_location_id' => 3,
                 ),
                 array(
                     'session_date' => date('2016-01-23'),
@@ -492,6 +494,7 @@ class TestBenefitersSeeder extends Seeder
                     'social_folder_id' => 2,
                     'psychosocial_theme_id' => 1,
                     'psychologist_id' => 4,
+                    'medical_location_id' => 1,
                 ),
                 array(
                     'session_date' => date('2016-02-03'),
@@ -499,6 +502,7 @@ class TestBenefitersSeeder extends Seeder
                     'social_folder_id' => 1,
                     'psychosocial_theme_id' => 4,
                     'psychologist_id' => 12,
+                    'medical_location_id' => 2,
                 ),
                 array(
                     'session_date' => date('2016-02-03'),
@@ -506,6 +510,7 @@ class TestBenefitersSeeder extends Seeder
                     'social_folder_id' => 5,
                     'psychosocial_theme_id' => 5,
                     'psychologist_id' => 4,
+                    'medical_location_id' => 1,
                 ),
                 array(
                     'session_date' => date('2014-02-03'),
@@ -513,6 +518,7 @@ class TestBenefitersSeeder extends Seeder
                     'social_folder_id' => 5,
                     'psychosocial_theme_id' => 1,
                     'psychologist_id' => 4,
+                    'medical_location_id' => 6,
                 ),
                 array(
                     'session_date' => date('2013-02-03'),
@@ -520,6 +526,7 @@ class TestBenefitersSeeder extends Seeder
                     'social_folder_id' => 6,
                     'psychosocial_theme_id' => 1,
                     'psychologist_id' => 4,
+                    'medical_location_id' => 6,
                 ),
                 array(
                     'session_date' => date('2016-02-03'),
@@ -527,6 +534,7 @@ class TestBenefitersSeeder extends Seeder
                     'social_folder_id' => 1,
                     'psychosocial_theme_id' => 1,
                     'psychologist_id' => 4,
+                    'medical_location_id' => 5,
                 ),
                 array(
                     'session_date' => date('2016-02-03'),
@@ -534,6 +542,7 @@ class TestBenefitersSeeder extends Seeder
                     'social_folder_id' => 4,
                     'psychosocial_theme_id' => 1,
                     'psychologist_id' => 4,
+                    'medical_location_id' => 4,
                 ),
             )
         );
