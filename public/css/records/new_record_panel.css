@@ -27,3 +27,14 @@
     font-size: 20px;
     margin: 0 20px;
 }
+
+@media screen and (max-width: 1350px){
+    .benefiter-info > h2, #menu ul, .child{
+        font-size: 15px;
+    }
+
+    .searchField{
+        font-size: 15px;
+        height: 57px;
+    }
+}

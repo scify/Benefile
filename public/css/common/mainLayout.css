@@ -253,3 +253,14 @@
         /*width: 100%;*/
     /*}*/
 /*}*/
+
+@media screen and (max-width: 1350px){
+    .userName{
+        font-size: 15px;
+    }
+
+    #menu ul > li{
+        height: 40px;
+        padding: 5px 5px 5px 10px;
+    }
+}

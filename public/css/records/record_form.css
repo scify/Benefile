@@ -425,3 +425,14 @@ a.btn.btn-default.font-weight-normal{
         padding-left: 50px;
     }
 }
+
+@media screen and (max-width: 1350px) {
+    .medical-visit-btn {
+        min-width: 100px;
+    }
+
+    table.display.dataTable td button, .btn-group-lg > .btn, .btn-lg {
+        font-size: 10px;
+        height: 30px;
+    }
+}
