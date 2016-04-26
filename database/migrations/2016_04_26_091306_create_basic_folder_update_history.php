@@ -22,6 +22,7 @@ class CreateBasicFolderUpdateHistory extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('benefiter_id')->references('id')->on('benefiters');
             $table->foreign('medical_location_id')->references('id')->on('medical_location_lookup');
+            $table->timestamps();
         });
     }
 

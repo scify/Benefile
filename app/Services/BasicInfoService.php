@@ -1,5 +1,6 @@
 <?php namespace app\Services;
 
+use App\Models\BasicFolderHistory;
 use App\Models\Benefiters_Tables_Models\Benefiter;
 use App\Models\Benefiters_Tables_Models\BenefiterReferrals;
 use App\Models\Benefiters_Tables_Models\BenefiterReferrals_lookup;
@@ -83,6 +84,7 @@ class BasicInfoService{
         // initialize SocialFolderService to use the saveSocialFolderToDB function
         $socialService = new SocialFolderService();
         $socialService->saveSocialFolderToDB(array('comments' => ''), $benefiter->id);
+        $this->saveBasicFolderUpdateHistory($benefiter->id, $request['medical_location_id'], $request['updated_by_date'], $request['updated_by_comments']);
         return $benefiter;
     }
 
@@ -102,6 +104,18 @@ class BasicInfoService{
             $request['legal_status'] = null;
         }
         $this->editLegalStatusesInDB($id, $request);
+        $this->saveBasicFolderUpdateHistory($id, $request['medical_location_id'], $request['updated_by_date'], $request['updated_by_comments']);
+    }
+
+    // insert a new row with the latest basic folder's update info
+    private function saveBasicFolderUpdateHistory($id, $medical_location_id, $updated_by_date, $comments){
+        BasicFolderHistory::create(array(
+            'benefiter_id' => $id,
+            'user_id' => \Auth::user()->id,
+            'medical_location_id' => $medical_location_id,
+            'update_date' => $this->datesHelper->makeDBFriendlyDate($updated_by_date),
+            'comments' => $comments,
+        ));
     }
 
     // get all languages from languages DB table
