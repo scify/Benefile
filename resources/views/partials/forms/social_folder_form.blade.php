@@ -226,7 +226,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group padding-left-right-15 col-md-3">
-                                {!! Form::label('medical_location_id', Lang::get($p.'detention_center')) !!}
+                                {!! Form::label('medical_location_id', Lang::get($p.'detention_center_caps')) !!}
                                 {!! Form::select('medical_location_id', $medical_locations_array) !!}
                             </div>
                         </div>
@@ -252,8 +252,8 @@
                     <div class="col-md-12">
                         <div class="col-xs-2 text-align-center"><p>@lang($p."date")</p></div>
                         <div class="col-xs-2 text-align-center"><p>@lang($p."subject")</p></div>
+                        <div class="col-xs-2 text-align-center"><p>@lang($p."detention_center")</p></div>
                         <div class="col-xs-4"><p>@lang($p."notes")</p></div>
-                        <div class="col-xs-2"></div>
                         <div class="col-xs-2"></div>
                     </div>
                 </div>
@@ -272,6 +272,7 @@
                     <div class="col-md-12">
                         <div class="col-xs-2 text-align-center">{{ $datesHelper->getFinelyFormattedStringDateFromDBDate($benefiter_session->session_date) }}</div>
                         <div class="col-xs-2 text-align-center">{{ $psychosocialSubjects[$benefiter_session->psychosocial_theme_id - 1]->description }}</div>
+                        <div class="col-xs-2 text-align-center">{{ $medical_locations_array[$benefiter_session->medical_location_id] }}</div>
                         <!-- ACCESS LEVEL -->
                         @if(Auth::user()->user_role_id == 5 || Auth::user()->user_role_id == 1)
                             <div class="col-xs-4 text-align-center">{!! nl2br(e($benefiter_session->session_comments)) !!}</div>
@@ -279,8 +280,8 @@
                             <div class="col-xs-4 text-align-center">----------------</div>
                         @endif
                         <!-- ACCESS LEVEL END -->
-                        <div class="col-xs-2">@if(\Auth::user()->user_role_id == 5 || \Auth::user()->user_role_id == 1)<button class="session-button edit-session medical_visit_from_history btn btn-info btn-lg">@lang($p."edit")</button>@endif</div>
-                        <div class="col-xs-2">@if(\Auth::user()->user_role_id == 5 || \Auth::user()->user_role_id == 1)<button class="session-button delete-session btn btn-warning btn-lg" name="{{ $benefiter_session->id }}">@lang($p."delete")</button>@endif</div>
+                        <div class="col-xs-2">@if(\Auth::user()->user_role_id == 5 || \Auth::user()->user_role_id == 1)<div class="row"><button class="session-button edit-session medical_visit_from_history btn btn-info btn-lg">@lang($p."edit")</button></div><div class="row"><button class="session-button delete-session btn btn-warning btn-lg" name="{{ $benefiter_session->id }}">@lang($p."delete")</button></div>@endif</div>
+{{--                        <div class="col-xs-2">@if(\Auth::user()->user_role_id == 5 || \Auth::user()->user_role_id == 1)<button class="session-button delete-session btn btn-warning btn-lg" name="{{ $benefiter_session->id }}">@lang($p."delete")</button>@endif</div>--}}
                     </div>
                 </div>
                 {{-- EDIT EACH SESSION --}}
@@ -316,7 +317,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group padding-left-right-15 col-md-3">
-                                        {!! Form::label('medical_location_id', Lang::get($p.'detention_center')) !!}
+                                        {!! Form::label('medical_location_id', Lang::get($p.'detention_center_caps')) !!}
                                         {!! Form::select('medical_location_id', $medical_locations_array, $benefiter_session->medical_location_id) !!}
                                     </div>
                                 </div>
