@@ -1790,7 +1790,7 @@
         </div>
 
         {{-- Ενημέρωση από --}}
-        <div class="updated-by form-section no-bottom-border">
+        <div class="updated-by form-section no-bottom-border non-printable">
             <div class="underline-header">
                 <h1 class="record-section-header padding-left-right-15">12. @lang($p."updated_by")</h1>
             </div>
