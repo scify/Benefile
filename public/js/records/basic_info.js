@@ -153,6 +153,13 @@ $(document).ready(function(){
             //"lengthMenu": [ [-1], ["All"] ]
         });
     });
+
+    // Apply dataTable to updates history
+    $(function() {
+        $('#folders-update-history').DataTable( {
+            //"lengthMenu": [ [-1], ["All"] ]
+        });
+    });
 });
 
 var $langs_count = $(".added-div").length;

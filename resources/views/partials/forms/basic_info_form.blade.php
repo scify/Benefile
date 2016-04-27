@@ -1941,6 +1941,58 @@
                         </div>
                     </div>
             </div>
+            {{-- Ιστορικό ενημέρωσης χρήστη --}}
+            <div class="updates-history form-section no-bottom-border non-printable">
+                <div class="underline-header">
+                    <h1 class="record-section-header padding-left-right-15">15. @lang($p."updates_history")</h1>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row padding-bottom-30">
+                            <div class="padding-left-right-15">
+                                <div class="table-responsive col-xs-12">
+                                    <table id="folders-update-history">
+                                        <thead>
+                                            <tr>
+                                                <th>@lang($p."counter")</th>
+                                                <th>@lang($p."user_name")</th>
+                                                <th>@lang($p."location")</th>
+                                                <th>@lang($p."date")</th>
+                                                <th>@lang($p."comments")</th>
+                                                <th>@lang($p."folder_name")</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        @if(!empty($allFoldersHistory))
+                                        @foreach($allFoldersHistory as $i => $allFoldersHistorySingleRow)
+                                            <tr>
+                                                <td>{{$i+1}}</td>
+                                                <td>{{$allFoldersHistorySingleRow->getUserName()}}</td>
+                                                <td>{{$allFoldersHistorySingleRow->getLocation()}}</td>
+                                                <td>{{$allFoldersHistorySingleRow->getDate()}}</td>
+                                                <td>{{$allFoldersHistorySingleRow->getComments()}}</td>
+                                                <td>@lang($p.$allFoldersHistorySingleRow->getFolderName())</td>
+                                            </tr>
+                                        @endforeach
+                                        @endif
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th>@lang($p."counter")</th>
+                                                <th>@lang($p."user_name")</th>
+                                                <th>@lang($p."location")</th>
+                                                <th>@lang($p."date")</th>
+                                                <th>@lang($p."comments")</th>
+                                                <th>@lang($p."folder_name")</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="form-section align-text-center no-bottom-border">
                 {!! Form::submit(Lang::get('basic_info_form.save_referral'), array('class' => 'submit-button')) !!}
             </div>

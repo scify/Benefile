@@ -63,6 +63,7 @@ class RecordsController extends Controller
 
     // get basic info view
     public function getBasicInfo($id){
+        $allFoldersHistory = null;
         // get all occurences from DB
         $occurrences = $this->basicInfoService->getAllOccurrencesByBenefiter($id);
         // brings the referrals options array from db to view
@@ -104,6 +105,7 @@ class RecordsController extends Controller
                 $benefiterLanguagesAndLevels = $this->basicInfoService->getLanguagesAndLanguagesLevelsByBenefiterId($id);
                 $workTitle = $this->basicInfoService->getWorkTitleNameFromBenefiterId($id);
             }
+            $allFoldersHistory = $this->basicInfoService->getFoldersUsageHistory($id);
         } else {
             $benefiter = new Benefiter();
             $benefiter->country_abandon_reason_id = $country_abandon_reason;
@@ -120,7 +122,8 @@ class RecordsController extends Controller
                                            ->with('success', $successMsg)
                                            ->with('countryAbandonReasons', $countryAbandonReasons)
                                            ->with('medical_locations_array', $medical_locations_array)
-                                           ->with('medical_location_id', $medical_location_id);
+                                           ->with('medical_location_id', $medical_location_id)
+                                           ->with('allFoldersHistory', $allFoldersHistory);
     }
 
     //------ post from basic info form -------------------------------//

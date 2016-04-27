@@ -1,6 +1,7 @@
 <?php
 
     return array(
+        'new_benefiter' => 'Νέος Ωφελούμενος',
         'new_occurrence' => 'Νέο Συμβάν',
         'no_occurrences_found' => "Δεν υπάρχουν διαθέσιμα συμβάντα γι' αυτόν τον ωφελούμενο" ,
         'occurrence_history' => 'Ιστορικό Συμβάντων',
@@ -85,6 +86,7 @@
         'month' => 'μήνας',
         'social_background_info' => 'Κοινωνικό Ιστορικό',
         'updated_by' => 'Ενημέρωση από:',
+        'updates_history' => 'Ιστορικό Ενημέρωσης Χρήστη',
         'user_name' => 'Όνομα Χρήστη',
         'exam_location' => 'Κέντρο Κράτησης',
         'comments' => 'Σχόλια',
@@ -105,4 +107,9 @@
         'done' => 'Διαγραφή',
         'save_referral' => 'Αποθήκευση Παραπομπών',
         'print_page' => 'Εκτύπωση σελίδας',
+        'location' => 'Τοποθεσία',
+        'folder_name' => 'Είδος Φακέλου',
+        'basic' => 'Βασικός',
+        'medical' => 'Ιατρικός',
+        'psychosocial' => 'Ψυχοκοινωνικός',
     );

@@ -19,4 +19,28 @@ class AllFoldersUsageHistory{
         $this->userName = $userName;
     }
 
+    public function getComments()
+    {
+        return $this->comments;
+    }
+
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    public function getFolderName()
+    {
+        return $this->folderName;
+    }
+
+    public function getLocation()
+    {
+        return $this->location;
+    }
+
+    public function getUserName()
+    {
+        return $this->userName;
+    }
 }
