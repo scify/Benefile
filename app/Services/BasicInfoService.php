@@ -1,10 +1,15 @@
 <?php namespace app\Services;
 
+use App\Models\ViewModels\AllFoldersUsageHistory;
 use App\Models\BasicFolderHistory;
 use App\Models\Benefiters_Tables_Models\Benefiter;
 use App\Models\Benefiters_Tables_Models\BenefiterReferrals;
 use App\Models\Benefiters_Tables_Models\BenefiterReferrals_lookup;
 use App\Models\Benefiters_Tables_Models\benefiterOccurrences;
+use App\Models\Benefiters_Tables_Models\medical_location_lookup;
+use App\Models\Benefiters_Tables_Models\medical_visits;
+use App\Models\PsychosocialSession;
+use App\Models\User;
 use App\Services\GreekStringConversionHelper;
 use App\Services\DatesHelper;
 use Illuminate\Support\Facades\Auth;
@@ -526,9 +531,90 @@ class BasicInfoService{
         benefiterOccurrences::where('id','=',$occurrence_id)->delete();
     }
 
-    /*
-     * public function deleteBasicInfoReferral($id, $referral_id){
-     *     BenefiterReferrals::where('id', '=', $referral_id)->delete();
-     * }
-     */
+    //returns all the users that have edited the corresponding benefiter's folder
+    public function getFoldersUsageHistory($benefiter_id){
+        $usageHistory = [];
+        // fetch from basic folder history
+        $basicFolderHistory = BasicFolderHistory::where('benefiter_id', '=', $benefiter_id)->get();
+        // fetch from medical visit
+        $medicalVisitsHistory = medical_visits::where('benefiter_id', '=', $benefiter_id)->get();
+        // todo:fetch from legal folder
+
+        // fetch from psychosocial folder
+        $socialFolderService = new SocialFolderService();
+        $psychosocialHistory = PsychosocialSession::where('social_folder_id', '=',
+            $socialFolderService->getSocialFolderFromBenefiterId($benefiter_id)->id)->get();
+        // fetch all users from DB
+        $users = User::get()->toArray();
+        // fetch all locations from DB
+        $locations = medical_location_lookup::get()->toArray();
+        // check if there are some users and locations in the DB, else return an empty array
+        if(!empty($users) and !empty($locations)) {
+            // push all basic folder history to the usageHistory array as AllFoldersUsageHistory objects
+            if (!empty($basicFolderHistory)) {
+                $this->pushAllBasicInfoFolderHistoryToUsageHistoryArray($basicFolderHistory, $users, $locations, $usageHistory);
+            }
+            // push all medical visits history to the usageHistory array as AllFoldersUsageHistory objects
+            if (!empty($medicalVisitsHistory)) {
+                $this->pushAllMedicalVisitsHistoryToUsageHistoryArray($medicalVisitsHistory, $users, $locations, $usageHistory);
+            }
+            // push all psychosocial sessions history to the usageHistory array as AllFoldersUsageHistory objects
+            if (!empty($psychosocialHistory)) {
+                $this->pushAllPsychosocialFolderHistoryToUsageHistoryArray($psychosocialHistory, $users, $locations, $usageHistory);
+            }
+        }
+        return $usageHistory;
+    }
+
+    // pushes all the basic info folder history to the usage history array as AllFoldersUsageHistory objects
+    private function pushAllBasicInfoFolderHistoryToUsageHistoryArray($basicFolderHistory, $users, $locations, &$usageHistory){
+        foreach ($basicFolderHistory as $basicFolderHistorySingleRow) {
+            $temp = new AllFoldersUsageHistory(
+                $users[$basicFolderHistorySingleRow->user_id - 1]['name'] . ' ' .
+                $users[$basicFolderHistorySingleRow->user_id - 1]['lastname'],
+                $locations[$basicFolderHistorySingleRow->medical_location_id - 1]['description'],
+                $this->datesHelper->getFinelyFormattedStringDateFromDBDate(
+                    $basicFolderHistorySingleRow->update_date),
+                $basicFolderHistorySingleRow->comments,
+                "basic"
+            );
+            array_push($usageHistory, $temp);
+        }
+    }
+
+    // push all medical visits history to the usageHistory array as AllFoldersUsageHistory objects
+    private function pushAllMedicalVisitsHistoryToUsageHistoryArray($medicalVisitsHistory, $users, $locations, &$usageHistory){
+        foreach ($medicalVisitsHistory as $medicalVisitsHistorySingleRow) {
+            $temp = new AllFoldersUsageHistory(
+                $users[$medicalVisitsHistorySingleRow->doctor_id - 1]['name'] . ' ' .
+                $users[$medicalVisitsHistorySingleRow->doctor_id - 1]['lastname'],
+                $locations[$medicalVisitsHistorySingleRow->medical_location_id - 1]['description'],
+                $this->datesHelper->getFinelyFormattedStringDateFromDBDate(
+                    $medicalVisitsHistorySingleRow->medical_visit_date),
+                "",
+                "medical"
+            );
+            array_push($usageHistory, $temp);
+        }
+    }
+
+    // push all psychosocial sessions history to the usageHistory array as AllFoldersUsageHistory objects
+    private function pushAllPsychosocialFolderHistoryToUsageHistoryArray($psychosocialHistory, $users, $locations, &$usageHistory){
+        foreach ($psychosocialHistory as $psychosocialHistorySingleRow) {
+            // check if the user should be able to see the session comments
+            // and put the correct string to the comments variable
+            $comments = (\Auth::user()->user_role_id == 1 || \Auth::user()->user_role_id == 5) ?
+                $psychosocialHistorySingleRow->session_comments : "";
+            $temp = new AllFoldersUsageHistory(
+                $users[$psychosocialHistorySingleRow->psychologist_id - 1]['name'] . ' ' .
+                $users[$psychosocialHistorySingleRow->psychologist_id - 1]['lastname'],
+                $locations[$psychosocialHistorySingleRow->medical_location_id - 1]['description'],
+                $this->datesHelper->getFinelyFormattedStringDateFromDBDate(
+                    $psychosocialHistorySingleRow->session_date),
+                $comments,
+                "psychosocial"
+            );
+            array_push($usageHistory, $temp);
+        }
+    }
 }
