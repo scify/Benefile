@@ -54,4 +54,5 @@
 
 @section('panel-scripts')
     <script src="{{asset('js/forms.js')}}"></script>
+    <script src="{{ asset('js/records/selectNewLocationInMainPanel.js') }}"></script>
 @stop
