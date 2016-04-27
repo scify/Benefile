@@ -811,6 +811,9 @@ class RecordsController extends Controller
 
     // returns view of legal folder
     public function getLegalFolder($id){
+        // brings the medical location array from db
+        $medical_locations = $this->medicalVisit->medicalLocationsLookup();
+        $medical_locations_array = $this->medicalVisit->reindex_array($medical_locations);
         $legalFolder = $this->legalFolderService->findLegalFolderFromBenefiterId($id);
         $asylumRequest = null;
         $legalStatus = null;
@@ -834,6 +837,7 @@ class RecordsController extends Controller
             ->with('legal_status', $legalStatus)
             ->with('lawyer_action', $lawyerActions)
             ->with('tab', 'legal')
+            ->with('medical_locations_array', $medical_locations_array)
             ->with('success', $successMsg);
     }
 

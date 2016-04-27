@@ -351,12 +351,37 @@
             </div>
         </div>
     </div>
-    <div class="lawyer-actions form-section no-bottom-border">
+    <div class="form-section align-text-center no-bottom-border">
+        @if($legal_folder == null)
+        {!! Form::submit(Lang::get('legal_folder_form.save_legal_folder'), array('class' => 'submit-button')) !!}
+        @else
+        {!! Form::submit(Lang::get('legal_folder_form.edit_legal_folder'), array('class' => 'submit-button')) !!}
+        @endif
+    </div>
+    {!! Form::close() !!}
+    <div class="lawyer-actions form-section">
         <div class="underline-header">
             <h1 class="record-section-header padding-left-right-15">4. @lang($p."lawyer_actions")</h1>
         </div>
+        {!! Form::open() !!}
         <div class="row">
             <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group col-xs-3">
+                            {!! Form::label('legal_name', Lang::get('basic_info_form.user_name')) !!}<i class="fa fa-asterisk asterisk"></i>
+                            {!! Form::text('legal_name', Auth::user()->name . ' ' . Auth::user()->lastname, array('class' => 'custom-input-text', 'disabled' => 'disabled')) !!}
+                        </div>
+                        <div class="form-group col-xs-3">
+                            {!! Form::label('medical_location_id', Lang::get('basic_info_form.exam_location')) !!}<i class="fa fa-asterisk asterisk"></i>
+                            {!! Form::select('medical_location_id', $medical_locations_array) !!}
+                        </div>
+                        <div class="form-group col-xs-3">
+                            {!! Form::label('legal_date', Lang::get('basic_info_form.date')) !!}<i class="fa fa-asterisk asterisk"></i>
+                            {!! Form::text('legal_date', null, array('class' => 'custom-input-text width-80-percent date-input', 'placeholder' => Lang::get('dates_common.date_placeholder'))) !!}<a href="javascript:void(0)"><span class="glyphicon glyphicon-remove color-red clear-date"></span></a>
+                        </div>
+                    </div>
+                </div>
                 <?php
                     for($i = 0; $i < 5; $i++){
                         $lawyer[$i] = false;
@@ -407,16 +432,25 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group padding-left-right-15">
+                            {!! Form::label('legal_comments', Lang::get('basic_info_form.comments')) !!}
+                            {!! Form::textarea('legal_comments', null, array('class' => 'custom-input-textarea width-100-percent non-printable')) !!}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="text-center">
+                            {!! Form::submit(Lang::get('legal_folder_form.save_lawyer_action'), array('class' => 'submit-button')) !!}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="form-section align-text-center">
-        @if($legal_folder == null)
-        {!! Form::submit(Lang::get('legal_folder_form.save_legal_folder'), array('class' => 'submit-button')) !!}
-        @else
-        {!! Form::submit(Lang::get('legal_folder_form.edit_legal_folder'), array('class' => 'submit-button')) !!}
-        @endif
-    </div>
+    {!! Form::close() !!}
 @else
     <div class="personal-family-info form-section no-bottom-border">
         <div class="underline-header">
@@ -717,6 +751,6 @@
             </div>
         </div>
     </div>
+    {!! Form::close() !!}
 @endif
-{!! Form::close() !!}
 </div>
