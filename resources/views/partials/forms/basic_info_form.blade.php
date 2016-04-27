@@ -1969,7 +1969,7 @@
                                                 <td>{{$i+1}}</td>
                                                 <td>{{$allFoldersHistorySingleRow->getUserName()}}</td>
                                                 <td>{{$allFoldersHistorySingleRow->getLocation()}}</td>
-                                                <td>{{$allFoldersHistorySingleRow->getDate()}}</td>
+                                                <td>{{$datesHelper->getFinelyFormattedStringDateFromDBDate($allFoldersHistorySingleRow->getDate())}}</td>
                                                 <td>{{$allFoldersHistorySingleRow->getComments()}}</td>
                                                 <td>@lang($p.$allFoldersHistorySingleRow->getFolderName())</td>
                                             </tr>

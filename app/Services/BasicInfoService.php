@@ -12,6 +12,7 @@ use App\Models\PsychosocialSession;
 use App\Models\User;
 use App\Services\GreekStringConversionHelper;
 use App\Services\DatesHelper;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 
@@ -562,6 +563,8 @@ class BasicInfoService{
             if (!empty($psychosocialHistory)) {
                 $this->pushAllPsychosocialFolderHistoryToUsageHistoryArray($psychosocialHistory, $users, $locations, $usageHistory);
             }
+            // order usageHistory array by date
+            usort($usageHistory, array($this, "orderUsageHistoryArrayByDate"));
         }
         return $usageHistory;
     }
@@ -573,8 +576,7 @@ class BasicInfoService{
                 $users[$basicFolderHistorySingleRow->user_id - 1]['name'] . ' ' .
                 $users[$basicFolderHistorySingleRow->user_id - 1]['lastname'],
                 $locations[$basicFolderHistorySingleRow->medical_location_id - 1]['description'],
-                $this->datesHelper->getFinelyFormattedStringDateFromDBDate(
-                    $basicFolderHistorySingleRow->update_date),
+                new Carbon($basicFolderHistorySingleRow->update_date),
                 $basicFolderHistorySingleRow->comments,
                 "basic"
             );
@@ -589,8 +591,7 @@ class BasicInfoService{
                 $users[$medicalVisitsHistorySingleRow->doctor_id - 1]['name'] . ' ' .
                 $users[$medicalVisitsHistorySingleRow->doctor_id - 1]['lastname'],
                 $locations[$medicalVisitsHistorySingleRow->medical_location_id - 1]['description'],
-                $this->datesHelper->getFinelyFormattedStringDateFromDBDate(
-                    $medicalVisitsHistorySingleRow->medical_visit_date),
+                new Carbon($medicalVisitsHistorySingleRow->medical_visit_date),
                 "",
                 "medical"
             );
@@ -609,12 +610,22 @@ class BasicInfoService{
                 $users[$psychosocialHistorySingleRow->psychologist_id - 1]['name'] . ' ' .
                 $users[$psychosocialHistorySingleRow->psychologist_id - 1]['lastname'],
                 $locations[$psychosocialHistorySingleRow->medical_location_id - 1]['description'],
-                $this->datesHelper->getFinelyFormattedStringDateFromDBDate(
-                    $psychosocialHistorySingleRow->session_date),
+                new Carbon($psychosocialHistorySingleRow->session_date),
                 $comments,
                 "psychosocial"
             );
             array_push($usageHistory, $temp);
         }
+    }
+
+    // order usageHistory by date
+    public function orderUsageHistoryArrayByDate($a, $b){
+        $aDate = $a->getDate();
+        $bDate = $b->getDate();
+        if($aDate->eq($bDate)){
+            return 0;
+        }
+        // descending order!
+        return ($aDate->lt($bDate)) ? 1 : -1;
     }
 }
