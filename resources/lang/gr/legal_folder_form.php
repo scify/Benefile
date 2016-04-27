@@ -32,6 +32,8 @@
         'interview_preparation' => 'Προετοιμασία για συνέντευξη',
         'appeal' => 'Προσφυγή',
         'detention_lift' => 'Διαδικασία για άρση κράτησης',
+        'add_new_session' => 'ΝΕΑ ΣΥΝΕΔΡΙΑ',
+        'new_lawyer_action' => 'Νέα Δράση Νομικού',
         'save_lawyer_action' => 'Αποθήκευση Δράσης Νομικού',
         'save_legal_folder' => 'Αποθήκευση Νομικού Φακέλου',
         'edit_legal_folder' => 'Ενημέρωση Νομικού Φακέλου',

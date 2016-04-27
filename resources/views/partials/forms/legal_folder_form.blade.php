@@ -351,106 +351,122 @@
             </div>
         </div>
     </div>
-    <div class="form-section align-text-center no-bottom-border">
-        @if($legal_folder == null)
+    @if($legal_folder == null)
+    <div class="form-section align-text-center">
         {!! Form::submit(Lang::get('legal_folder_form.save_legal_folder'), array('class' => 'submit-button')) !!}
-        @else
+    @else
+    <div class="form-section align-text-center no-bottom-border">
         {!! Form::submit(Lang::get('legal_folder_form.edit_legal_folder'), array('class' => 'submit-button')) !!}
-        @endif
+    @endif
     </div>
     {!! Form::close() !!}
-    <div class="lawyer-actions form-section">
-        <div class="underline-header">
-            <h1 class="record-section-header padding-left-right-15">4. @lang($p."lawyer_actions")</h1>
-        </div>
-        {!! Form::open() !!}
+    @if($legal_folder != null)
+    <div class="lawyer-action-div form-section">
         <div class="row">
-            <div class="col-md-12">
+            <!-- ACCESS LEVEL -->
+            @if (Auth::user()->user_role_id == 5 || Auth::user()->user_role_id == 1)
+            <div class="col-xs-12">
+                <button id="add-new-session" class="float-right margin-30 float-right session-button lighter-green-background">@lang($p."add_new_session")</button>
+            </div>
+            @endif
+        </div>
+        <div class="lawyer-actions">
+            <div class="underline-header">
+                <h1 class="record-section-header padding-left-right-15">4. @lang($p."lawyer_actions")</h1>
+            </div>
+            <div class="new-session dynamic-form-section">
+                <h1 class="record-section-header padding-left-right-15">@lang($p."new_lawyer_action")</h1>
+                {!! Form::open() !!}
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="form-group col-xs-3">
-                            {!! Form::label('legal_name', Lang::get('basic_info_form.user_name')) !!}<i class="fa fa-asterisk asterisk"></i>
-                            {!! Form::text('legal_name', Auth::user()->name . ' ' . Auth::user()->lastname, array('class' => 'custom-input-text', 'disabled' => 'disabled')) !!}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group col-xs-3">
+                                    {!! Form::label('legal_name', Lang::get('basic_info_form.user_name')) !!}<i class="fa fa-asterisk asterisk"></i>
+                                    {!! Form::text('legal_name', Auth::user()->name . ' ' . Auth::user()->lastname, array('class' => 'custom-input-text', 'disabled' => 'disabled')) !!}
+                                </div>
+                                <div class="form-group col-xs-3">
+                                    {!! Form::label('medical_location_id', Lang::get('basic_info_form.exam_location')) !!}<i class="fa fa-asterisk asterisk"></i>
+                                    {!! Form::select('medical_location_id', $medical_locations_array) !!}
+                                </div>
+                                <div class="form-group col-xs-3">
+                                    {!! Form::label('legal_date', Lang::get('basic_info_form.date')) !!}<i class="fa fa-asterisk asterisk"></i>
+                                    {!! Form::text('legal_date', null, array('class' => 'custom-input-text width-80-percent date-input', 'placeholder' => Lang::get('dates_common.date_placeholder'))) !!}<a href="javascript:void(0)"><span class="glyphicon glyphicon-remove color-red clear-date"></span></a>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group col-xs-3">
-                            {!! Form::label('medical_location_id', Lang::get('basic_info_form.exam_location')) !!}<i class="fa fa-asterisk asterisk"></i>
-                            {!! Form::select('medical_location_id', $medical_locations_array) !!}
+                        <?php
+                            for($i = 0; $i < 5; $i++){
+                                $lawyer[$i] = false;
+                            }
+                            if(isset($lawyer_action) and $lawyer_action != null){
+                                foreach($lawyer_action as $law_action){
+                                    $lawyer[$law_action->lawyer_action_id - 1] = true;
+                                }
+                            }
+                        ?>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group make-inline padding-left-right-15 float-left width-100-percent">
+                                    {!! Form::checkbox('lawyer_action[]', 1, $lawyer[0], array('class' => 'float-left', 'id' => 'rights_advise')) !!}
+                                    {!! Form::label('rights_advise', Lang::get('legal_folder_form.rights_advise'), array('class' => 'float-left')) !!}
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group col-xs-3">
-                            {!! Form::label('legal_date', Lang::get('basic_info_form.date')) !!}<i class="fa fa-asterisk asterisk"></i>
-                            {!! Form::text('legal_date', null, array('class' => 'custom-input-text width-80-percent date-input', 'placeholder' => Lang::get('dates_common.date_placeholder'))) !!}<a href="javascript:void(0)"><span class="glyphicon glyphicon-remove color-red clear-date"></span></a>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group make-inline padding-left-right-15 float-left width-100-percent">
+                                    {!! Form::checkbox('lawyer_action[]', 2, $lawyer[1], array('class' => 'float-left', 'id' => 'asylum_advise')) !!}
+                                    {!! Form::label('asylum_advise', Lang::get('legal_folder_form.asylum_advise'), array('class' => 'float-left')) !!}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group make-inline padding-left-right-15 float-left width-100-percent">
+                                    {!! Form::checkbox('lawyer_action[]', 3, $lawyer[2], array('class' => 'float-left', 'id' => 'interview_preparation')) !!}
+                                    {!! Form::label('interview_preparation', Lang::get('legal_folder_form.interview_preparation'), array('class' => 'float-left')) !!}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group make-inline padding-left-right-15 float-left width-100-percent">
+                                    {!! Form::checkbox('lawyer_action[]', 4, $lawyer[3], array('class' => 'float-left', 'id' => 'appeal')) !!}
+                                    {!! Form::label('appeal', Lang::get('legal_folder_form.appeal'), array('class' => 'float-left')) !!}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group make-inline padding-left-right-15 float-left width-100-percent">
+                                    {!! Form::checkbox('lawyer_action[]', 5, $lawyer[4], array('class' => 'float-left', 'id' => 'detention_lift')) !!}
+                                    {!! Form::label('detention_lift', Lang::get('legal_folder_form.detention_lift'), array('class' => 'float-left')) !!}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group padding-left-right-15">
+                                    {!! Form::label('legal_comments', Lang::get('basic_info_form.comments')) !!}
+                                    {!! Form::textarea('legal_comments', null, array('class' => 'custom-input-textarea width-100-percent non-printable')) !!}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row padding-bottom-30">
+                            <div class="col-md-12">
+                                <div class="text-center">
+                                    {!! Form::submit(Lang::get('legal_folder_form.save_lawyer_action'), array('class' => 'submit-button')) !!}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <?php
-                    for($i = 0; $i < 5; $i++){
-                        $lawyer[$i] = false;
-                    }
-                    if(isset($lawyer_action) and $lawyer_action != null){
-                        foreach($lawyer_action as $law_action){
-                            $lawyer[$law_action->lawyer_action_id - 1] = true;
-                        }
-                    }
-                ?>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group make-inline padding-left-right-15 float-left width-100-percent">
-                            {!! Form::checkbox('lawyer_action[]', 1, $lawyer[0], array('class' => 'float-left', 'id' => 'rights_advise')) !!}
-                            {!! Form::label('rights_advise', Lang::get('legal_folder_form.rights_advise'), array('class' => 'float-left')) !!}
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group make-inline padding-left-right-15 float-left width-100-percent">
-                            {!! Form::checkbox('lawyer_action[]', 2, $lawyer[1], array('class' => 'float-left', 'id' => 'asylum_advise')) !!}
-                            {!! Form::label('asylum_advise', Lang::get('legal_folder_form.asylum_advise'), array('class' => 'float-left')) !!}
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group make-inline padding-left-right-15 float-left width-100-percent">
-                            {!! Form::checkbox('lawyer_action[]', 3, $lawyer[2], array('class' => 'float-left', 'id' => 'interview_preparation')) !!}
-                            {!! Form::label('interview_preparation', Lang::get('legal_folder_form.interview_preparation'), array('class' => 'float-left')) !!}
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group make-inline padding-left-right-15 float-left width-100-percent">
-                            {!! Form::checkbox('lawyer_action[]', 4, $lawyer[3], array('class' => 'float-left', 'id' => 'appeal')) !!}
-                            {!! Form::label('appeal', Lang::get('legal_folder_form.appeal'), array('class' => 'float-left')) !!}
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group make-inline padding-left-right-15 float-left width-100-percent">
-                            {!! Form::checkbox('lawyer_action[]', 5, $lawyer[4], array('class' => 'float-left', 'id' => 'detention_lift')) !!}
-                            {!! Form::label('detention_lift', Lang::get('legal_folder_form.detention_lift'), array('class' => 'float-left')) !!}
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group padding-left-right-15">
-                            {!! Form::label('legal_comments', Lang::get('basic_info_form.comments')) !!}
-                            {!! Form::textarea('legal_comments', null, array('class' => 'custom-input-textarea width-100-percent non-printable')) !!}
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="text-center">
-                            {!! Form::submit(Lang::get('legal_folder_form.save_lawyer_action'), array('class' => 'submit-button')) !!}
-                        </div>
-                    </div>
+                    {!! Form::close() !!}
                 </div>
             </div>
         </div>
     </div>
-    {!! Form::close() !!}
+    @endif
 @else
     <div class="personal-family-info form-section no-bottom-border">
         <div class="underline-header">
