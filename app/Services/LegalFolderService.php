@@ -137,14 +137,13 @@ class LegalFolderService{
     }
 
     // saves lawyer actions in legal_lawyer_action DB table
-    private function saveLawyerActionsToDB($lawyer_actions, $legalFolderId){
-        \DB::table('legal_lawyer_action')->where('legal_folder_id', '=', $legalFolderId)->delete();
+    private function saveLawyerActionsToDB($lawyer_actions, $legalSessionId){
         if($lawyer_actions != null) {
             foreach ($lawyer_actions as $lawyer_action) {
                 \DB::table('legal_lawyer_action')->insert(
                     array(
                         'lawyer_action_id' => $lawyer_action,
-                        'legal_folder_id' => $legalFolderId,
+                        'legal_session_id' => $legalSessionId,
                     )
                 );
             }
@@ -152,5 +151,24 @@ class LegalFolderService{
     }
 
     // saves legal session to corresponding DB table
-    public function saveLegalSessionToDB($request, $benefiterId){}
+    public function saveLegalSessionToDB($request, $benefiterId){
+        $legal_folder = $this->findLegalFolderFromBenefiterId($benefiterId);
+        if($legal_folder != null){
+            $legalSessionId = \DB::table('legal_sessions')->insertGetId($this->getLegalSessionArrayForDBInsert($request, $legal_folder->id));
+            if($legalSessionId != null) {
+                $this->saveLawyerActionsToDB($request['lawyer_action'], $legalSessionId);
+            }
+        }
+    }
+
+    // returns an array with data suitable for legal_session DB table insertion
+    private function getLegalSessionArrayForDBInsert($request, $legalFolderId){
+        return array(
+            'legal_folder_id' => $legalFolderId,
+            'legal_date' => $request['legal_date'],
+            'legal_comments' => $request['legal_comments'],
+            'user_id' => \Auth::user()->id,
+            'medical_location_id' => $request['medical_location_id'],
+        );
+    }
 }

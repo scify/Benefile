@@ -98,6 +98,7 @@ class CreateLegalFolderTable extends Migration
             $table->integer('legal_folder_id')->unsigned();
             $table->integer('medical_location_id')->unsigned();
             $table->date('legal_date');
+            $table->text('legal_comments');
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('legal_folder_id')->references('id')->on('legal_folder');
             $table->foreign('medical_location_id')->references('id')->on('medical_location_lookup');
