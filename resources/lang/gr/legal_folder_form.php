@@ -42,4 +42,5 @@
         'mothers_name'         =>  'ΜΗΤΡΩΝΥΜΟ',
         'nationality'          =>  'ΧΩΡΑ ΕΘΝΙΚΟΤΗΤΑΣ',
         'arrival_date'         =>  'ΗΜΕΡ. ΑΦΙΞΗΣ',
+        'actions' => 'Δράσεις',
     );

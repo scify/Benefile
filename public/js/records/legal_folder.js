@@ -55,4 +55,17 @@ $(document).ready(function(){
     $("body").on("change", "#penalty-yes", function(){
         $(".penalty-text").removeClass("hide");
     });
+
+    // slide toggle to add a new session
+    $(".new-session").hide();
+    $("#add-new-session").on("click", function(){
+        $(".new-session").slideToggle("slow");
+    });
+
+    // Apply dataTable to legal sessions history
+    $(function() {
+        $('#legal-sessions-history').DataTable( {
+            //"lengthMenu": [ [-1], ["All"] ]
+        });
+    });
 });

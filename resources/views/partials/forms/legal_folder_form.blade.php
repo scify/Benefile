@@ -464,6 +464,53 @@
                     {!! Form::close() !!}
                 </div>
             </div>
+            {{-- Ιστορικό δράσεων νομικού --}}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row padding-bottom-30">
+                        <div class="padding-left-right-15">
+                            <div class="table-responsive col-xs-12">
+                                <table id="legal-sessions-history">
+                                    <thead>
+                                        <tr>
+                                            <th>@lang("basic_info_form.counter")</th>
+                                            <th>@lang("basic_info_form.user_name")</th>
+                                            <th>@lang("basic_info_form.location")</th>
+                                            <th>@lang("basic_info_form.date")</th>
+                                            <th>@lang($p."actions")</th>
+                                            <th>@lang("basic_info_form.comments")</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    @if(!empty($legalSessionsHistory))
+                                    @foreach($legalSessionsHistory as $i => $legalSessionsHistorySingleRow)
+                                        <tr>
+                                            <td>{{$i+1}}</td>
+                                            <td>{{$legalSessionsHistorySingleRow->getUserName()}}</td>
+                                            <td>{{$legalSessionsHistorySingleRow->getLocation()}}</td>
+                                            <td>{{$datesHelper->getFinelyFormattedStringDateFromDBDate($legalSessionsHistorySingleRow->getDate())}}</td>
+                                            <td>{{$legalSessionsHistorySingleRow->getLawyerActions()}}</td>
+                                            <td>{{$legalSessionsHistorySingleRow->getComments()}}</td>
+                                        </tr>
+                                    @endforeach
+                                    @endif
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>@lang("basic_info_form.counter")</th>
+                                            <th>@lang("basic_info_form.user_name")</th>
+                                            <th>@lang("basic_info_form.location")</th>
+                                            <th>@lang("basic_info_form.date")</th>
+                                            <th>@lang($p."actions")</th>
+                                            <th>@lang("basic_info_form.comments")</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     @endif
