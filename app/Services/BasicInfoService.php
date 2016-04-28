@@ -16,6 +16,7 @@ use App\Services\DatesHelper;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use Illuminate\Support\Facades\Log;
 
 class BasicInfoService{
 
@@ -649,5 +650,45 @@ class BasicInfoService{
         }
         // descending order!
         return ($aDate->lt($bDate)) ? 1 : -1;
+    }
+
+    // checks for possible duplicates between current form and DB rows
+    public function checkForDuplicates($request){
+        $selectQuery = "select id, name, lastname, fathers_name, birth_date from benefiters where ";
+        $firstWhereParameter = true;
+        if(isset($request['name']) and !empty($request['name'])){
+            $selectQuery .= "name='" . $request['name'] . "'";
+            $firstWhereParameter = false;
+        }
+        if(isset($request['lastname']) and !empty($request['lastname'])){
+            if(!$firstWhereParameter){
+                $selectQuery .= " and ";
+            }
+            $selectQuery .= "lastname='" . $request['lastname'] . "'";
+            $firstWhereParameter = false;
+        }
+        if(isset($request['birth_date']) and !empty($request['birth_date'])){
+            if(!$firstWhereParameter){
+                $selectQuery .= " and ";
+            }
+            $selectQuery .= "birth_date='" . $this->datesHelper->makeDBSearchFriendlyDate(
+                    $this->datesHelper->makeDBFriendlyDate($request['birth_date'])) . "'";
+            $firstWhereParameter = false;
+        }
+        if(isset($request['fathers_name']) and !empty($request['fathers_name'])){
+            if(!$firstWhereParameter){
+                $selectQuery .= " and ";
+            }
+            $selectQuery .= "fathers_name='" . $request['fathers_name'] . "'";
+            $firstWhereParameter = false;
+        }
+        // if some where parameters have been passed, return results
+        if(!$firstWhereParameter){
+            Log::info('The search for possible duplicates query is: ' . $selectQuery);
+            return \DB::select(\DB::raw($selectQuery));
+        } else { // if no where parameter is set, return null
+            Log::info('No query parameters have been passed!');
+            return null;
+        }
     }
 }

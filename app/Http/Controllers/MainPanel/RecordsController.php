@@ -188,6 +188,11 @@ class RecordsController extends Controller
         }
     }
 
+    // check for duplicated folders
+    public function postCheckForDuplicatedFolders(Request $request){
+        return $this->basicInfoService->checkForDuplicates($request->all());
+    }
+
     // save Occurrences to DB with AJAX
     public function saveOccurrencesBasicInfo(Request $request, $id){
         // saves in DB, with the benefiter->id

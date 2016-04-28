@@ -1008,7 +1008,7 @@
         @endif
     @else
         {{-- Προσωπικά Στοιχεία --}}
-        <div class="personal-info form-section no-bottom-border">
+        <div class="personal-info form-section no-bottom-border" data-url="{{url('check-for-possible-duplicates')}}">
             <div class="underline-header">
                 <h1 class="record-section-header padding-left-right-15">1. @lang($p."personal_info")</h1>
             </div>
@@ -1022,11 +1022,11 @@
                             </div>
                             <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-xs-2">
                                 {!! Form::label('lastname', Lang::get('basic_info_form.lastname')) !!}<i class="fa fa-asterisk asterisk"></i>
-                                {!! Form::text('lastname', null, array('class' => 'custom-input-text')) !!}
+                                {!! Form::text('lastname', null, array('class' => 'custom-input-text uniqueness')) !!}
                             </div>
                             <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-xs-2">
                                 {!! Form::label('name', Lang::get('basic_info_form.name')) !!}<i class="fa fa-asterisk asterisk"></i>
-                                {!! Form::text('name', null, array('class' => 'custom-input-text')) !!}
+                                {!! Form::text('name', null, array('class' => 'custom-input-text uniqueness')) !!}
                             </div>
                             <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-xs-2">
                                 {!! Form::label('gender_id', Lang::get('basic_info_form.gender')) !!}
@@ -1054,7 +1054,7 @@
                             <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-xs-2">
                                 {!! Form::label(Lang::get('basic_info_form.birth_date')) !!}
                                 <div class="make-inline">
-                                    {!! Form::text('birth_date', null, array('class' => 'custom-input-text width-80-percent date-input', 'placeholder' => Lang::get('dates_common.date_placeholder'))) !!}<a href="javascript:void(0)"><span class="glyphicon glyphicon-remove color-red clear-date"></span></a>
+                                    {!! Form::text('birth_date', null, array('class' => 'custom-input-text width-80-percent date-input uniqueness', 'placeholder' => Lang::get('dates_common.date_placeholder'))) !!}<a href="javascript:void(0)"><span class="glyphicon glyphicon-remove color-red clear-date"></span></a>
                                 </div>
                             </div>
                         </div>
@@ -1063,7 +1063,7 @@
                         <div class="padding-left-right-15">
                             <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-xs-2">
                                 {!! Form::label('fathers_name', Lang::get('basic_info_form.fathers_name')) !!}
-                                {!! Form::text('fathers_name', null, array('class' => 'custom-input-text')) !!}
+                                {!! Form::text('fathers_name', null, array('class' => 'custom-input-text uniqueness')) !!}
                             </div>
                             <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-xs-2">
                                 {!! Form::label('mothers_name', Lang::get('basic_info_form.mothers_name')) !!}

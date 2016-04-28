@@ -56,6 +56,7 @@ Route::get('benefiter/{id}/basic-info/referral-delete/{referral_id}', 'MainPanel
 Route::get('benefiter/{id}/new-occurrence-save', 'MainPanel\RecordsController@saveOccurrencesBasicInfo');
 Route::get('benefiter/{id}/edit-occurrence/{occurrence_id}', 'MainPanel\RecordsController@editOccurrencesBasicInfo');
 Route::get('benefiter/{id}/delete-occurrence/{occurrence_id}', 'MainPanel\RecordsController@deleteOccurrencesBasicInfo');
+Route::post('check-for-possible-duplicates', 'MainPanel\RecordsController@postCheckForDuplicatedFolders');
 //----------------------- END BASIC INFO
 
 //----------------------- MEDICAL FOLDER

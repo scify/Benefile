@@ -1,4 +1,88 @@
-$(document).ready(function(){
+//structuring javascript
+
+// 1. Create methods instead of writing code on the click events.
+    // $("#button1").click(CreateNewEventForm);
+
+// 2. Create a method init that assigns the events to the functions
+// 3. call the init method on bottom()
+
+// example of structure:
+//function test1(){}
+//function test1(){}
+//function test1(){}
+//function test1(){}
+//function test1(){}
+//function test1(){}
+//
+//function init(){
+//
+//    $("basdas").click(test1);
+//    $("basdas").click(test1);
+//    $("basdas").click(test1);
+//    $("basdas").click(test1);
+//    $("basdas").click(test1);
+//
+//
+//}
+//
+//$(function(){
+//    init();
+//})
+
+function displayMonthsPassed($selected_date){
+    if($selected_date != null) {
+        // used only for document ready, if no date is selected
+        if ($selected_date == "") {
+            $("#months-passed").text("");
+            return;
+        }
+        var $det_date = new Date($selected_date.substring(6, 10), $selected_date.substring(3, 5) - 1, $selected_date.substring(0, 2));
+        var $now = $.now();
+        var $diff = new Date($now - $det_date);
+        if ($diff >= 0) {
+            var $array = ($diff / 1000 / 60 / 60 / 24 / 30).toString().split(".");
+            var $result = $array[0];
+            if ($result == 1) {
+                $result = $result + " " + $("#months-passed").data("month");
+            } else {
+                $result = $result + " " + $("#months-passed").data("months");
+            }
+            $("#months-passed").text("(" + $result + ")");
+        } else {
+            $("#months-passed").text("");
+        }
+    }
+}
+
+function displayPossibleDuplicatedFolders(data){
+
+}
+
+function checkIfBenefiterAlreadyExists(){
+    //collect values
+    var data = {};
+    $(".uniqueness").each(function(){
+        if ($(this).val().length>0){
+            data[$(this).attr("name")] = $(this).val();
+        }
+    });
+    data["_token"] = $("input[name='_token']").val();
+    //send ajax request
+    $.ajax({
+        url: $(".personal-info").data("url"),
+        data: data,
+        method: "post",
+        success: function(data){
+            displayPossibleDuplicatedFolders(data);
+        }
+    });
+}
+
+function init(){
+
+    var $langs_count = $(".added-div").length;
+    var $countUniquenessElements = $('.uniqueness').length;
+
     // hide new occurrence form
     $(".new-occurrence").hide();
     $("#add-new-occurrence").on("click", function(){
@@ -32,10 +116,10 @@ $(document).ready(function(){
         $.ajax({
             url: $('body').attr('data-url') + "/benefiter/"+ $(this).attr('data-benefiter-id') +"/new-occurrence-save",
             data: {
-                    occurrence_date: $('#occurrence_date').val(),
-                    occurrences_comments: $('#occurrences_comments').val(),
-                    benefiter_id: $('#benefiter_id').val()
-                },
+                occurrence_date: $('#occurrence_date').val(),
+                occurrences_comments: $('#occurrences_comments').val(),
+                benefiter_id: $('#benefiter_id').val()
+            },
             success: function () {
             }
         }).done(function() {
@@ -148,43 +232,18 @@ $(document).ready(function(){
     });
 
     // Apply dataTable to benefiter referrals history
-    $(function() {
-        $('#benefiter_referrals_history').DataTable( {
-            //"lengthMenu": [ [-1], ["All"] ]
-        });
+    $('#benefiter_referrals_history').DataTable( {
+        //"lengthMenu": [ [-1], ["All"] ]
     });
 
     // Apply dataTable to updates history
-    $(function() {
-        $('#folders-update-history').DataTable( {
-            //"lengthMenu": [ [-1], ["All"] ]
-        });
+    $('#folders-update-history').DataTable( {
+        //"lengthMenu": [ [-1], ["All"] ]
     });
-});
 
-var $langs_count = $(".added-div").length;
-
-function displayMonthsPassed($selected_date){
-    if($selected_date != null) {
-        // used only for document ready, if no date is selected
-        if ($selected_date == "") {
-            $("#months-passed").text("");
-            return;
-        }
-        var $det_date = new Date($selected_date.substring(6, 10), $selected_date.substring(3, 5) - 1, $selected_date.substring(0, 2));
-        var $now = $.now();
-        var $diff = new Date($now - $det_date);
-        if ($diff >= 0) {
-            var $array = ($diff / 1000 / 60 / 60 / 24 / 30).toString().split(".");
-            var $result = $array[0];
-            if ($result == 1) {
-                $result = $result + " " + $("#months-passed").data("month");
-            } else {
-                $result = $result + " " + $("#months-passed").data("months");
-            }
-            $("#months-passed").text("(" + $result + ")");
-        } else {
-            $("#months-passed").text("");
-        }
-    }
+    $('.uniqueness').on('change', checkIfBenefiterAlreadyExists);
 }
+
+
+$(document).ready(init);
+
