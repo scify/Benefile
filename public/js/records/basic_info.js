@@ -55,7 +55,23 @@ function displayMonthsPassed($selected_date){
 }
 
 function displayPossibleDuplicatedFolders(data){
-
+    if(data.length <= 0){
+        if(!$("#duplicate-folders").is(":hidden")) {
+            $("#duplicate-folders").toggle("slow");
+        }
+    } else {
+        if($("#duplicate-folders").is(":hidden")) {
+            $("#duplicate-folders").toggle("slow");
+        }
+        $("#duplicate-folders").html("<div class=\"alert-header\"><strong>" + $("#duplicate-folders").data("title") + "</strong></div>");
+        for(var i in data){
+            $("#duplicate-folders").append(data[i].name + " " + data[i].lastname + ", " +
+                data[i].fathers_name + ", " + data[i].birth_date +
+                ", <a style=\"color: black;\" target=\"_blank\" href=\"" +
+                $(location).attr("href").replace("-1", data[i].id) + "\">" +
+                $("#duplicate-folders").data("display-link") + "</a>" + "<br/>");
+        }
+    }
 }
 
 function checkIfBenefiterAlreadyExists(){
@@ -241,7 +257,7 @@ function init(){
         //"lengthMenu": [ [-1], ["All"] ]
     });
 
-    $('.uniqueness').on('change', checkIfBenefiterAlreadyExists);
+    $('.uniqueness').on('change changeDate', checkIfBenefiterAlreadyExists);
 }
 
 
