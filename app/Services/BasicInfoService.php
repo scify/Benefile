@@ -1,5 +1,6 @@
 <?php namespace app\Services;
 
+use App\Models\LegalSession;
 use App\Models\ViewModels\AllFoldersUsageHistory;
 use App\Models\BasicFolderHistory;
 use App\Models\Benefiters_Tables_Models\Benefiter;
@@ -539,8 +540,10 @@ class BasicInfoService{
         $basicFolderHistory = BasicFolderHistory::where('benefiter_id', '=', $benefiter_id)->get();
         // fetch from medical visit
         $medicalVisitsHistory = medical_visits::where('benefiter_id', '=', $benefiter_id)->get();
-        // todo:fetch from legal folder
-
+        // fetch from legal folder
+        $legalFolderService = new LegalFolderService();
+        $legalFolderHistory = LegalSession::where('legal_folder_id', '=',
+            $legalFolderService->findLegalFolderFromBenefiterId($benefiter_id)->id)->get();
         // fetch from psychosocial folder
         $socialFolderService = new SocialFolderService();
         $psychosocialHistory = PsychosocialSession::where('social_folder_id', '=',
@@ -558,6 +561,10 @@ class BasicInfoService{
             // push all medical visits history to the usageHistory array as AllFoldersUsageHistory objects
             if (!empty($medicalVisitsHistory)) {
                 $this->pushAllMedicalVisitsHistoryToUsageHistoryArray($medicalVisitsHistory, $users, $locations, $usageHistory);
+            }
+            // push all legal folder history to the usageHistory array as AllFoldersUsageHistory objects
+            if (!empty($legalFolderHistory)) {
+                $this->pushAllLegalFolderHistoryToUsageHistoryArray($legalFolderHistory, $users, $locations, $usageHistory);
             }
             // push all psychosocial sessions history to the usageHistory array as AllFoldersUsageHistory objects
             if (!empty($psychosocialHistory)) {
@@ -594,6 +601,21 @@ class BasicInfoService{
                 new Carbon($medicalVisitsHistorySingleRow->medical_visit_date),
                 "",
                 "medical"
+            );
+            array_push($usageHistory, $temp);
+        }
+    }
+
+    // push all legal folder history to the usageHistory array as AllFoldersUsageHistory objects
+    private function pushAllLegalFolderHistoryToUsageHistoryArray($legalFolderHistory, $users, $locations, &$usageHistory){
+        foreach ($legalFolderHistory as $legalFolderHistorySingleRow) {
+            $temp = new AllFoldersUsageHistory(
+                $users[$legalFolderHistorySingleRow->user_id - 1]['name'] . ' ' .
+                $users[$legalFolderHistorySingleRow->user_id - 1]['lastname'],
+                $locations[$legalFolderHistorySingleRow->medical_location_id - 1]['description'],
+                new Carbon($legalFolderHistorySingleRow->legal_date),
+                $legalFolderHistorySingleRow->legal_comments,
+                "legal"
             );
             array_push($usageHistory, $temp);
         }

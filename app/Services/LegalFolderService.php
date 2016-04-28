@@ -1,5 +1,6 @@
 <?php namespace App\Services;
 
+use App\Models\LegalSession;
 use App\Models\Benefiters_Tables_Models\medical_location_lookup;
 use App\Models\User;
 use App\Models\ViewModels\LegalSessionsHistory;
@@ -189,7 +190,7 @@ class LegalFolderService{
 
     // returns all the legal sessions that have the legal folder id
     private function findLegalSessionsFromLegalFolderIdOrderedByDateDesc($legalFolderId){
-        return \DB::table('legal_sessions')->where('legal_folder_id', '=', $legalFolderId)->orderBy('legal_date', 'desc')->get();
+        return LegalSession::where('legal_folder_id', '=', $legalFolderId)->orderBy('legal_date', 'desc')->get();
     }
 
     // pushes legal sessions as LegalSessionHistory objects to the history array
