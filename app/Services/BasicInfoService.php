@@ -543,8 +543,12 @@ class BasicInfoService{
         $medicalVisitsHistory = medical_visits::where('benefiter_id', '=', $benefiter_id)->get();
         // fetch from legal folder
         $legalFolderService = new LegalFolderService();
-        $legalFolderHistory = LegalSession::where('legal_folder_id', '=',
-            $legalFolderService->findLegalFolderFromBenefiterId($benefiter_id)->id)->get();
+        $legalFolder = $legalFolderService->findLegalFolderFromBenefiterId($benefiter_id);
+        $legalFolderHistory = null;
+        if($legalFolder != null) {
+            $legalFolderHistory = LegalSession::where('legal_folder_id', '=',
+                $legalFolder->id)->get();
+        }
         // fetch from psychosocial folder
         $socialFolderService = new SocialFolderService();
         $psychosocialHistory = PsychosocialSession::where('social_folder_id', '=',
