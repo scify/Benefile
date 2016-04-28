@@ -1007,7 +1007,6 @@
             {!! Form::close() !!}
         @endif
     @else
-        <div id="duplicate-folders" class="alert alert-info" style="display: none;" data-title="@lang($p."meaning")" data-display-link="@lang($p."view")"></div>
         {{-- Προσωπικά Στοιχεία --}}
         <div class="personal-info form-section no-bottom-border" data-url="{{url('check-for-possible-duplicates')}}">
             <div class="underline-header">
@@ -1111,6 +1110,7 @@
 
         {{--2. Συμβάν --}}
         <div class="form-section no-bottom-border">
+            <div id="duplicate-folders" class="alert alert-info" style="display: none;" data-title="@lang($p."meaning")" data-display-link="@lang($p."view")"></div>
              {{--NEW OCCURRENCE BUTTON --}}
             @if($benefiter->id != -1)
                 <div class="row">

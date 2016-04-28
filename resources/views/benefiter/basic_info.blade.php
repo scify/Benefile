@@ -51,9 +51,11 @@
 
 @section('panel-scripts')
     <script src="{{ asset('/plugins/datepicker/js/bootstrap-datepicker.js') }}"></script>
-    {{-- select new record in side-panel if you are creating a new benefiter's basic info... --}}
+    {{-- select new record in side-panel if you are creating a new benefiter's basic info
+        and include js for checking duplicate benefiters... --}}
     @if($benefiter->id == -1)
     <script src="{{ asset('js/records/selectNewRecordInMainPanel.js') }}"></script>
+    <script src="{{ asset('js/records/check_if_benefiter_already_exists.js') }}"></script>
     {{-- ...else select the edit benefiter option --}}
     @else
     <script src="{{asset('js/records/selectEditRecordInMainPanel.js')}}"></script>
