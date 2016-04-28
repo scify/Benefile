@@ -35,10 +35,6 @@ class LegalFolderService{
 
     // save legal folder form's input in DB
     public function saveLegalFolderToDB($request, $id){
-        // if lawyer_action is not existent, add it
-        if(!array_key_exists('lawyer_action' ,$request)){
-            $request['lawyer_action'] = null;
-        }
         $legalFolder = $this->findLegalFolderFromBenefiterId($id);
         if($legalFolder == null) {
             $legalFolderId = \DB::table('legal_folder')->insertGetId($this->getLegalFolderArrayForDBInsert($request['legal_folder_status'], $request['penalty'], $request['penalty_text'], $id));
@@ -48,7 +44,6 @@ class LegalFolderService{
             } else { // ...a new no_legal_status row
                 \DB::table('legal_section_status')->insert($this->getLegalSectionStatusArrayForDBInsert($request['legal_folder_status'], $request['action'], $request['result'], $legalFolderId));
             }
-//            $this->saveLawyerActionsToDB($request['lawyer_action'], $legalFolderId);
         } else {
             \DB::table('legal_folder')->where('id', '=', $legalFolder->id)->update($this->getLegalFolderArrayForDBInsert($request['legal_folder_status'], $request['penalty'], $request['penalty_text'], $id));
             // ON EDIT: delete the row from the non checked table if it is existent
@@ -74,7 +69,6 @@ class LegalFolderService{
                     \DB::table('asylum_request')->where('id', '=', $asylum_request->id)->delete();
                 }
             }
-//            $this->saveLawyerActionsToDB($request['lawyer_action'], $legalFolder->id);
         }
     }
 
