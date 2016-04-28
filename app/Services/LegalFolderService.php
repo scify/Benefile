@@ -1,6 +1,10 @@
 <?php namespace App\Services;
 
+use App\Models\Benefiters_Tables_Models\medical_location_lookup;
+use App\Models\User;
+use App\Models\ViewModels\LegalSessionsHistory;
 use App\Services\DatesHelper;
+use Carbon\Carbon;
 use Validator;
 
 class LegalFolderService{
@@ -87,11 +91,6 @@ class LegalFolderService{
         return \DB::table('legal_section_status')->where('legal_folder_id', '=', $legalFolderId)->first();
     }
 
-    // gets lawyer actions using the legal folder's id
-    public function findLawyerActionsFromLegalFolderId($legalFolderId){
-        return \DB::table('legal_lawyer_action')->where('legal_folder_id', '=', $legalFolderId)->get();
-    }
-
     // returns an array suitable for legal_folder DB table insert
     private function getLegalFolderArrayForDBInsert($legalFolderStatus, $penalty, $penaltyText, $id){
         $penaltyText = ($penalty == '1') ? $penaltyText : "";
@@ -159,10 +158,78 @@ class LegalFolderService{
     private function getLegalSessionArrayForDBInsert($request, $legalFolderId){
         return array(
             'legal_folder_id' => $legalFolderId,
-            'legal_date' => $request['legal_date'],
+            'legal_date' => $this->datesHelper->makeDBFriendlyDate($request['legal_date']),
             'legal_comments' => $request['legal_comments'],
             'user_id' => \Auth::user()->id,
             'medical_location_id' => $request['medical_location_id'],
         );
+    }
+
+    // gets all legal sessions history for a benefiter
+    public function getLegalSessionsHistoryForSingleBenefiter($benefiterId){
+        $history = array();
+        $legal_folder = $this->findLegalFolderFromBenefiterId($benefiterId);
+        if($legal_folder != null){
+            $legalSessions = $this->findLegalSessionsFromLegalFolderIdOrderedByDateDesc($legal_folder->id);
+            if($legalSessions != null){
+                // fetch all users from DB
+                $users = User::get()->toArray();
+                // fetch all locations from DB
+                $locations = medical_location_lookup::get()->toArray();
+                // fetch all lawyer actions from DB
+                $lawyerActions = \DB::table('lawyer_action_lookup')->get();
+                if($users != null and $locations != null and $lawyerActions != null) {
+                    $this->pushLegalSessionsToHistoryArray(
+                        $legalSessions, $users, $locations, $lawyerActions, $history);
+                }
+            }
+        }
+        return $history;
+    }
+
+    // returns all the legal sessions that have the legal folder id
+    private function findLegalSessionsFromLegalFolderIdOrderedByDateDesc($legalFolderId){
+        return \DB::table('legal_sessions')->where('legal_folder_id', '=', $legalFolderId)->orderBy('legal_date', 'desc')->get();
+    }
+
+    // pushes legal sessions as LegalSessionHistory objects to the history array
+    private function pushLegalSessionsToHistoryArray(
+        $legalSessions, $users, $locations, $lawyerActions, &$history)
+    {
+        foreach($legalSessions as $legalSession){
+            $sessionLawyerActionsDescriptionList = null;
+            $this->displaySessionLawyerActionsAsCommaSeparatedString($legalSession->id,
+                $lawyerActions, $sessionLawyerActionsDescriptionList);
+            $temp = new LegalSessionsHistory(
+                $users[$legalSession->user_id - 1]['name'] . ' ' .
+                $users[$legalSession->user_id - 1]['lastname'],
+                $locations[$legalSession->medical_location_id - 1]['description'],
+                new Carbon($legalSession->legal_date),
+                $sessionLawyerActionsDescriptionList,
+                $legalSession->legal_comments
+            );
+            array_push($history, $temp);
+        }
+    }
+
+    // makes a comma separated string of session's lawyer actions
+    private function displaySessionLawyerActionsAsCommaSeparatedString($legalSessionId,
+       $lawyerActions, &$sessionLawyerActionsDescriptionList)
+    {
+        $sessionLawyerActions = $this->findLawyerActionsFromLegalSessionId($legalSessionId);
+        if($sessionLawyerActions != null) {
+            foreach($sessionLawyerActions as $i => $singleSessionLawyerAction){
+                $sessionLawyerActionsDescriptionList .=
+                    $lawyerActions[$singleSessionLawyerAction->lawyer_action_id - 1]->description;
+                if($i < count($sessionLawyerActions) - 1){
+                    $sessionLawyerActionsDescriptionList .= ", ";
+                }
+            }
+        }
+    }
+
+    // gets lawyer actions using the legal session's id
+    private function findLawyerActionsFromLegalSessionId($legalSessionId){
+        return \DB::table('legal_lawyer_action')->where('legal_session_id', '=', $legalSessionId)->get();
     }
 }

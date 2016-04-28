@@ -824,12 +824,12 @@ class RecordsController extends Controller
         if($legalFolder != null){
             $asylumRequest = $this->legalFolderService->findAsylumRequestFromLegalFolderId($legalFolder->id);
             $legalStatus = $this->legalFolderService->findLegalSectionStatusFromLegalFolderId($legalFolder->id);
-//            $lawyerActions = $this->legalFolderService->findLawyerActionsFromLegalFolderId($legalFolder->id);
         }
         $benefiter = $this->basicInfoService->findExistentBenefiter($id);
         if($benefiter == null){
             return view('errors.404');
         }
+        $legalSessionsHistory = $this->legalFolderService->getLegalSessionsHistoryForSingleBenefiter($id);
         return view('benefiter.legal_folder')
             ->with('legal_folder', $legalFolder)
             ->with('benefiter', $benefiter)
@@ -838,6 +838,7 @@ class RecordsController extends Controller
             ->with('lawyer_action', $lawyerActions)
             ->with('tab', 'legal')
             ->with('medical_locations_array', $medical_locations_array)
+            ->with('legalSessionsHistory', $legalSessionsHistory)
             ->with('success', $successMsg);
     }
 
