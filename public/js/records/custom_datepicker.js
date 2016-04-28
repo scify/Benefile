@@ -11,6 +11,6 @@ $(document).ready(function(){
 
     // clear date value
     $("body").on("click", ".clear-date", function(){
-        $(this).parents('div:first').find(".date-input").val("");
+        $(this).parents('div:first').find(".date-input").val("").trigger("changeDate");
     });
 });
