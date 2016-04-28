@@ -1123,7 +1123,7 @@
                 </div>
 
                 {{--Νέο Συμβάν --}}
-                <div class="new-occurrence dynamic-form-section">
+                <div class="new-occurrence dynamic-form-section padding-bottom-30">
                     <h1 class="record-section-header padding-left-right-15">@lang($p."new_occurrence")</h1>
                     {{--{!! Form::open(array('url' => 'benefiter/'.$benefiter->id.'/new-occurrence-save')) !!}--}}
                     <div class="row">
