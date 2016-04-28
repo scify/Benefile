@@ -1,6 +1,8 @@
 <?php namespace app\Services;
 
 use App\Models\LegalSession;
+use App\Models\Users_roles;
+use App\Models\Users_subroles;
 use App\Models\ViewModels\AllFoldersUsageHistory;
 use App\Models\BasicFolderHistory;
 use App\Models\Benefiters_Tables_Models\Benefiter;
@@ -537,6 +539,8 @@ class BasicInfoService{
     //returns all the users that have edited the corresponding benefiter's folder
     public function getFoldersUsageHistory($benefiter_id){
         $usageHistory = [];
+        // find the benefiter from id
+        $benefiter = Benefiter::find($benefiter_id);
         // fetch from basic folder history
         $basicFolderHistory = BasicFolderHistory::where('benefiter_id', '=', $benefiter_id)->get();
         // fetch from medical visit
@@ -557,23 +561,26 @@ class BasicInfoService{
         $users = User::get()->toArray();
         // fetch all locations from DB
         $locations = medical_location_lookup::get()->toArray();
+        // fetch all user roles and subroles
+        $roles = Users_roles::get()->toArray();
+        $subroles = Users_subroles::get()->toArray();
         // check if there are some users and locations in the DB, else return an empty array
-        if(!empty($users) and !empty($locations)) {
+        if(!empty($users) and !empty($locations) and $benefiter != null) {
             // push all basic folder history to the usageHistory array as AllFoldersUsageHistory objects
             if (!empty($basicFolderHistory)) {
-                $this->pushAllBasicInfoFolderHistoryToUsageHistoryArray($basicFolderHistory, $users, $locations, $usageHistory);
+                $this->pushAllBasicInfoFolderHistoryToUsageHistoryArray($basicFolderHistory, $benefiter, $roles, $users, $locations, $usageHistory);
             }
             // push all medical visits history to the usageHistory array as AllFoldersUsageHistory objects
             if (!empty($medicalVisitsHistory)) {
-                $this->pushAllMedicalVisitsHistoryToUsageHistoryArray($medicalVisitsHistory, $users, $locations, $usageHistory);
+                $this->pushAllMedicalVisitsHistoryToUsageHistoryArray($medicalVisitsHistory, $benefiter, $roles, $subroles, $users, $locations, $usageHistory);
             }
             // push all legal folder history to the usageHistory array as AllFoldersUsageHistory objects
             if (!empty($legalFolderHistory)) {
-                $this->pushAllLegalFolderHistoryToUsageHistoryArray($legalFolderHistory, $users, $locations, $usageHistory);
+                $this->pushAllLegalFolderHistoryToUsageHistoryArray($legalFolderHistory, $benefiter, $roles, $users, $locations, $usageHistory);
             }
             // push all psychosocial sessions history to the usageHistory array as AllFoldersUsageHistory objects
             if (!empty($psychosocialHistory)) {
-                $this->pushAllPsychosocialFolderHistoryToUsageHistoryArray($psychosocialHistory, $users, $locations, $usageHistory);
+                $this->pushAllPsychosocialFolderHistoryToUsageHistoryArray($psychosocialHistory, $benefiter, $roles, $users, $locations, $usageHistory);
             }
             // order usageHistory array by date
             usort($usageHistory, array($this, "orderUsageHistoryArrayByDate"));
@@ -582,11 +589,14 @@ class BasicInfoService{
     }
 
     // pushes all the basic info folder history to the usage history array as AllFoldersUsageHistory objects
-    private function pushAllBasicInfoFolderHistoryToUsageHistoryArray($basicFolderHistory, $users, $locations, &$usageHistory){
+    private function pushAllBasicInfoFolderHistoryToUsageHistoryArray($basicFolderHistory, $benefiter, $roles, $users, $locations, &$usageHistory){
         foreach ($basicFolderHistory as $basicFolderHistorySingleRow) {
             $temp = new AllFoldersUsageHistory(
+                $benefiter->folder_number,
+                $benefiter->name . " " . $benefiter->lastname,
                 $users[$basicFolderHistorySingleRow->user_id - 1]['name'] . ' ' .
                 $users[$basicFolderHistorySingleRow->user_id - 1]['lastname'],
+                $roles[$users[$basicFolderHistorySingleRow->user_id - 1]['user_role_id'] - 1]['role'],
                 $locations[$basicFolderHistorySingleRow->medical_location_id - 1]['description'],
                 new Carbon($basicFolderHistorySingleRow->update_date),
                 $basicFolderHistorySingleRow->comments,
@@ -597,11 +607,21 @@ class BasicInfoService{
     }
 
     // push all medical visits history to the usageHistory array as AllFoldersUsageHistory objects
-    private function pushAllMedicalVisitsHistoryToUsageHistoryArray($medicalVisitsHistory, $users, $locations, &$usageHistory){
+    private function pushAllMedicalVisitsHistoryToUsageHistoryArray($medicalVisitsHistory, $benefiter, $roles, $subroles, $users, $locations, &$usageHistory){
         foreach ($medicalVisitsHistory as $medicalVisitsHistorySingleRow) {
+            // if the user has a subrole, display it too next to his/hers role
+            $userSubrole = "";
+            if($users[$medicalVisitsHistorySingleRow->doctor_id - 1]['user_subrole_id'] != null){
+                $userSubrole = " (" .
+                    $subroles[$users[$medicalVisitsHistorySingleRow->doctor_id - 1]['user_subrole_id'] - 1]['subrole'] . ")";
+            }
             $temp = new AllFoldersUsageHistory(
+                $benefiter->folder_number,
+                $benefiter->name . " " . $benefiter->lastname,
                 $users[$medicalVisitsHistorySingleRow->doctor_id - 1]['name'] . ' ' .
                 $users[$medicalVisitsHistorySingleRow->doctor_id - 1]['lastname'],
+                $roles[$users[$medicalVisitsHistorySingleRow->doctor_id - 1]['user_role_id'] - 1]['role'] .
+                    $userSubrole,
                 $locations[$medicalVisitsHistorySingleRow->medical_location_id - 1]['description'],
                 new Carbon($medicalVisitsHistorySingleRow->medical_visit_date),
                 "",
@@ -612,11 +632,14 @@ class BasicInfoService{
     }
 
     // push all legal folder history to the usageHistory array as AllFoldersUsageHistory objects
-    private function pushAllLegalFolderHistoryToUsageHistoryArray($legalFolderHistory, $users, $locations, &$usageHistory){
+    private function pushAllLegalFolderHistoryToUsageHistoryArray($legalFolderHistory, $benefiter, $roles, $users, $locations, &$usageHistory){
         foreach ($legalFolderHistory as $legalFolderHistorySingleRow) {
             $temp = new AllFoldersUsageHistory(
+                $benefiter->folder_number,
+                $benefiter->name . " " . $benefiter->lastname,
                 $users[$legalFolderHistorySingleRow->user_id - 1]['name'] . ' ' .
                 $users[$legalFolderHistorySingleRow->user_id - 1]['lastname'],
+                $roles[$users[$legalFolderHistorySingleRow->user_id - 1]['user_role_id'] - 1]['role'],
                 $locations[$legalFolderHistorySingleRow->medical_location_id - 1]['description'],
                 new Carbon($legalFolderHistorySingleRow->legal_date),
                 $legalFolderHistorySingleRow->legal_comments,
@@ -627,15 +650,18 @@ class BasicInfoService{
     }
 
     // push all psychosocial sessions history to the usageHistory array as AllFoldersUsageHistory objects
-    private function pushAllPsychosocialFolderHistoryToUsageHistoryArray($psychosocialHistory, $users, $locations, &$usageHistory){
+    private function pushAllPsychosocialFolderHistoryToUsageHistoryArray($psychosocialHistory, $benefiter, $roles, $users, $locations, &$usageHistory){
         foreach ($psychosocialHistory as $psychosocialHistorySingleRow) {
             // check if the user should be able to see the session comments
             // and put the correct string to the comments variable
             $comments = (\Auth::user()->user_role_id == 1 || \Auth::user()->user_role_id == 5) ?
                 $psychosocialHistorySingleRow->session_comments : "";
             $temp = new AllFoldersUsageHistory(
+                $benefiter->folder_number,
+                $benefiter->name . " " . $benefiter->lastname,
                 $users[$psychosocialHistorySingleRow->psychologist_id - 1]['name'] . ' ' .
                 $users[$psychosocialHistorySingleRow->psychologist_id - 1]['lastname'],
+                $roles[$users[$psychosocialHistorySingleRow->psychologist_id - 1]['user_role_id'] - 1]['role'],
                 $locations[$psychosocialHistorySingleRow->medical_location_id - 1]['description'],
                 new Carbon($psychosocialHistorySingleRow->session_date),
                 $comments,

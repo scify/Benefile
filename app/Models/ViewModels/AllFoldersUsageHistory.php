@@ -4,14 +4,20 @@ namespace App\Models\ViewModels;
 
 class AllFoldersUsageHistory{
 
+    private $folderNumber;
+    private $benefiterName;
     private $userName;
+    private $speciality;
     private $location;
     private $date;
     private $comments;
     private $folderName;
 
-    function __construct($userName, $location, $date, $comments, $folderName)
+    function __construct($folderNumber, $benefiterName, $userName, $speciality, $location, $date, $comments, $folderName)
     {
+        $this->folderNumber = $folderNumber;
+        $this->benefiterName = $benefiterName;
+        $this->speciality = $speciality;
         $this->comments = $comments;
         $this->date = $date;
         $this->folderName = $folderName;
@@ -43,4 +49,21 @@ class AllFoldersUsageHistory{
     {
         return $this->userName;
     }
+
+    public function getBenefiterName()
+    {
+        return $this->benefiterName;
+    }
+
+    public function getFolderNumber()
+    {
+        return $this->folderNumber;
+    }
+
+    public function getSpeciality()
+    {
+        return $this->speciality;
+    }
+
+
 }
