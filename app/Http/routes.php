@@ -72,6 +72,7 @@ Route::post('benefiter/{id}/editMedicalVisit', 'MainPanel\RecordsController@post
 //----------------------- LEGAL FOLDER
 Route::get('benefiter/{id}/legal-folder', 'MainPanel\RecordsController@getLegalFolder');
 Route::post('benefiter/{id}/legal-folder', 'MainPanel\RecordsController@postLegalFolder');
+Route::post('benefiter/{id}/legal-session', 'MainPanel\RecordsController@postLegalSession');
 //----------------------- END LEGAL FOLDER
 
 //----------------------- SOCIAL FOLDER
@@ -81,15 +82,11 @@ Route::post('benefiter/{id}/session-save', 'MainPanel\RecordsController@postSess
 Route::post('benefiter/{id}/session-edit/{session_id}', 'MainPanel\RecordsController@postSessionEdit');
 Route::get('benefiter/{id}/session-delete/{session_id}', 'MainPanel\RecordsController@getSessionDelete');
 //----------------------- END SOCIAL FOLDER
-//----------- END ΝΕΑ new-benefiter/medical-folderΕΓΓΡΑΦΗ
+//----------- END ΝΕΑ ΕΓΓΡΑΦΗ
 
 //----------- ΦΟΡΤΩΣΗ ΑΡΧΕΙΟΥ
 Route::get('new-benefiter/uploadCSV', 'UploadFileController@getUploadCSV');
 Route::post('new-benefiter/uploadCSV', 'UploadFileController@excelUpload');
-
-//// --- to be deleted later  ---//
-//Route::get('new-benefiter/uploadCSV/dataTester', 'UploadFileController@testData');
-
 //----------- END ΦΟΡΤΩΣΗ ΑΡΧΕΙΟΥ
 //--- END ΕΓΓΡΑΦΗ
 

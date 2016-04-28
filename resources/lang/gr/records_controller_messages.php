@@ -10,4 +10,5 @@
         'session_edit_success' => 'Η συνεδρία τροποποιήθηκε επιτυχώς.',
         'session_delete_success' => 'Η συνεδρία διαγράφηκε επιτυχώς.',
         'legal_folder_create_success' => 'Ο νομικός φάκελος αποθηκεύτηκε επιτυχώς.',
+        'legal_session_create_success' => 'Η δράση του νομικού αποθηκεύτηκε επιτυχώς.',
     );

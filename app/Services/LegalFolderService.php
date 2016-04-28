@@ -23,6 +23,16 @@ class LegalFolderService{
         );
     }
 
+    // validation for legal session form
+    public function legalSessionValidator($request){
+        return Validator::make($request,
+                array(
+                    'legal_date' => 'date|required',
+                    'legal_comments' => 'max:2000',
+                )
+            );
+    }
+
     // save legal folder form's input in DB
     public function saveLegalFolderToDB($request, $id){
         // if lawyer_action is not existent, add it
@@ -38,7 +48,7 @@ class LegalFolderService{
             } else { // ...a new no_legal_status row
                 \DB::table('legal_section_status')->insert($this->getLegalSectionStatusArrayForDBInsert($request['legal_folder_status'], $request['action'], $request['result'], $legalFolderId));
             }
-            $this->saveLawyerActionsToDB($request['lawyer_action'], $legalFolderId);
+//            $this->saveLawyerActionsToDB($request['lawyer_action'], $legalFolderId);
         } else {
             \DB::table('legal_folder')->where('id', '=', $legalFolder->id)->update($this->getLegalFolderArrayForDBInsert($request['legal_folder_status'], $request['penalty'], $request['penalty_text'], $id));
             // ON EDIT: delete the row from the non checked table if it is existent
@@ -64,7 +74,7 @@ class LegalFolderService{
                     \DB::table('asylum_request')->where('id', '=', $asylum_request->id)->delete();
                 }
             }
-            $this->saveLawyerActionsToDB($request['lawyer_action'], $legalFolder->id);
+//            $this->saveLawyerActionsToDB($request['lawyer_action'], $legalFolder->id);
         }
     }
 
@@ -83,7 +93,7 @@ class LegalFolderService{
         return \DB::table('legal_section_status')->where('legal_folder_id', '=', $legalFolderId)->first();
     }
 
-    // gets gets lawyer actions using the legal folder's id
+    // gets lawyer actions using the legal folder's id
     public function findLawyerActionsFromLegalFolderId($legalFolderId){
         return \DB::table('legal_lawyer_action')->where('legal_folder_id', '=', $legalFolderId)->get();
     }
@@ -140,4 +150,7 @@ class LegalFolderService{
             }
         }
     }
+
+    // saves legal session to corresponding DB table
+    public function saveLegalSessionToDB($request, $benefiterId){}
 }

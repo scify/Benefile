@@ -91,13 +91,25 @@ class CreateLegalFolderTable extends Migration
             $table->string('description');
         });
 
+        // create the legal_sessions table
+        Schema::create('legal_sessions', function(Blueprint $table){
+            $table->increments('id');
+            $table->integer('user_id')->unsigned();
+            $table->integer('legal_folder_id')->unsigned();
+            $table->integer('medical_location_id')->unsigned();
+            $table->date('legal_date');
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('legal_folder_id')->references('id')->on('legal_folder');
+            $table->foreign('medical_location_id')->references('id')->on('medical_location_lookup');
+        });
+
         // create legal_lawyer_action table
         Schema::create('legal_lawyer_action', function(Blueprint $table){
             $table->increments('id');
             $table->integer('lawyer_action_id')->unsigned();
-            $table->integer('legal_folder_id')->unsigned();
+            $table->integer('legal_session_id')->unsigned();
             $table->foreign('lawyer_action_id')->references('id')->on('lawyer_action_lookup');
-            $table->foreign('legal_folder_id')->references('id')->on('legal_folder');
+            $table->foreign('legal_session_id')->references('id')->on('legal_sessions');
             $table->timestamps();
         });
     }
@@ -110,6 +122,7 @@ class CreateLegalFolderTable extends Migration
     public function down()
     {
         Schema::drop('legal_lawyer_action');
+        Schema::drop('legal_sessions');
         Schema::drop('lawyer_action_lookup');
         Schema::drop('legal_section_status');
         Schema::drop('result_lookup');

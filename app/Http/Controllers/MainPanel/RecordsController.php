@@ -824,7 +824,7 @@ class RecordsController extends Controller
         if($legalFolder != null){
             $asylumRequest = $this->legalFolderService->findAsylumRequestFromLegalFolderId($legalFolder->id);
             $legalStatus = $this->legalFolderService->findLegalSectionStatusFromLegalFolderId($legalFolder->id);
-            $lawyerActions = $this->legalFolderService->findLawyerActionsFromLegalFolderId($legalFolder->id);
+//            $lawyerActions = $this->legalFolderService->findLawyerActionsFromLegalFolderId($legalFolder->id);
         }
         $benefiter = $this->basicInfoService->findExistentBenefiter($id);
         if($benefiter == null){
@@ -851,6 +851,19 @@ class RecordsController extends Controller
         } else {
             $this->legalFolderService->saveLegalFolderToDB($request->all(), $id);
             return redirect('benefiter/'.$id.'/legal-folder')->with('success', \Lang::get('records_controller_messages.legal_folder_create_success'));
+        }
+    }
+
+    // gets data from legal session form
+    public function postLegalSession(Request $request, $id){
+        $validator = $this->legalFolderService->legalSessionValidator($request->all());
+        if($validator->fails()){
+            return redirect('benefiter/'.$id.'/legal-folder')
+                ->withInput($request->all())
+                ->withErrors($validator->errors()->all());
+        } else {
+            $this->legalFolderService->saveLegalSessionToDB($request->all(), $id);
+            return redirect('benefiter/'.$id.'/legal-folder')->with('success', \Lang::get('records_controller_messages.legal_session_create_success'));
         }
     }
 }

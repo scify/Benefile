@@ -376,7 +376,7 @@
             </div>
             <div class="new-session dynamic-form-section">
                 <h1 class="record-section-header padding-left-right-15">@lang($p."new_lawyer_action")</h1>
-                {!! Form::open() !!}
+                {!! Form::open(array('url' => 'benefiter/'.$benefiter->id.'/legal-session')) !!}
                 <div class="row">
                     <div class="col-md-12">
                         <div class="row">
