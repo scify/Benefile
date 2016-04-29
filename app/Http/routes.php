@@ -106,6 +106,7 @@ Route::get('benefites-VS-ClinicalConditions-Report-get-data', 'MainPanel\Reports
 Route::get('medical_visits-PER-month-Report-get-data', 'MainPanel\ReportsController@getMedicalVisitsVSMonthDate');
 Route::get('benefites-VS-phycological-support-type', 'MainPanel\ReportsController@getBenefitersVSPhycologicalSupportType');
 Route::get('registrations-PER-month-Report-get-data', 'MainPanel\ReportsController@getRegistrationsVSMonthDate');
+Route::get('download-history-csv', 'MainPanel\RecordsController@downloadCSVFileWithAllBenefitersFoldersHistory');
 //--- END ΑΝΑΦΟΡΑ
 
 //--- NEW LOCATION
@@ -119,5 +120,3 @@ Route::post('main-panel/users-list', 'MainPanel\UsersController@UserStatusUpdate
 //--- END ΧΡΗΣΤΕΣ
 
 // END OF MAIN PANEL MENU
-
-Route::get('test', 'MainPanel\RecordsController@downloadCSVFileWithAllBenefitersFoldersHistory');

@@ -48,5 +48,7 @@
         'number_of_benefiters'          => 'Αριθμός ωφελούμενων',
         'report-med-visits-per-month'   => 'Αριθμός περιστατικών ανά μήνα',
         'medical_visits_per_month'      => 'Αριθμός Ιατρικών Επισκέψεων',
-        'report-phycological-support'   => 'Αριθμός ωφελούμενων ανά κατηγορία ψυχοκοινωνική  υποστήριξης',
+        'report-phycological-support'   => 'Αριθμός ωφελούμενων ανά κατηγορία ψυχοκοινωνική υποστήριξης',
+        'download_folders_history_csv'  => 'Κατεβάστε όλο το ιστορικό των φακέλων',
+        'download_csv'                  => 'Κατέβασμα αρχείου .csv',
     );

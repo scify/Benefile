@@ -214,13 +214,26 @@
         </div>
     </div>
     {{-- REPORT: Benefiters vs phycological support --}}
-    <div class="benefiters-report form-section">
+    <div class="benefiters-report form-section no-bottom-border">
         <div class="row">
             <div class="col-md-12">
                 <div class="underline-header">
                     <h1 class="record-section-header padding-left-right-15">@lang($p.'report-phycological-support')</h1>
                 </div>
                 <div id="benefiter_vs_phycological_support" data-number-of-benefiters="@lang($p."number_of_benefiters")"></div>
+            </div>
+        </div>
+    </div>
+    {{-- download .csv with all the benefiters folders history --}}
+    <div class="benefiters-report form-section">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="underline-header">
+                    <h1 class="record-section-header padding-left-right-15">@lang($p.'download_folders_history_csv')</h1>
+                </div>
+                <div class="text-center margin-top-60 margin-bottom-50">
+                    <a class="simple-button" href="{{ url('download-history-csv') }}">@lang($p."download_csv")</a>
+                </div>
             </div>
         </div>
     </div>
