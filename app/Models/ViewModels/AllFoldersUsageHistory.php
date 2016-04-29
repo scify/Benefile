@@ -18,7 +18,7 @@ class AllFoldersUsageHistory{
         $this->folderNumber = $folderNumber;
         $this->benefiterName = $benefiterName;
         $this->speciality = $speciality;
-        $this->comments = $this->makeStringCSVFriendly($this->removeSpecialCharacters($comments));
+        $this->comments = $this->removeSpecialCharacters($comments);
         $this->date = $date;
         $this->folderName = $folderName;
         $this->location = $location;

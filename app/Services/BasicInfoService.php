@@ -731,15 +731,15 @@ class BasicInfoService{
             \Lang::get($p."location") . "," . \Lang::get($p."date") . "," .
             \Lang::get($p."comments") . "," . \Lang::get($p."folder_name") . "\n";
         foreach($foldersHistory as $foldersHistorySingleRow){
-            $export_data .= $foldersHistorySingleRow->getFolderNumber() . "," .
-                $foldersHistorySingleRow->getBenefiterName() . "," .
-                $foldersHistorySingleRow->getUserName() . "," .
-                $foldersHistorySingleRow->getSpeciality() . "," .
-                $foldersHistorySingleRow->getLocation() . "," .
+            $export_data .= "\"" . $foldersHistorySingleRow->getFolderNumber() . "\",\"" .
+                $foldersHistorySingleRow->getBenefiterName() . "\",\"" .
+                $foldersHistorySingleRow->getUserName() . "\",\"" .
+                $foldersHistorySingleRow->getSpeciality() . "\",\"" .
+                $foldersHistorySingleRow->getLocation() . "\",\"" .
                 $this->datesHelper->getFinelyFormattedStringDateFromDBDate(
-                    $foldersHistorySingleRow->getDate()) . "," .
-                $foldersHistorySingleRow->getComments() . "," .
-                \Lang::get('basic_info_form.' . $foldersHistorySingleRow->getFolderName()) . "\n";
+                    $foldersHistorySingleRow->getDate()) . "\",\"" .
+                $foldersHistorySingleRow->getComments() . "\",\"" .
+                \Lang::get('basic_info_form.' . $foldersHistorySingleRow->getFolderName()) . "\"\n";
         }
         return $export_data;
     }
