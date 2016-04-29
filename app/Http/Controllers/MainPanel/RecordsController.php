@@ -872,4 +872,18 @@ class RecordsController extends Controller
             return redirect('benefiter/'.$id.'/legal-folder')->with('success', \Lang::get('records_controller_messages.legal_session_create_success'));
         }
     }
+
+    public function downloadCSVFileWithAllBenefitersFoldersHistory(){
+        $export_data = $this->basicInfoService->formatFoldersHistoryToCSVFile();
+        $fileName = "benefiters_folders_history_" . $this->datesHelper->getCurrentTimeString() . ".csv";
+        if(!empty($export_data)) {
+            return response($export_data)
+                ->header('Content-Type', 'application/csv')
+                ->header('Content-Disposition', 'attachment; filename="'. $fileName .'"')
+                ->header('Pragma', 'no-cache')
+                ->header('Expires', '0');
+        } else {
+            return null;
+        }
+    }
 }

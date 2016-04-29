@@ -18,11 +18,22 @@ class AllFoldersUsageHistory{
         $this->folderNumber = $folderNumber;
         $this->benefiterName = $benefiterName;
         $this->speciality = $speciality;
-        $this->comments = $comments;
+        $this->comments = $this->makeStringCSVFriendly($this->removeSpecialCharacters($comments));
         $this->date = $date;
         $this->folderName = $folderName;
         $this->location = $location;
         $this->userName = $userName;
+    }
+
+    private function removeSpecialCharacters($string){
+        $string = str_replace("\r\n", " ", $string);
+        $string = str_replace("\r", " ", $string);
+        $string = str_replace("\n", " ", $string);
+        return $string;
+    }
+
+    private function makeStringCSVFriendly($string){
+        return str_replace(",", "", $string);
     }
 
     public function getComments()

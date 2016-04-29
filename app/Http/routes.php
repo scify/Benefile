@@ -120,7 +120,4 @@ Route::post('main-panel/users-list', 'MainPanel\UsersController@UserStatusUpdate
 
 // END OF MAIN PANEL MENU
 
-
-
-
-
+Route::get('test', 'MainPanel\RecordsController@downloadCSVFileWithAllBenefitersFoldersHistory');

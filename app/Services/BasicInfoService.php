@@ -17,6 +17,7 @@ use App\Services\GreekStringConversionHelper;
 use App\Services\DatesHelper;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Lang;
 use Validator;
 use Illuminate\Support\Facades\Log;
 
@@ -720,5 +721,36 @@ class BasicInfoService{
             Log::info('No query parameters have been passed!');
             return null;
         }
+    }
+
+    public function formatFoldersHistoryToCSVFile(){
+        $foldersHistory = $this->getFoldersUsageHistoryForAllBenefiters();
+        $p = "all_folders_history_csv_titles.";
+        $export_data= \Lang::get($p.'folder_number') . "," . \Lang::get($p."benefiter_name") . "," .
+            \Lang::get($p."user_name") . "," . \Lang::get($p."speciality") . "," .
+            \Lang::get($p."location") . "," . \Lang::get($p."date") . "," .
+            \Lang::get($p."comments") . "," . \Lang::get($p."folder_name") . "\n";
+        foreach($foldersHistory as $foldersHistorySingleRow){
+            $export_data .= $foldersHistorySingleRow->getFolderNumber() . "," .
+                $foldersHistorySingleRow->getBenefiterName() . "," .
+                $foldersHistorySingleRow->getUserName() . "," .
+                $foldersHistorySingleRow->getSpeciality() . "," .
+                $foldersHistorySingleRow->getLocation() . "," .
+                $this->datesHelper->getFinelyFormattedStringDateFromDBDate(
+                    $foldersHistorySingleRow->getDate()) . "," .
+                $foldersHistorySingleRow->getComments() . "," .
+                \Lang::get('basic_info_form.' . $foldersHistorySingleRow->getFolderName()) . "\n";
+        }
+        return $export_data;
+    }
+
+    private function getFoldersUsageHistoryForAllBenefiters(){
+        $usageHistoryForAll = array();
+        $benefiters = Benefiter::get();
+        $benefitersIds = $benefiters->pluck('id');
+        foreach($benefitersIds as $benefiterId){
+            $usageHistoryForAll = array_merge($usageHistoryForAll, $this->getFoldersUsageHistory($benefiterId));
+        }
+        return $usageHistoryForAll;
     }
 }
