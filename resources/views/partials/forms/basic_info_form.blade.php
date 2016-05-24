@@ -286,7 +286,7 @@
                             <div class="form-group float-left width-100-percent">
                                 <?php
                                     $marital_status[0] = true;
-                                    for($i = 1; $i < 5; $i++){
+                                    for($i = 1; $i < 6; $i++){
                                         $marital_status[$i] = false;
                                     }
                                     $marital_status[$benefiter->marital_status_id -1] = true;
@@ -297,18 +297,22 @@
                                 </div>
                                 <div class="col-md-2 make-inline">
                                     {!! Form::radio('marital_status', 2, $marital_status[1], array('class' => 'make-inline', 'disabled' => 'disabled')) !!}
-                                    {!! Form::label('marital_status', Lang::get('basic_info_form.married'), array('class' => 'radio-value')) !!}
+                                    {!! Form::label('marital_status', Lang::get('basic_info_form.cohabits'), array('class' => 'radio-value')) !!}
                                 </div>
                                 <div class="col-md-2 make-inline">
                                     {!! Form::radio('marital_status', 3, $marital_status[2], array('class' => 'make-inline', 'disabled' => 'disabled')) !!}
-                                    {!! Form::label('marital_status', Lang::get('basic_info_form.divorced'), array('class' => 'radio-value')) !!}
+                                    {!! Form::label('marital_status', Lang::get('basic_info_form.married'), array('class' => 'radio-value')) !!}
                                 </div>
                                 <div class="col-md-2 make-inline">
                                     {!! Form::radio('marital_status', 4, $marital_status[3], array('class' => 'make-inline', 'disabled' => 'disabled')) !!}
-                                    {!! Form::label('marital_status', Lang::get('basic_info_form.widower'), array('class' => 'radio-value')) !!}
+                                    {!! Form::label('marital_status', Lang::get('basic_info_form.divorced'), array('class' => 'radio-value')) !!}
                                 </div>
                                 <div class="col-md-2 make-inline">
                                     {!! Form::radio('marital_status', 5, $marital_status[4], array('class' => 'make-inline', 'disabled' => 'disabled')) !!}
+                                    {!! Form::label('marital_status', Lang::get('basic_info_form.widower'), array('class' => 'radio-value')) !!}
+                                </div>
+                                <div class="col-md-2 make-inline">
+                                    {!! Form::radio('marital_status', 6, $marital_status[5], array('class' => 'make-inline', 'disabled' => 'disabled')) !!}
                                     {!! Form::label('marital_status', Lang::get('basic_info_form.estranged'), array('class' => 'radio-value')) !!}
                                 </div>
                             </div>
@@ -1279,31 +1283,35 @@
                         <div class="padding-left-right-15">
                             <div class="form-group float-left width-100-percent">
                                 <?php
-                                    $marital_status[0] = true;
-                                    for($i = 1; $i < 5; $i++){
-                                        $marital_status[$i] = false;
-                                    }
-                                    $marital_status[$benefiter->marital_status_id -1] = true;
+                                $marital_status[0] = true;
+                                for($i = 1; $i < 6; $i++){
+                                    $marital_status[$i] = false;
+                                }
+                                $marital_status[$benefiter->marital_status_id -1] = true;
                                 ?>
                                 <div class="col-md-2 make-inline">
-                                    {!! Form::radio('marital_status', 1, $marital_status[0], array('class' => 'make-inline', 'id' => 'unmarried')) !!}
-                                    {!! Form::label('unmarried', Lang::get('basic_info_form.unmarried'), array('class' => 'radio-value')) !!}
+                                    {!! Form::radio('marital_status', 1, $marital_status[0], array('class' => 'make-inline')) !!}
+                                    {!! Form::label('marital_status', Lang::get('basic_info_form.unmarried'), array('class' => 'radio-value')) !!}
                                 </div>
                                 <div class="col-md-2 make-inline">
-                                    {!! Form::radio('marital_status', 2, $marital_status[1], array('class' => 'make-inline', 'id' => 'married')) !!}
-                                    {!! Form::label('married', Lang::get('basic_info_form.married'), array('class' => 'radio-value')) !!}
+                                    {!! Form::radio('marital_status', 2, $marital_status[1], array('class' => 'make-inline')) !!}
+                                    {!! Form::label('marital_status', Lang::get('basic_info_form.cohabits'), array('class' => 'radio-value')) !!}
                                 </div>
                                 <div class="col-md-2 make-inline">
-                                    {!! Form::radio('marital_status', 3, $marital_status[2], array('class' => 'make-inline', 'id' => 'divorced')) !!}
-                                    {!! Form::label('divorced', Lang::get('basic_info_form.divorced'), array('class' => 'radio-value')) !!}
+                                    {!! Form::radio('marital_status', 3, $marital_status[2], array('class' => 'make-inline')) !!}
+                                    {!! Form::label('marital_status', Lang::get('basic_info_form.married'), array('class' => 'radio-value')) !!}
                                 </div>
                                 <div class="col-md-2 make-inline">
-                                    {!! Form::radio('marital_status', 4, $marital_status[3], array('class' => 'make-inline', 'id' => 'widowed')) !!}
-                                    {!! Form::label('widowed', Lang::get('basic_info_form.widower'), array('class' => 'radio-value')) !!}
+                                    {!! Form::radio('marital_status', 4, $marital_status[3], array('class' => 'make-inline')) !!}
+                                    {!! Form::label('marital_status', Lang::get('basic_info_form.divorced'), array('class' => 'radio-value')) !!}
                                 </div>
                                 <div class="col-md-2 make-inline">
-                                    {!! Form::radio('marital_status', 5, $marital_status[4], array('class' => 'make-inline', 'id' => 'estranged')) !!}
-                                    {!! Form::label('estranged', Lang::get('basic_info_form.estranged'), array('class' => 'radio-value')) !!}
+                                    {!! Form::radio('marital_status', 5, $marital_status[4], array('class' => 'make-inline')) !!}
+                                    {!! Form::label('marital_status', Lang::get('basic_info_form.widower'), array('class' => 'radio-value')) !!}
+                                </div>
+                                <div class="col-md-2 make-inline">
+                                    {!! Form::radio('marital_status', 6, $marital_status[5], array('class' => 'make-inline')) !!}
+                                    {!! Form::label('marital_status', Lang::get('basic_info_form.estranged'), array('class' => 'radio-value')) !!}
                                 </div>
                             </div>
                         </div>

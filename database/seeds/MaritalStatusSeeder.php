@@ -14,6 +14,7 @@ class MaritalStatusSeeder extends Seeder
         \DB::table('marital_status_lookup')->insert(
             array(
                 array('marital_status_title' => "Άγαμος"),
+                array('marital_status_tilte' => "Συζεί"),
                 array('marital_status_title' => "Έγγαμος"),
                 array('marital_status_title' => "Διαζευγμένος"),
                 array('marital_status_title' => "Χήρος"),
