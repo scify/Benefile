@@ -131,10 +131,6 @@
         <div class="col-md-12">
             <div class="row float-right">
                 <div class="padding-left-right-15">
-                    {{--<div class="form-group padding-left-right-15 float-left">--}}
-                        {{--{!! Form::label('folder_number', Lang::get($p.'folder_number')) !!}--}}
-                        {{--{!! Form::text('folder_number', $benefiter_folder_number, array('class' => 'custom-input-text text-align-right' , 'disabled')) !!}--}}
-                    {{--</div>--}}
                     <div class="form-group padding-left-right-15 float-left">
                         {!! Form::label('medical_visit_id', Lang::get($p.'total_visits_number')) !!}
                         {!! Form::text('medical_visit_id', $medical_visits_number, array('class' => 'custom-input-text text-align-right' , 'disabled')) !!}
