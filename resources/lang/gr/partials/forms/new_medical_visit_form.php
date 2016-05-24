@@ -16,7 +16,7 @@ return array(
     'arrival_date'         =>  'ΗΜΕΡ. ΑΦΙΞΗΣ',
     'travel_route'         =>  'ΔΙΑΔΡΟΜΗ',
     'travel_duration'      =>  'ΔΙΑΡΚΕΙΑ',
-    'folder_number'        =>  'ΑΡΙΘΜΟΣ ΦΑΚΕΛΟΥ',
+    'folder_number'        =>  'ΑΡ. ΦΑΚΕΛΟΥ',
     'total_visits_number'  =>  'ΑΡΙΘΜΟΣ ΕΠΙΣΚΕΨΕΩΝ',
     'referrals_history'    =>  'ΠΑΡΑΠΟΜΠΕΣ',
     'options'              =>  'ΕΠΙΛΟΓΕΣ',

@@ -77,7 +77,7 @@ a[disabled] {
 
 @media screen and (max-width: 1350px) {
     body {
-        font-size: 1em;
+        font-size: 1.2em;
     }
 
     .benefiter-info > h2{

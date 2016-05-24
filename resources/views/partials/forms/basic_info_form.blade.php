@@ -31,19 +31,19 @@
                 <div class="col-md-12">
                     <div class="row">
                         <div class="padding-left-right-15">
-                            <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-xs-2">
+                            <div class="form-group make-inline padding-left-right-15 float-left col-md-2">
                                 {!! Form::label('folder_number', Lang::get('basic_info_form.folder_number')) !!}<i class="fa fa-asterisk asterisk"></i>
-                                {!! Form::text('folder_number', null, array('class' => 'custom-input-text text-align-right', 'disabled' => 'disabled')) !!}
+                                {!! Form::text('folder_number', null, array('class' => 'custom-input-text text-align-right width-100-percent', 'disabled' => 'disabled')) !!}
                             </div>
-                            <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-xs-2">
+                            <div class="form-group make-inline padding-left-right-15 float-left col-md-2">
                                 {!! Form::label('lastname', Lang::get('basic_info_form.lastname')) !!}<i class="fa fa-asterisk asterisk"></i>
-                                {!! Form::text('lastname', null, array('class' => 'custom-input-text', 'disabled' => 'disabled')) !!}
+                                {!! Form::text('lastname', null, array('class' => 'custom-input-text width-100-percent', 'disabled' => 'disabled')) !!}
                             </div>
-                            <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-xs-2">
+                            <div class="form-group make-inline padding-left-right-15 float-left col-md-2">
                                 {!! Form::label('name', Lang::get('basic_info_form.name')) !!}<i class="fa fa-asterisk asterisk"></i>
-                                {!! Form::text('name', null, array('class' => 'custom-input-text', 'disabled' => 'disabled')) !!}
+                                {!! Form::text('name', null, array('class' => 'custom-input-text width-100-percent', 'disabled' => 'disabled')) !!}
                             </div>
-                            <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-xs-2">
+                            <div class="form-group make-inline padding-left-right-15 float-left col-md-2">
                                 {!! Form::label('gender_id', Lang::get('basic_info_form.gender')) !!}
                                 <?php
                                     $male = false;
@@ -57,7 +57,7 @@
                                         $other = true;
                                     }
                                 ?>
-                                <div class="make-inline">
+                                <div class="make-inline width-100-percent">
                                     {!! Form::radio('gender_id', 1, $male, array('class' => 'make-inline', 'disabled' => 'disabled')) !!}
                                     {!! Form::label('gender_id', Lang::get('basic_info_form.male'), array('class' => 'radio-value')) !!}
                                     {!! Form::radio('gender_id', 2, $female, array('class' => 'make-inline', 'disabled' => 'disabled')) !!}
@@ -66,7 +66,7 @@
                                     {!! Form::label('gender_id', Lang::get('basic_info_form.other'), array('class' => 'radio-value')) !!}
                                 </div>
                             </div>
-                            <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-xs-2">
+                            <div class="form-group make-inline padding-left-right-15 float-left col-md-3">
                                 {!! Form::label(Lang::get('basic_info_form.birth_date')) !!}
                                 <div class="make-inline">
                                     {!! Form::text('birth_date', null, array('class' => 'custom-input-text width-80-percent date-input', 'disabled' => 'disabled')) !!}
@@ -76,46 +76,46 @@
                     </div>
                     <div class="row">
                         <div class="padding-left-right-15">
-                            <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-xs-2">
+                            <div class="form-group make-inline padding-left-right-15 float-left col-md-2">
                                 {!! Form::label('fathers_name', Lang::get('basic_info_form.fathers_name')) !!}
-                                {!! Form::text('fathers_name', null, array('class' => 'custom-input-text', 'disabled' => 'disabled')) !!}
+                                {!! Form::text('fathers_name', null, array('class' => 'custom-input-text width-100-percent', 'disabled' => 'disabled')) !!}
                             </div>
-                            <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-xs-2">
+                            <div class="form-group make-inline padding-left-right-15 float-left col-md-2">
                                 {!! Form::label('mothers_name', Lang::get('basic_info_form.mothers_name')) !!}
-                                {!! Form::text('mothers_name', null, array('class' => 'custom-input-text', 'disabled' => 'disabled')) !!}
+                                {!! Form::text('mothers_name', null, array('class' => 'custom-input-text width-100-percent', 'disabled' => 'disabled')) !!}
                             </div>
-                            <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-xs-2">
+                            <div class="form-group make-inline padding-left-right-15 float-left col-md-2">
                                 {!! Form::label('nationality_country', Lang::get('basic_info_form.nationality_country')) !!}
-                                {!! Form::text('nationality_country', null, array('class' => 'custom-input-text', 'disabled' => 'disabled')) !!}
+                                {!! Form::text('nationality_country', null, array('class' => 'custom-input-text width-100-percent', 'disabled' => 'disabled')) !!}
                             </div>
-                            <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-xs-2">
+                            <div class="form-group make-inline padding-left-right-15 float-left col-md-2">
                                 {!! Form::label('origin_country', Lang::get('basic_info_form.origin_country')) !!}
-                                {!! Form::text('origin_country', null, array('class' => 'custom-input-text', 'disabled' => 'disabled')) !!}
+                                {!! Form::text('origin_country', null, array('class' => 'custom-input-text width-100-percent', 'disabled' => 'disabled')) !!}
                             </div>
-                            <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-xs-2">
+                            <div class="form-group make-inline padding-left-right-15 float-left col-md-3">
                                 {!! Form::label('ethnic_group', Lang::get('basic_info_form.ethnic_group')) !!}
-                                {!! Form::text('ethnic_group', null, array('class' => 'custom-input-text', 'disabled' => 'disabled')) !!}
+                                {!! Form::text('ethnic_group', null, array('class' => 'custom-input-text width-100-percent', 'disabled' => 'disabled')) !!}
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="padding-left-right-15">
-                            <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-xs-2">
+                            <div class="form-group make-inline padding-left-right-15 float-left col-md-2">
                                 {!! Form::label('arrival_date', Lang::get('basic_info_form.arrival_date')) !!}
                                 {!! Form::text('arrival_date', null, array('class' => 'custom-input-text width-80-percent date-input', 'disabled' => 'disabled')) !!}
                             </div>
-                            <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-xs-2">
+                            <div class="form-group make-inline padding-left-right-15 float-left col-md-2">
                                 {!! Form::label('telephone', Lang::get('basic_info_form.telephone')) !!}
                                 <?php
                                     if($benefiter->telephone == 0){
                                         $benefiter->telephone = "";
                                     }
                                 ?>
-                                {!! Form::text('telephone', null, array('class' => 'custom-input-text', 'disabled' => 'disabled')) !!}
+                                {!! Form::text('telephone', null, array('class' => 'custom-input-text width-100-percent', 'disabled' => 'disabled')) !!}
                             </div>
-                            <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-xs-6">
+                            <div class="form-group make-inline padding-left-right-15 float-left col-md-6">
                                 {!! Form::label('address', Lang::get('basic_info_form.address')) !!}
-                                {!! Form::text('address', null, array('class' => 'custom-input-text address', 'disabled' => 'disabled')) !!}
+                                {!! Form::text('address', null, array('class' => 'custom-input-text address width-100-percent', 'disabled' => 'disabled')) !!}
                             </div>
                         </div>
                     </div>
@@ -320,20 +320,20 @@
                     </div>
                     <div class="row">
                         <div class="padding-left-right-15">
-                            <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-md-2">
+                            <div class="form-group make-inline padding-left-right-15 float-left col-md-2">
                                 {!! Form::label('number_of_children', Lang::get('basic_info_form.number_of_children')) !!}
                                 <?php
                                     if($benefiter->number_of_children == 0){
                                         $benefiter->number_of_children = "";
                                     }
                                 ?>
-                                {!! Form::text('number_of_children', null, array('class' => 'custom-input-text', 'disabled' => 'disabled')) !!}
+                                {!! Form::text('number_of_children', null, array('class' => 'custom-input-text width-100-percent', 'disabled' => 'disabled')) !!}
                             </div>
                         </div>
                         <div class="padding-left-right-15">
-                            <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-md-6">
+                            <div class="form-group make-inline padding-left-right-15 float-left col-md-6">
                                 {!! Form::label('relatives_residence', Lang::get('basic_info_form.relatives_residence')) !!}
-                                {!! Form::text('relatives_residence', null, array('class' => 'custom-input-text address', 'disabled' => 'disabled')) !!}
+                                {!! Form::text('relatives_residence', null, array('class' => 'custom-input-text address width-100-percent', 'disabled' => 'disabled')) !!}
                             </div>
                         </div>
                     </div>
