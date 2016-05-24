@@ -1994,6 +1994,9 @@
                         </div>
                     </div>
             </div>
+            <div class="form-section align-text-center no-bottom-border">
+                {!! Form::submit(Lang::get('basic_info_form.save_referral'), array('class' => 'submit-button')) !!}
+            </div>
             {{-- Ιστορικό ενημέρωσης χρήστη --}}
             <div class="updates-history form-section no-bottom-border non-printable">
                 <div class="underline-header">
@@ -2045,9 +2048,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="form-section align-text-center no-bottom-border">
-                {!! Form::submit(Lang::get('basic_info_form.save_referral'), array('class' => 'submit-button')) !!}
             </div>
             {!! Form::close() !!}
         @endif
