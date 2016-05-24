@@ -9,7 +9,7 @@
         'refugee_number' => 'Αρ. Δελτίου Πρόσφυγα',
         'stay_permit_ack' => 'Βεβ. Άδειας Διαμονής',
         'stay_permit' => 'Άδεια Παραμονής',
-        'european' => 'Ευρωπαϊος Πολίτης',
+        'european' => 'Ευρωπαίος Πολίτης',
         'minor' => 'Ασυνόδευτος Ανήλικος',
         'asylum_request_date' => 'ΗΜ. ΑΙΤΗΜΑΤΟΣ',
         'request_progress' => 'ΣΤΑΔΙΟ ΑΙΤΗΣΗΣ',

@@ -523,45 +523,45 @@
             <div class="col-md-12">
                 <div class="row">
                     <div class="padding-left-right-15">
-                        <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-md-2">
+                        <div class="form-group make-inline padding-left-right-15 float-left col-md-2">
                             {!! Form::label('folder_number', Lang::get('basic_info_form.folder_number')) !!}
-                            {!! Form::text('folder_number', $benefiter->folder_number, array('class' => 'custom-input-text text-align-right', 'disabled' => 'disabled')) !!}
+                            {!! Form::text('folder_number', $benefiter->folder_number, array('class' => 'custom-input-text text-align-right width-100-percent', 'disabled' => 'disabled')) !!}
                         </div>
-                        <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-md-2">
+                        <div class="form-group make-inline padding-left-right-15 float-left col-md-2">
                             {!! Form::label('lastname', Lang::get('basic_info_form.lastname')) !!}
-                            {!! Form::text('lastname', $benefiter->lastname, array('class' => 'custom-input-text', 'disabled' => 'disabled')) !!}
+                            {!! Form::text('lastname', $benefiter->lastname, array('class' => 'custom-input-text width-100-percent', 'disabled' => 'disabled')) !!}
                         </div>
-                        <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-md-2">
+                        <div class="form-group make-inline padding-left-right-15 float-left col-md-2">
                             {!! Form::label('name', Lang::get('basic_info_form.name')) !!}
-                            {!! Form::text('name', $benefiter->name, array('class' => 'custom-input-text', 'disabled' => 'disabled')) !!}
+                            {!! Form::text('name', $benefiter->name, array('class' => 'custom-input-text width-100-percent', 'disabled' => 'disabled')) !!}
                         </div>
-                        <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-md-2">
+                        <div class="form-group make-inline padding-left-right-15 float-left col-md-2">
                             {!! Form::label('fathers_name', Lang::get('basic_info_form.fathers_name')) !!}
-                            {!! Form::text('fathers_name', $benefiter->fathers_name, array('class' => 'custom-input-text', 'disabled' => 'disabled')) !!}
+                            {!! Form::text('fathers_name', $benefiter->fathers_name, array('class' => 'custom-input-text width-100-percent', 'disabled' => 'disabled')) !!}
                         </div>
-                        <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-md-2">
+                        <div class="form-group make-inline padding-left-right-15 float-left col-md-3">
                             {!! Form::label('children_names', Lang::get('basic_info_form.children_names')) !!}
-                            {!! Form::text('children_names', $benefiter->children_names, array('class' => 'custom-input-text', 'disabled' => 'disabled')) !!}
+                            {!! Form::text('children_names', $benefiter->children_names, array('class' => 'custom-input-text width-100-percent', 'disabled' => 'disabled')) !!}
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="padding-left-right-15">
-                        <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-md-2">
+                        <div class="form-group make-inline padding-left-right-15 float-left col-md-2">
+                            {!! Form::label('telephone', Lang::get('basic_info_form.telephone')) !!}
+                            {!! Form::text('telephone', $benefiter->telephone, array('class' => 'custom-input-text width-100-percent', 'disabled' => 'disabled')) !!}
+                        </div>
+                        <div class="form-group make-inline padding-left-right-15 float-left col-md-2">
                             {!! Form::label('origin_country', Lang::get('basic_info_form.origin_country')) !!}
-                            {!! Form::text('origin_country', $benefiter->origin_country, array('class' => 'custom-input-text', 'disabled' => 'disabled')) !!}
+                            {!! Form::text('origin_country', $benefiter->origin_country, array('class' => 'custom-input-text width-100-percent', 'disabled' => 'disabled')) !!}
                         </div>
-                        <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-md-2">
+                        <div class="form-group make-inline padding-left-right-15 float-left col-md-3">
                             {!! Form::label('ethnic_group', Lang::get('basic_info_form.ethnic_group')) !!}
-                            {!! Form::text('ethnic_group', $benefiter->ethnic_group, array('class' => 'custom-input-text', 'disabled' => 'disabled')) !!}
+                            {!! Form::text('ethnic_group', $benefiter->ethnic_group, array('class' => 'custom-input-text width-100-percent', 'disabled' => 'disabled')) !!}
                         </div>
-                        <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-md-2">
+                        <div class="form-group make-inline padding-left-right-15 float-left col-md-3">
                             {!! Form::label('birth_date', Lang::get('basic_info_form.birth_date')) !!}
                             {!! Form::text('birth_date', $benefiter->birth_date, array('class' => 'custom-input-text width-80-percent date-input', 'disabled' => 'disabled')) !!}<a href="javascript:void(0)"><span class="glyphicon glyphicon-remove color-red clear-date hide"></span></a>
-                        </div>
-                        <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-md-2">
-                            {!! Form::label('telephone', Lang::get('basic_info_form.telephone')) !!}
-                            {!! Form::text('telephone', $benefiter->telephone, array('class' => 'custom-input-text', 'disabled' => 'disabled')) !!}
                         </div>
                     </div>
                 </div>
@@ -577,23 +577,55 @@
                 <div class="row">
                     <div class="padding-left-right-15">
                         <?php
-                            for($i = 0; $i < 2; $i++){
-                                $legal_folder_status[$i] = false;
-                            }
-                            if(isset($legal_folder) and $legal_folder != null){
-                                $legal_folder_status[$legal_folder->legal_folder_status_id - 1] = true;
-                            } else {
-                                $legal_folder_status[0] = true;
-                            }
+                        for($i = 0; $i < 8; $i++){
+                            $legal_folder_status[$i] = false;
+                        }
+                        if(isset($legal_folder) and $legal_folder != null){
+                            $legal_folder_status[$legal_folder->legal_folder_status_id - 1] = true;
+                        } else {
+                            $legal_folder_status[0] = true;
+                        }
                         ?>
                         <div class="form-group float-left width-100-percent">
-                            <div class="col-md-3 make-inline">
-                                {!! Form::radio('legal_folder_status', 1, $legal_folder_status[0], array('class' => 'make-inline', 'id' => 'asylum', 'disabled' => 'disabled')) !!}
-                                {!! Form::label('legal_folder_status', Lang::get('legal_folder_form.asylum'), array('class' => 'radio-value')) !!}
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="col-xs-3 make-inline">
+                                        {!! Form::radio('legal_folder_status', 1, $legal_folder_status[0], array('class' => 'make-inline', 'id' => 'asylum', 'disabled' => 'disabled')) !!}
+                                        {!! Form::label('asylum', Lang::get('legal_folder_form.asylum'), array('class' => 'radio-value')) !!}
+                                    </div>
+                                    <div class="col-xs-3 make-inline">
+                                        {!! Form::radio('legal_folder_status', 2, $legal_folder_status[1], array('class' => 'make-inline legal-status', 'id' => 'no-legal', 'disabled' => 'disabled')) !!}
+                                        {!! Form::label('no-legal', Lang::get('legal_folder_form.no_legal'), array('class' => 'radio-value')) !!}
+                                    </div>
+                                    <div class="col-xs-3 make-inline">
+                                        {!! Form::radio('legal_folder_status', 3, $legal_folder_status[2], array('class' => 'make-inline legal-status', 'id' => 'asylum-number', 'disabled' => 'disabled')) !!}
+                                        {!! Form::label('asylum-number', Lang::get('legal_folder_form.asylum_number'), array('class' => 'radio-value')) !!}
+                                    </div>
+                                    <div class="col-xs-3 make-inline">
+                                        {!! Form::radio('legal_folder_status', 4, $legal_folder_status[3], array('class' => 'make-inline legal-status', 'id' => 'refugee-number', 'disabled' => 'disabled')) !!}
+                                        {!! Form::label('refugee-number', Lang::get('legal_folder_form.refugee_number'), array('class' => 'radio-value')) !!}
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-3 make-inline">
-                                {!! Form::radio('legal_folder_status', 2, $legal_folder_status[1], array('class' => 'make-inline', 'id' => 'no-legal', 'disabled' => 'disabled')) !!}
-                                {!! Form::label('legal_folder_status', Lang::get('legal_folder_form.no_legal'), array('class' => 'radio-value')) !!}
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="col-xs-3 make-inline">
+                                        {!! Form::radio('legal_folder_status', 5, $legal_folder_status[4], array('class' => 'make-inline legal-status', 'id' => 'stay-permit-ack', 'disabled' => 'disabled')) !!}
+                                        {!! Form::label('stay-permit-ack', Lang::get('legal_folder_form.stay_permit_ack'), array('class' => 'radio-value')) !!}
+                                    </div>
+                                    <div class="col-xs-3 make-inline">
+                                        {!! Form::radio('legal_folder_status', 6, $legal_folder_status[5], array('class' => 'make-inline legal-status', 'id' => 'stay-permit', 'disabled' => 'disabled')) !!}
+                                        {!! Form::label('stay-permit', Lang::get('legal_folder_form.stay_permit'), array('class' => 'radio-value')) !!}
+                                    </div>
+                                    <div class="col-xs-3 make-inline">
+                                        {!! Form::radio('legal_folder_status', 7, $legal_folder_status[6], array('class' => 'make-inline legal-status', 'id' => 'european', 'disabled' => 'disabled')) !!}
+                                        {!! Form::label('european', Lang::get('legal_folder_form.european'), array('class' => 'radio-value')) !!}
+                                    </div>
+                                    <div class="col-xs-3 make-inline">
+                                        {!! Form::radio('legal_folder_status', 8, $legal_folder_status[7], array('class' => 'make-inline legal-status', 'id' => 'minor', 'disabled' => 'disabled')) !!}
+                                        {!! Form::label('minor', Lang::get('legal_folder_form.minor'), array('class' => 'radio-value')) !!}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -631,11 +663,11 @@
                             </div>
                             <div class="row">
                                 <div class="form-group float-left padding-left-right-15 width-100-percent">
-                                    <div class="col-md-2 make-inline">
+                                    <div class="col-md-3 make-inline">
                                         {!! Form::radio('procedure', 1, $procedure[0], array('class' => 'make-inline', 'id' => 'procedure-old', 'disabled' => 'disabled')) !!}
                                         {!! Form::label('procedure', Lang::get('legal_folder_form.procedure_old'), array('class' => 'radio-value')) !!}
                                     </div>
-                                    <div class="col-md-2 make-inline">
+                                    <div class="col-md-3 make-inline">
                                         {!! Form::radio('procedure', 2, $procedure[1], array('class' => 'make-inline', 'id' => 'procedure-new', 'disabled' => 'disabled')) !!}
                                         {!! Form::label('procedure', Lang::get('legal_folder_form.procedure_new'), array('class' => 'radio-value')) !!}
                                     </div>
@@ -658,20 +690,21 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="no-legal dynamic-form-section hide">
+                        <div class="legal-status-div  dynamic-form-section hide">
                             <h1 class="record-section-header padding-left-right-15">@lang($p."no_legal")</h1>
                             <?php
-                                for($i = 0; $i < 2; $i++){
+                                for($i = 0; $i < 8; $i++){
                                     $action[$i] = false;
                                 }
                                 $action[0] = true;
-                                for($i = 0; $i < 2; $i++){
+                                for($i = 0; $i < 8; $i++){
                                     $result[$i] = false;
                                 }
                                 $result[0] = true;
-                                if(isset($no_legal_status) and $no_legal_status != null){
-                                    $action[$no_legal_status->action_id - 1] = true;
-                                    $result[$no_legal_status->result_id - 1] = true;
+                                if(isset($legal_status) and $legal_status != null){
+                                    $selected;
+                                    $action[$legal_status->action_id - 1] = true;
+                                    $result[$legal_status->result_id - 1] = true;
                                 }
                             ?>
                             <div class="row">
@@ -732,11 +765,11 @@
                             <div class="col-md-1 make-inline">
                                 {!! Form::label('penalty', Lang::get('legal_folder_form.penalty')) !!}
                             </div>
-                            <div class="col-md-1 make-inline">
+                            <div class="col-md-2 make-inline">
                                 {!! Form::radio('penalty', 1, $penalty[0], array('class' => 'make-inline', 'id' => 'penalty-yes', 'disabled' => 'disabled')) !!}
                                 {!! Form::label('penalty', Lang::get('legal_folder_form.yes'), array('class' => 'radio-value')) !!}
                             </div>
-                            <div class="col-md-1 make-inline">
+                            <div class="col-md-2 make-inline">
                                 {!! Form::radio('penalty', 2, $penalty[1], array('class' => 'make-inline', 'id' => 'penalty-no', 'disabled' => 'disabled')) !!}
                                 {!! Form::label('penalty', Lang::get('legal_folder_form.no'), array('class' => 'radio-value')) !!}
                             </div>
@@ -759,55 +792,48 @@
         <div class="underline-header">
             <h1 class="record-section-header padding-left-right-15">4. @lang($p."lawyer_actions")</h1>
         </div>
+        {{-- Ιστορικό δράσεων νομικού --}}
         <div class="row">
             <div class="col-md-12">
-                <?php
-                    for($i = 0; $i < 5; $i++){
-                        $lawyer[$i] = false;
-                    }
-                    if(isset($lawyer_action) and $lawyer_action != null){
-                        foreach($lawyer_action as $law_action){
-                            $lawyer[$law_action->lawyer_action_id - 1] = true;
-                        }
-                    }
-                ?>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group make-inline padding-left-right-15 float-left width-100-percent">
-                            {!! Form::checkbox('lawyer_action[]', 1, $lawyer[0], array('class' => 'float-left', 'disabled' => 'disabled')) !!}
-                            {!! Form::label('rights_advise', Lang::get('legal_folder_form.rights_advise'), array('class' => 'float-left')) !!}
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group make-inline padding-left-right-15 float-left width-100-percent">
-                            {!! Form::checkbox('lawyer_action[]', 2, $lawyer[1], array('class' => 'float-left', 'disabled' => 'disabled')) !!}
-                            {!! Form::label('asylum_advise', Lang::get('legal_folder_form.asylum_advise'), array('class' => 'float-left')) !!}
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group make-inline padding-left-right-15 float-left width-100-percent">
-                            {!! Form::checkbox('lawyer_action[]', 3, $lawyer[2], array('class' => 'float-left', 'disabled' => 'disabled')) !!}
-                            {!! Form::label('interview_preparation', Lang::get('legal_folder_form.interview_preparation'), array('class' => 'float-left')) !!}
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group make-inline padding-left-right-15 float-left width-100-percent">
-                            {!! Form::checkbox('lawyer_action[]', 4, $lawyer[3], array('class' => 'float-left', 'disabled' => 'disabled')) !!}
-                            {!! Form::label('appeal', Lang::get('legal_folder_form.appeal'), array('class' => 'float-left')) !!}
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group make-inline padding-left-right-15 float-left width-100-percent">
-                            {!! Form::checkbox('lawyer_action[]', 5, $lawyer[4], array('class' => 'float-left', 'disabled' => 'disabled')) !!}
-                            {!! Form::label('detention_lift', Lang::get('legal_folder_form.detention_lift'), array('class' => 'float-left')) !!}
+                <div class="row padding-bottom-30">
+                    <div class="padding-left-right-15">
+                        <div class="table-responsive col-xs-12">
+                            <table id="legal-sessions-history">
+                                <thead>
+                                <tr>
+                                    <th>@lang("basic_info_form.counter")</th>
+                                    <th>@lang("basic_info_form.user_name")</th>
+                                    <th>@lang("basic_info_form.location")</th>
+                                    <th>@lang("basic_info_form.date")</th>
+                                    <th>@lang($p."actions")</th>
+                                    <th>@lang("basic_info_form.comments")</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @if(!empty($legalSessionsHistory))
+                                    @foreach($legalSessionsHistory as $i => $legalSessionsHistorySingleRow)
+                                        <tr>
+                                            <td>{{$i+1}}</td>
+                                            <td>{{$legalSessionsHistorySingleRow->getUserName()}}</td>
+                                            <td>{{$legalSessionsHistorySingleRow->getLocation()}}</td>
+                                            <td>{{$datesHelper->getFinelyFormattedStringDateFromDBDate($legalSessionsHistorySingleRow->getDate())}}</td>
+                                            <td>{{$legalSessionsHistorySingleRow->getLawyerActions()}}</td>
+                                            <td>{{$legalSessionsHistorySingleRow->getComments()}}</td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <th>@lang("basic_info_form.counter")</th>
+                                    <th>@lang("basic_info_form.user_name")</th>
+                                    <th>@lang("basic_info_form.location")</th>
+                                    <th>@lang("basic_info_form.date")</th>
+                                    <th>@lang($p."actions")</th>
+                                    <th>@lang("basic_info_form.comments")</th>
+                                </tr>
+                                </tfoot>
+                            </table>
                         </div>
                     </div>
                 </div>
