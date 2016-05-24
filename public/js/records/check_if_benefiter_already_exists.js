@@ -11,7 +11,7 @@ function displayPossibleDuplicatedFolders(data){
         for(var i in data){
             $("#duplicate-folders").append(data[i].name + " " + data[i].lastname + ", " +
             data[i].fathers_name + ", " + data[i].birth_date +
-            ", <a style=\"color: black;\" target=\"_blank\" href=\"" +
+            ", <a style=\"color: black;\" href=\"" +
             $(location).attr("href").replace("-1", data[i].id) + "\">" +
             $("#duplicate-folders").data("display-link") + "</a>" + "<br/>");
         }
