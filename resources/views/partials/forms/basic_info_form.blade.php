@@ -53,7 +53,7 @@
                                         $male = true;
                                     } elseif ($benefiter->gender_id == 2) {
                                         $female = true;
-                                    } else {
+                                    } elseif ($benefiter->gender_id == 3) {
                                         $other = true;
                                     }
                                 ?>
