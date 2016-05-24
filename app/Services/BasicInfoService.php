@@ -78,6 +78,10 @@ class BasicInfoService{
         if(!array_key_exists('interpreter' ,$request)){
            $request['interpreter'] = 0;
         }
+        // if gender checkbox has no value, it should have null value
+        if(!array_key_exists('gender_id' ,$request)){
+            $request['gender_id'] = null;
+        }
         // get work title id from work title name
         $request['working_title'] = $this->getWorkTitleIdFromDBAndInsertNewWorkTitleIfNeeded($request['working_title']);
         $benefiter = new Benefiter(
@@ -106,6 +110,10 @@ class BasicInfoService{
         // if interpreter checkbox has no value, it should have '0' value
         if(!array_key_exists('interpreter' ,$request)){
             $request['interpreter'] = 0;
+        }
+        // if gender checkbox has no value, it should have null value
+        if(!array_key_exists('gender_id' ,$request)){
+            $request['gender_id'] = null;
         }
         // get work title id from work title name
         $request['working_title'] = $this->getWorkTitleIdFromDBAndInsertNewWorkTitleIfNeeded($request['working_title']);

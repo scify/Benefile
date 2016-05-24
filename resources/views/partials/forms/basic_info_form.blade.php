@@ -1031,14 +1031,14 @@
                             <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-xs-2">
                                 {!! Form::label('gender_id', Lang::get('basic_info_form.gender')) !!}
                                 <?php
-                                    $male = true;
+                                    $male = false;
                                     $female = false;
                                     $other = false;
                                     if($benefiter->gender_id == 1){
                                         $male = true;
                                     } elseif ($benefiter->gender_id == 2) {
                                         $female = true;
-                                    } else {
+                                    } elseif ($benefiter->gender_id == 3) {
                                         $other = true;
                                     }
                                 ?>
