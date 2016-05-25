@@ -29,12 +29,7 @@
 }
 
 @media screen and (max-width: 1350px){
-    .benefiter-info > h2, #menu ul, .child{
+    .benefiter-info > h2{
         font-size: 15px;
-    }
-
-    .searchField{
-        font-size: 15px;
-        height: 57px;
     }
 }
