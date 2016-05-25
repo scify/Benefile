@@ -761,4 +761,65 @@ class BasicInfoService{
         }
         return $usageHistoryForAll;
     }
+
+    public function formatAllBenefitersToCSVFile(){
+        $benefiters = $this->getAllBenefitersForCsvFileDownload();
+        $p = "basic_info_form.";
+        $export_data= \Lang::get($p.'folder_number') . "," . \Lang::get($p."lastname") . "," .
+            \Lang::get($p."name") . "," . \Lang::get($p."gender") . "," .
+            \Lang::get($p."birth_date") . "," . \Lang::get($p.'fathers_name') . "," .
+            \Lang::get($p.'mothers_name') . "," . \Lang::get($p.'nationality_country') . "," .
+            \Lang::get($p.'origin_country') . "," . \Lang::get($p.'ethnic_group') . "," .
+            \Lang::get($p.'arrival_date') . "," . \Lang::get($p.'telephone') . "," .
+            \Lang::get($p.'address') . "," . \Lang::get($p.'relatives_residence') . "," .
+            \Lang::get($p.'number_of_children') . "," . \Lang::get($p.'children_names') . "," .
+            \Lang::get($p.'translator_needed_caps') . "," .\Lang::get($p.'work_caps') . "," .
+            \Lang::get($p.'abandon_reason_caps') . "," . \Lang::get($p.'travel_route_caps') . "," .
+            \Lang::get($p.'travel_duration_caps') . "," . \Lang::get($p.'detention_duration_caps') . "," .
+            \Lang::get($p.'ethnic_group_caps') . "," . \Lang::get($p.'social_history_caps') . "," .
+            \Lang::get($p.'marital_status_caps') . "," . \Lang::get($p.'education_caps') . "," .
+            \Lang::get($p.'legal_work_caps') . "," . \Lang::get($p.'kind_of_work_caps') . "," . "\n";
+        foreach($benefiters as $benefiter){
+            $export_data .= "\"" . $benefiter->folder_number . "\",\"" . $benefiter->lastname . "\",\"" .
+                $benefiter->name . "\",\"" . $benefiter->gender . "\",\"" .
+                $this->datesHelper->getFinelyFormattedStringDateFromDBDate($benefiter->birth_date) . "\",\"" .
+                $benefiter->fathers_name . "\",\"" . $benefiter->mothers_name . "\",\"" .
+                $benefiter->nationality_country . "\",\"" . $benefiter->origin_country . "\",\"" .
+                $benefiter->ethnic_group . "\",\"" .
+                $this->datesHelper->getFinelyFormattedStringDateFromDBDate($benefiter->arrival_date) . "\",\"" .
+                $benefiter->telephone . "\",\"" . $benefiter->address . "\",\"" .
+                $benefiter->relatives_residence . "\",\"" . $benefiter->number_of_children . "\",\"" .
+                $benefiter->children_names . "\",\"" .
+                $this->getYesOrNoTextFromId($benefiter->language_interpreter_needed) . "\",\"" .
+                $this->getYesOrNoTextFromId($benefiter->is_benefiter_working) . "\",\"" .
+                $benefiter->country_abandon_reason . "\",\"" .
+                $benefiter->travel_route . "\",\"" . $benefiter->travel_duration . "\",\"" .
+                $this->datesHelper->getFinelyFormattedStringDateFromDBDate($benefiter->detention_date) . "\",\"" .
+                $benefiter->ethnic_group . "\",\"" . $benefiter->social_history . "\",\"" .
+                $benefiter->marital_status_title . "\",\"" . $benefiter->education_title . "\",\"" .
+                $benefiter->legal_working_status . "\",\"" . $benefiter->work_title . "\"\n";
+        }
+        return $export_data;
+    }
+
+    private function getAllBenefitersForCsvFileDownload(){
+        $queryString = "select b.*, gl.gender, msl.marital_status_title, el.education_title, wll.description " .
+            "as legal_working_status, wtll.work_title, " .
+            "carl.description as country_abandon_reason from benefiters as b " .
+            "left join benefiters_legal_status as bls on b.id = bls.benefiter_id left join genders_lookup as gl " .
+            "on b.gender_id = gl.id left join marital_status_lookup as msl on b.marital_status_id = msl.id " .
+            "left join education_lookup as el on b.education_id = el.id left join working_legally_lookup as wll " .
+            "on b.working_legally = wll.id left join work_title_list_lookup as wtll on b.work_title_id = wtll.id " .
+            "left join country_abandon_reasons_lookup as carl on b.country_abandon_reason_id = carl.id " .
+            "where deleted_at is null group by b.id";
+        return \DB::select(\DB::raw($queryString));
+    }
+
+    // gets binary int and returns yes or no
+    private function getYesOrNoTextFromId($binary){
+        if($binary == null){
+            return null;
+        }
+        return \Lang::get("search/search.binary_" . $binary);
+    }
 }

@@ -15,6 +15,28 @@
 @stop
 
 @section('main-window-content')
+    {{-- download .csv with all the benefiters folders history --}}
+    <div class="benefiters-report form-section no-bottom-border">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="underline-header">
+                    <h1 class="record-section-header padding-left-right-15">@lang($p.'download_csv')</h1>
+                </div>
+                <div class="text-center margin-top-60 margin-bottom-50">
+                    <div class="row">
+                        <div class="col-xs-6 col-xs-offset-3">
+                            <a class="simple-button font-size-1_2em display-block" href="{{ url('download-benefiters-csv') }}">@lang($p.'download_all_benefiters_csv')</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 col-xs-offset-3">
+                            <a class="simple-button font-size-1_2em display-block" href="{{ url('download-history-csv') }}">@lang($p.'download_folders_history_csv')</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     {{-- REPORT: users numbers divided by their roles --}}
     <div class="users-report form-section no-bottom-border">
         <div class="underline-header">
@@ -214,26 +236,13 @@
         </div>
     </div>
     {{-- REPORT: Benefiters vs phycological support --}}
-    <div class="benefiters-report form-section no-bottom-border">
+    <div class="benefiters-report form-section">
         <div class="row">
             <div class="col-md-12">
                 <div class="underline-header">
                     <h1 class="record-section-header padding-left-right-15">@lang($p.'report-phycological-support')</h1>
                 </div>
                 <div id="benefiter_vs_phycological_support" data-number-of-benefiters="@lang($p."number_of_benefiters")"></div>
-            </div>
-        </div>
-    </div>
-    {{-- download .csv with all the benefiters folders history --}}
-    <div class="benefiters-report form-section">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="underline-header">
-                    <h1 class="record-section-header padding-left-right-15">@lang($p.'download_folders_history_csv')</h1>
-                </div>
-                <div class="text-center margin-top-60 margin-bottom-50">
-                    <a class="simple-button font-size-1_2em" href="{{ url('download-history-csv') }}">@lang($p."download_csv")</a>
-                </div>
             </div>
         </div>
     </div>
