@@ -232,7 +232,7 @@
                     <h1 class="record-section-header padding-left-right-15">@lang($p.'download_folders_history_csv')</h1>
                 </div>
                 <div class="text-center margin-top-60 margin-bottom-50">
-                    <a class="simple-button" href="{{ url('download-history-csv') }}">@lang($p."download_csv")</a>
+                    <a class="simple-button font-size-1_2em" href="{{ url('download-history-csv') }}">@lang($p."download_csv")</a>
                 </div>
             </div>
         </div>

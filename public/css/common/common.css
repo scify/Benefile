@@ -79,6 +79,10 @@ a[disabled] {
     display: block;
 }
 
+.font-size-1_2m{
+    font-size: 1.2em;
+}
+
 @media screen and (max-width: 1350px) {
     body {
         font-size: 1.2em;
