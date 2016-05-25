@@ -778,8 +778,10 @@ class BasicInfoService{
             \Lang::get($p.'travel_duration_caps') . "," . \Lang::get($p.'detention_duration_caps') . "," .
             \Lang::get($p.'ethnic_group_caps') . "," . \Lang::get($p.'social_history_caps') . "," .
             \Lang::get($p.'marital_status_caps') . "," . \Lang::get($p.'education_caps') . "," .
-            \Lang::get($p.'legal_work_caps') . "," . \Lang::get($p.'kind_of_work_caps') . "," . "\n";
+            \Lang::get($p.'legal_work_caps') . "," . \Lang::get($p.'kind_of_work_caps') . "," .
+            \Lang::get($p.'registration_date_caps') . "," . \Lang::get($p.'last_update_caps') . "\n";
         foreach($benefiters as $benefiter){
+            $latestUpdate = $this->getLatestFolderUpdateForBenefiter($benefiter->id);
             $export_data .= "\"" . $benefiter->folder_number . "\",\"" . $benefiter->lastname . "\",\"" .
                 $benefiter->name . "\",\"" . $benefiter->gender . "\",\"" .
                 $this->datesHelper->getFinelyFormattedStringDateFromDBDate($benefiter->birth_date) . "\",\"" .
@@ -797,7 +799,9 @@ class BasicInfoService{
                 $this->datesHelper->getFinelyFormattedStringDateFromDBDate($benefiter->detention_date) . "\",\"" .
                 $benefiter->ethnic_group . "\",\"" . $benefiter->social_history . "\",\"" .
                 $benefiter->marital_status_title . "\",\"" . $benefiter->education_title . "\",\"" .
-                $benefiter->legal_working_status . "\",\"" . $benefiter->work_title . "\"\n";
+                $benefiter->legal_working_status . "\",\"" . $benefiter->work_title . "\",\"" .
+                $this->datesHelper->getFinelyFormattedStringDateFromDBDate($benefiter->created_at) . "\",\"" .
+                $this->datesHelper->getFinelyFormattedStringDateFromDBDate($latestUpdate) . "\"\n";
         }
         return $export_data;
     }
@@ -821,5 +825,14 @@ class BasicInfoService{
             return null;
         }
         return \Lang::get("search/search.binary_" . $binary);
+    }
+
+    private function getLatestFolderUpdateForBenefiter($benefiter_id){
+        $benefiterFolderHistory = $this->getFoldersUsageHistory($benefiter_id);
+        if(!empty($benefiterFolderHistory)) {
+            return $benefiterFolderHistory[0]->getDate();
+        } else {
+            return null;
+        }
     }
 }

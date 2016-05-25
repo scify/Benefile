@@ -128,4 +128,6 @@
         'education_caps' => 'ΕΚΠΑΙΔΕΥΣΗ',
         'legal_work_caps' => 'ΚΑΤΑΣΤΑΣΗ ΕΡΓΑΣΙΑΣ (ΝΟΜΙΜΗ Η ΠΑΡΑΝΟΜΗ)',
         'kind_of_work_caps' => 'ΕΙΔΟΣ ΕΡΓΑΣΙΑΣ',
+        'registration_date_caps' => 'ΗΜ. ΚΑΤΑΧΩΡΗΣΗΣ',
+        'last_update_caps' => 'ΤΕΛΕΥΤΑΙΑ ΕΝΗΜΕΡΩΣΗ',
     );

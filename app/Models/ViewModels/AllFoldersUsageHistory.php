@@ -32,10 +32,6 @@ class AllFoldersUsageHistory{
         return $string;
     }
 
-    private function makeStringCSVFriendly($string){
-        return str_replace(",", "", $string);
-    }
-
     public function getComments()
     {
         return $this->comments;
