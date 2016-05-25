@@ -596,7 +596,7 @@
                                 $counter++;
                     ?>
                             <div class="form-group float-left width-100-percent @if($benefiter_language->language_id == 1) non-printable @endif">
-                                <div class="col-md-3 make-inline">
+                                <div class="col-md-4 make-inline">
                                     <select disabled name="language{{$counter}}" class="language-selection">
                                         @foreach($languages as $language)
                                         <?php $selected = "";?>
@@ -629,7 +629,7 @@
                     ?>
                         <div class="padding-left-right-15 language-div non-printable">
                             <div class="form-group float-left width-100-percent">
-                                <div class="col-md-3 make-inline">
+                                <div class="col-md-4 make-inline">
                                     <select disabled name="language" class="language-selection">
                                         <?php
                                             $first = true;
@@ -1600,7 +1600,7 @@
                                 $counter++;
                     ?>
                             <div class="form-group float-left width-100-percent @if($benefiter_language->language_id == 1) non-printable @endif">
-                                <div class="col-md-3 make-inline">
+                                <div class="col-md-4 make-inline">
                                     <select name="language{{$counter}}" class="language-selection">
                                         @foreach($languages as $language)
                                         <?php $selected = "";?>
@@ -1635,7 +1635,7 @@
                     ?>
                         <div class="padding-left-right-15 language-div">
                             <div class="form-group float-left width-100-percent">
-                                <div class="col-md-3 make-inline">
+                                <div class="col-md-4 make-inline">
                                     <select name="language" class="language-selection">
                                         <?php
                                             $first = true;

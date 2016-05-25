@@ -432,7 +432,7 @@ a.btn.btn-default.font-weight-normal{
     }
 
     table.display.dataTable td button, .btn-group-lg > .btn, .btn-lg {
-        font-size: 10px;
+        font-size: 12px;
         height: 30px;
     }
 }
