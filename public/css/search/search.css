@@ -59,7 +59,7 @@ a.simple-button:hover, a.simple-button:focus{
 .search-submit-button {
     border: medium none;
     color: white;
-    font-size: 18px;
+    font-size: 1.2em;
     font-weight: 700;
     height: 50px;
     width: 220px;
