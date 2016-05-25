@@ -612,7 +612,7 @@
                         <div id="hospitalization" class="row padding-bottom-30">
                             @if(!empty($med_visit_hospitalizations) && count($med_visit_hospitalizations) !=0)
                                 @for($i=0 ; $i<count($med_visit_hospitalizations) ; $i++)
-                            <div class="padding-left-right-15 @if($i==0) hospitalization-div @endif @if($i!=0) hospitalization-added-div @endif">
+                            <div class="padding-left-right-15 @if($i==0) hospitalization-div @else hospitalization-added-div @endif">
                                 <div class="form-group float-left width-100-percent">
                                     <div class="make-inline col-md-8">
                                         {!! Form::label('hospitalization', Lang::get($p.'hospitalization_info'), array('class' => 'vertical-align-top')) !!}
@@ -633,7 +633,7 @@
                             </div>
                                 @endfor
                             @else
-                            <div class="padding-left-right-15 hospitalization">
+                            <div class="padding-left-right-15 hospitalization-div">
                                 <div class="form-group float-left width-100-percent">
                                     <div class="make-inline col-md-8">
                                         {!! Form::label('hospitalization', Lang::get($p.'hospitalization_info'), array('class' => 'vertical-align-top')) !!}
