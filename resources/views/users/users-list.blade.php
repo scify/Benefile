@@ -35,7 +35,7 @@
 
     {{-- TO BE ACTIVATED USERS --}}
     <div class="no-margin pos-relative" id="results-to-activate">
-        <div class="display padding-20">
+        <div class="display padding-20 table-responsive">
             <table id="usersTable-to-activate" class="display" cellspacing="0" width="100%">
                 <thead>
                 <tr>
@@ -88,7 +88,7 @@
 
     {{-- ACTIVE USERS --}}
     <div class="no-margin pos-relative" id="results-active">
-        <div class="display padding-20">
+        <div class="display padding-20 table-responsive">
             <table id="usersTable-active" class="display" cellspacing="0" width="100%">
                 <thead>
                 <tr>
@@ -140,7 +140,7 @@
 
     {{-- DEACTIVATED USERS --}}
     <div class="no-margin pos-relative" id="results-deactiveted">
-        <div class="display padding-20">
+        <div class="display padding-20 table-responsive">
             <table id="usersTable-deactivated" class="display" cellspacing="0" width="100%">
                 <thead>
                 <tr>
