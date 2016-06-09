@@ -50,6 +50,7 @@
                        @lang($p.'no_account')
                        &nbsp;
                         <b><a class="white" href="{{ url('auth/register')}}">@lang($p.'register_here')</a></b>
+                        @lang($p.'demo_account')
                     </p>
                 </div>
             </div>

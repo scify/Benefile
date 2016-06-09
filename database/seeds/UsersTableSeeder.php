@@ -13,6 +13,18 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
+       // Demo account
+       User::create(array(
+           'name' => 'Demo',
+          'lastname' => 'Demo',
+          'email' => 'demo@scify.org',
+          'password' => Hash::make('demo1234'),
+          'user_role_id' => 1,
+          'user_subrole_id' => null,
+          'activation_status' => 1,
+          'is_deactivated' => 0,
+       ));
+
         // ADMIN USER (DIMIZAS)
        User::create(array(
            'name' => 'Christos',
