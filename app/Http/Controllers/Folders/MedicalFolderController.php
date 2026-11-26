@@ -10,7 +10,6 @@ use App\Models\Benefiters_Tables_Models\medical_location_lookup;
 use App\Models\Benefiters_Tables_Models\medical_visits;
 use App\Services\BasicInfoService;
 use App\Services\BenefiterMedicalFolderService;
-use App\Services\DatesHelper;
 use Illuminate\Http\Request;
 
 /**
@@ -21,7 +20,6 @@ class MedicalFolderController extends Controller
     public function __construct(
         private readonly BasicInfoService $basicInfoService,
         private readonly BenefiterMedicalFolderService $medicalVisit,
-        private readonly DatesHelper $datesHelper,
     ) {
     }
 
@@ -251,215 +249,32 @@ class MedicalFolderController extends Controller
 
     }
 
-    //------------ GET MEDICAL VISIT MODAL DATA FOR BENEFITER FOR EACH VISIT ------//
+    // The window with a past visit, from the medical history.
     public function getMedicalVisitModal(Request $request, $id){
-        // ------ MODAL: MEDICAL HISTORY DATA FOR EACH MEDICAL VISIT ------ //
-        // initialize
-        $med_visit_doctor = '';
-        $med_visit_date = '';
-        $med_visit_location = '';
-        $med_visit_incident_type = '';
-        $med_visit_chronic_conditions = '';
-        $med_visit_height = '';
-        $med_visit_weight = '';
-        $med_visit_temperature = '';
-        $med_visit_blood_pressure_systolic = '';
-        $med_visit_blood_pressure_diastolic = '';
-        $med_visit_skull_perimeter = '';
-        $med_visit_exam_results = '';
-        $med_visit_lab_results = '';
-        $med_visit_diagnosis_results = '';
-        $med_visit_medication = '';
-        $med_visit_hospitalizations = '';
-        $med_visit_referrals = '';
-        $med_visit_uploads = '';
-        // TODO CREATE A SERVICE THAT RETURNS A JSON WITH ALL INFO FOR EVERY VISIT
-        $current_benefiter_medical_visit_id = $request['current_medical_visit'];
-        $benefiter_medical_visits_list = $this->medicalVisit->findMedicalVisitsForBenefiter($id);
-        $benefiter_folder_number = $this->medicalVisit->find_benefiter_folder_number($id);
-        $benefiter = $this->basicInfoService->findExistentBenefiter($id);
-        $ExamResultsLookup = $this->medicalVisit->get_medical_examination_results_from_lookup();
-        // for every medical visit of the benefiter fetch the corresponding medical data from DB
-        foreach($benefiter_medical_visits_list as $med_visit) {
-            if ($med_visit['id'] == $current_benefiter_medical_visit_id) {
-                //Doctor Name
-                $med_visit_doctor = $med_visit['doctor']['name'] . ' ' . $med_visit['doctor']['lastname'];
-                // Examination date
-                if ($med_visit['medical_visit_date'] == null) {
-                    $med_visit_date = $this->datesHelper->getFinelyFormattedStringDateFromDBDate($med_visit['created_at']);
-                } else {
-                    $med_visit_date = $this->datesHelper->getFinelyFormattedStringDateFromDBDate($med_visit['medical_visit_date']);
-                }
-                // Visit location
-                $med_visit_location = $med_visit['medicalLocation']['description'];
-                // Visit incident type
-                $med_visit_incident_type = $med_visit['medicalIncidentType']['description'];
-                // Chronic Conditions
-                $med_visit_chronic_conditions = $this->medicalVisit->findMedicalChronicConditionsForBenefiter($id, $med_visit['id']);
-                // physical examinations
-                $med_visit_examination = $this->medicalVisit->findMedicalVisitExamination($med_visit['id']);
-                // height
-                $med_visit_height = $med_visit_examination['height'];
-                // weight
-                $med_visit_weight = $med_visit_examination['weight'];
-                // temperature
-                $med_visit_temperature = $med_visit_examination['temperature'];
-                // blood pressure
-                $med_visit_blood_pressure_systolic = $med_visit_examination['blood_pressure_systolic'];
-                $med_visit_blood_pressure_diastolic = $med_visit_examination['blood_pressure_diastolic'];
-                // skull_perimeter
-                $med_visit_skull_perimeter = $med_visit_examination['skull_perimeter'];
-                // Examination results
-                $med_visit_exam_results = $this->medicalVisit->findMedicalVisitExaminationResults($med_visit['id']);
-                // Lab results
-                $med_visit_lab_results = $this->medicalVisit->findMedicalVisitLabResults($med_visit['id']);
-                // Diagnosis results
-                $med_visit_diagnosis_results = $this->medicalVisit->findMedicalVisitDiagnosisResults($med_visit['id']);
-                // Medication
-                $med_visit_medication = $this->medicalVisit->findMedicalVisitMedication($med_visit['id']);
-                // Hospitalizations
-                $med_visit_hospitalizations = $this->medicalVisit->findMedicalVisitHospitalizations($med_visit['id']);
-                // Referrals
-                $med_visit_referrals = $this->medicalVisit->findMedicalVisitReferrals($med_visit['id']);
-                // Uploads
-                $med_visit_uploads = $this->medicalVisit->findMedicalVisitUploads($med_visit['id']);
-            }
-        }
-        // ------ END MODAL: MEDICAL HISTORY DATA FOR EACH MEDICAL VISIT ------ //
-        return  view('partials.modals.medical_visit_info')
-                                                    ->with('benefiter_medical_visits_list', $benefiter_medical_visits_list)
-                                                    ->with('med_visit_doctor', $med_visit_doctor)
-                                                    ->with('med_visit_location', $med_visit_location)
-                                                    ->with('med_visit_incident_type', $med_visit_incident_type)
-                                                    ->with('med_visit_chronic_conditions', $med_visit_chronic_conditions)
-                                                    ->with('med_visit_height', $med_visit_height)
-                                                    ->with('med_visit_weight', $med_visit_weight)
-                                                    ->with('med_visit_temperature', $med_visit_temperature)
-                                                    ->with('med_visit_blood_pressure_systolic', $med_visit_blood_pressure_systolic)
-                                                    ->with('med_visit_blood_pressure_diastolic', $med_visit_blood_pressure_diastolic)
-                                                    ->with('med_visit_skull_perimeter', $med_visit_skull_perimeter)
-                                                    ->with('med_visit_exam_results', $med_visit_exam_results)
-                                                    ->with('med_visit_lab_results', $med_visit_lab_results)
-                                                    ->with('med_visit_diagnosis_results', $med_visit_diagnosis_results)
-                                                    ->with('med_visit_medication', $med_visit_medication)
-                                                    ->with('med_visit_hospitalizations', $med_visit_hospitalizations)
-                                                    ->with('med_visit_referrals', $med_visit_referrals)
-                                                    ->with('med_visit_uploads', $med_visit_uploads)
-                                                    ->with('benefiter_folder_number', $benefiter_folder_number)
-                                                    ->with('benefiter', $benefiter)
-                                                    ->with('ExamResultsLookup', $ExamResultsLookup)
-                                                    ->with('med_visit_date', $med_visit_date);
+        $details = $this->medicalVisit->visitDetails((int) $id, (int) $request['current_medical_visit']);
+        abort_if($details === null, 404);
+
+        return view('partials.modals.medical_visit_info', $details + [
+            'benefiter_folder_number' => $this->medicalVisit->find_benefiter_folder_number($id),
+            'benefiter' => $this->basicInfoService->findExistentBenefiter($id),
+            'ExamResultsLookup' => $this->medicalVisit->get_medical_examination_results_from_lookup(),
+        ]);
     }
 
-    //------------ GET: EDIT MEDICAL VISIT ----------------------------------------//
+    // The edit form of a past visit.
     public function getMedicalVisitForEditing(Request $request, $id){
-        $selected_medical_visit_id = $request['medical_visit_id'];
-        $benefiter = $this->basicInfoService->findExistentBenefiter($id);
-        $benefiter_medical_visits_list = $this->medicalVisit->findMedicalVisitsForBenefiter($id);
-//        $doctor_id = $this->medicalVisit->findDoctorId();
-        $medical_locations = $this->medicalVisit->medicalLocationsLookup();  //medical_location_lookup::get();
-        $medical_incident_type = $this->medicalVisit->medicalIncidentTypeLookup();  //medical_incident_type_lookup::get();
-        $medical_locations_array = $this->medicalVisit->reindex_array($medical_locations);
-        $medical_incident_type_array = $this->medicalVisit->reindex_array($medical_incident_type);
-        $ExamResultsLookup = $this->medicalVisit->examinationsResultsLookup();
-
-        // initialize variables
-        $med_visit_doctor = '';
-        $med_visit_date = '';
-        $med_visit_location_id = '';
-        $med_visit_incident_type_id = '';
-        $med_visit_chronic_conditions = '';
-        $med_visit_height = '';
-        $med_visit_weight = '';
-        $med_visit_temperature = '';
-        $med_visit_blood_pressure_systolic = '';
-        $med_visit_blood_pressure_diastolic = '';
-        $med_visit_skull_perimeter = '';
-        $med_visit_exam_results = '';
-        $med_visit_lab_results = '';
-        $med_visit_diagnosis_results = '';
-        $med_visit_medication = '';
-        $med_visit_hospitalizations = '';
-        $med_visit_referrals = '';
-        $med_visit_uploads = '';
-        $doctor_id = null;
-
-        // for every medical visit of the benefiter fetch the corresponding medical data from DB
-        foreach($benefiter_medical_visits_list as $med_visit) {
-            if ($med_visit['id'] == $selected_medical_visit_id) {
-                $doctor_id = $med_visit['doctor']['id'];
-                //Doctor Name
-                $med_visit_doctor = $med_visit['doctor']['name'] . ' ' . $med_visit['doctor']['lastname'];
-                // Examination date
-                if ($med_visit['medical_visit_date'] == null) {
-                    $med_visit_date = $this->datesHelper->getFinelyFormattedStringDateFromDBDate($med_visit['created_at']);
-                } else {
-                    $med_visit_date = $this->datesHelper->getFinelyFormattedStringDateFromDBDate($med_visit['medical_visit_date']);
-                }
-                // Visit location
-                $med_visit_location_id = $med_visit['medical_location_id'];
-                // Visit incident type
-                $med_visit_incident_type_id = $med_visit['medical_incident_id'];
-                // Chronic Conditions
-                $med_visit_chronic_conditions = $this->medicalVisit->findMedicalChronicConditionsForBenefiter($id, $med_visit['id']);
-                // physical examinations
-                $med_visit_examination = $this->medicalVisit->findMedicalVisitExamination($med_visit['id']);
-                // height
-                $med_visit_height = $med_visit_examination['height'];
-                // weight
-                $med_visit_weight = $med_visit_examination['weight'];
-                // temperature
-                $med_visit_temperature = $med_visit_examination['temperature'];
-                // blood pressure
-                $med_visit_blood_pressure_systolic = $med_visit_examination['blood_pressure_systolic'];
-                $med_visit_blood_pressure_diastolic = $med_visit_examination['blood_pressure_diastolic'];
-                // skull_perimeter
-                $med_visit_skull_perimeter = $med_visit_examination['skull_perimeter'];
-                // Examination results
-                $med_visit_exam_results = $this->medicalVisit->findMedicalVisitExaminationResults($med_visit['id']);
-                // Lab results
-                $med_visit_lab_results = $this->medicalVisit->findMedicalVisitLabResults($med_visit['id']);
-                // Diagnosis results
-                $med_visit_diagnosis_results = $this->medicalVisit->findMedicalVisitDiagnosisResults($med_visit['id']);
-                // Medication
-                $med_visit_medication = $this->medicalVisit->findMedicalVisitMedication($med_visit['id']);
-                // Hospitalizations
-                $med_visit_hospitalizations = $this->medicalVisit->findMedicalVisitHospitalizations($med_visit['id']);
-                // Referrals
-                $med_visit_referrals = $this->medicalVisit->findMedicalVisitReferrals($med_visit['id']);
-                // Uploads
-                $med_visit_uploads = $this->medicalVisit->findMedicalVisitUploads($med_visit['id']);
-
-            }
-        }
+        $selected_medical_visit_id = (int) $request['medical_visit_id'];
+        $details = $this->medicalVisit->visitDetails((int) $id, $selected_medical_visit_id);
         // The visit is not a visit of this beneficiary.
-        abort_if($doctor_id === null, 404);
-        return view('partials.forms.medical-visit.medical_visit_edit')
-            ->with('selected_medical_visit_id',$selected_medical_visit_id)
-            ->with('benefiter',$benefiter)
-            ->with('doctor_id',$doctor_id)
-            ->with('med_visit_date',$med_visit_date)
-            ->with('med_visit_location_id',$med_visit_location_id)
-            ->with('med_visit_incident_type_id',$med_visit_incident_type_id)
-            ->with('med_visit_chronic_conditions',$med_visit_chronic_conditions)
-            ->with('med_visit_height',$med_visit_height)
-            ->with('med_visit_weight',$med_visit_weight)
-            ->with('med_visit_temperature',$med_visit_temperature)
-            ->with('med_visit_blood_pressure_systolic',$med_visit_blood_pressure_systolic)
-            ->with('med_visit_blood_pressure_diastolic',$med_visit_blood_pressure_diastolic)
-            ->with('med_visit_skull_perimeter',$med_visit_skull_perimeter)
-            ->with('med_visit_exam_results',$med_visit_exam_results)
-            ->with('med_visit_lab_results',$med_visit_lab_results)
-            ->with('med_visit_diagnosis_results',$med_visit_diagnosis_results)
-            ->with('med_visit_medication',$med_visit_medication)
-            ->with('med_visit_hospitalizations', $med_visit_hospitalizations)
-            ->with('med_visit_referrals',$med_visit_referrals)
-            ->with('med_visit_uploads',$med_visit_uploads)
-            ->with('medical_locations_array',$medical_locations_array)
-            ->with('medical_incident_type_array',$medical_incident_type_array)
-            ->with('ExamResultsLookup',$ExamResultsLookup)
-            ->with('med_visit_doctor',$med_visit_doctor)
-            ->with('$benefiter_medical_visits_list', $benefiter_medical_visits_list);
+        abort_if($details === null, 404);
+
+        return view('partials.forms.medical-visit.medical_visit_edit', $details + [
+            'selected_medical_visit_id' => $selected_medical_visit_id,
+            'benefiter' => $this->basicInfoService->findExistentBenefiter($id),
+            'medical_locations_array' => $this->medicalVisit->reindex_array($this->medicalVisit->medicalLocationsLookup()),
+            'medical_incident_type_array' => $this->medicalVisit->reindex_array($this->medicalVisit->medicalIncidentTypeLookup()),
+            'ExamResultsLookup' => $this->medicalVisit->examinationsResultsLookup(),
+        ]);
     }
 
     //------------ POST: EDIT MEDICAL VISIT ---------------------------------------//

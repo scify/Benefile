@@ -268,4 +268,21 @@ class FolderWorkflowsTest extends FeatureTestCase
         $this->actingAs(User::factory()->role(User::ROLE_PSYCHOLOGIST)->create())->get('/benefiter/1/basic-info')
             ->assertOk()->assertSee('Εμπιστευτική σημείωση');
     }
+
+    public function test_a_saved_visit_shows_in_its_window_and_in_its_edit_form(): void
+    {
+        $doctor = User::factory()->create(['name' => 'Ασκληπιός', 'lastname' => 'Επιδαύριος']);
+        $this->actingAs($doctor)->post('/benefiter/1/medical-folder', $this->medicalVisit([
+            'lab_results' => ['Εξέταση-ΧΥΖ'], 'medication_new_name' => ['Φάρμακο-ΑΒΓ'], 'referrals' => ['Παραπομπή-ΔΕΖ'], 'height' => '183',
+        ]));
+        $visit = $this->latestVisitId();
+
+        $window = $this->actingAs($doctor)->get("/benefiter/1/getEachMedicalVisit?current_medical_visit=$visit");
+        $window->assertOk()->assertSee('Ασκληπιός Επιδαύριος')->assertSee('Εξέταση-ΧΥΖ')->assertSee('Φάρμακο-ΑΒΓ')->assertSee('Παραπομπή-ΔΕΖ')->assertSee('183');
+
+        $edit = $this->actingAs($doctor)->get("/benefiter/1/editMedicalVisit?medical_visit_id=$visit");
+        $edit->assertOk()->assertSee('Εξέταση-ΧΥΖ')->assertSee('Φάρμακο-ΑΒΓ')->assertSee('Παραπομπή-ΔΕΖ')->assertSee('183');
+
+        $this->actingAs($doctor)->get('/benefiter/2/editMedicalVisit?medical_visit_id='.$visit)->assertNotFound();
+    }
 }

@@ -1430,4 +1430,43 @@ class BenefiterMedicalFolderService
 
         return [mb_substr($title, 0, 250), $path];
     }
+
+    /**
+     * Everything about one visit of a beneficiary, for its window and its edit form.
+     *
+     * @return array<string, mixed>|null Null when the visit is not a visit of this beneficiary.
+     *     The keys are the names of the view variables (med_visit_…).
+     */
+    public function visitDetails(int $benefiterId, int $visitId): ?array
+    {
+        $visit = $this->findMedicalVisitsForBenefiter($benefiterId)->firstWhere('id', $visitId);
+        if ($visit === null) {
+            return null;
+        }
+        $examination = $this->findMedicalVisitExamination($visit['id']);
+
+        return [
+            'doctor_id' => $visit['doctor']['id'] ?? null,
+            'med_visit_doctor' => trim(($visit['doctor']['name'] ?? '') . ' ' . ($visit['doctor']['lastname'] ?? '')),
+            'med_visit_date' => $this->datesHelper->getFinelyFormattedStringDateFromDBDate($visit['medical_visit_date'] ?? $visit['created_at']),
+            'med_visit_location' => $visit['medicalLocation']['description'] ?? '',
+            'med_visit_location_id' => $visit['medical_location_id'],
+            'med_visit_incident_type' => $visit['medicalIncidentType']['description'] ?? '',
+            'med_visit_incident_type_id' => $visit['medical_incident_id'],
+            'med_visit_chronic_conditions' => $this->findMedicalChronicConditionsForBenefiter($benefiterId, $visit['id']),
+            'med_visit_height' => $examination['height'] ?? '',
+            'med_visit_weight' => $examination['weight'] ?? '',
+            'med_visit_temperature' => $examination['temperature'] ?? '',
+            'med_visit_blood_pressure_systolic' => $examination['blood_pressure_systolic'] ?? '',
+            'med_visit_blood_pressure_diastolic' => $examination['blood_pressure_diastolic'] ?? '',
+            'med_visit_skull_perimeter' => $examination['skull_perimeter'] ?? '',
+            'med_visit_exam_results' => $this->findMedicalVisitExaminationResults($visit['id']),
+            'med_visit_lab_results' => $this->findMedicalVisitLabResults($visit['id']),
+            'med_visit_diagnosis_results' => $this->findMedicalVisitDiagnosisResults($visit['id']),
+            'med_visit_medication' => $this->findMedicalVisitMedication($visit['id']),
+            'med_visit_hospitalizations' => $this->findMedicalVisitHospitalizations($visit['id']),
+            'med_visit_referrals' => $this->findMedicalVisitReferrals($visit['id']),
+            'med_visit_uploads' => $this->findMedicalVisitUploads($visit['id']),
+        ];
+    }
 }
