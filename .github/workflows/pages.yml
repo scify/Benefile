@@ -5,6 +5,9 @@
 # (Actions › Landing page › Run workflow). The source of the animated hero
 # (site/hero/) and the README of site/ are not published, only the build
 # of the hero in site/assets/hero/.
+#
+# The repository allows only actions pinned to a full commit SHA; the
+# comment beside each one names its release.
 
 name: Landing page
 
@@ -32,12 +35,12 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Copy the published files
         run: rsync -a --exclude hero/ --exclude README.md site/ _site/
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: _site
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
