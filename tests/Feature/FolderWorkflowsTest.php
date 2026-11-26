@@ -388,4 +388,18 @@ class FolderWorkflowsTest extends FeatureTestCase
         $this->assertNotEmpty($codes);
         $this->assertLessThanOrEqual(50, count($codes));
     }
+
+    public function test_a_visit_that_fails_validation_keeps_the_typed_rows(): void
+    {
+        $doctor = User::factory()->create();
+
+        $this->actingAs($doctor)->post('/benefiter/1/medical-folder', $this->medicalVisit(['height' => 'tall']))
+            ->assertRedirect('benefiter/1/medical-folder')
+            ->assertSessionHasErrors();
+
+        $this->actingAs($doctor)->get('/benefiter/1/medical-folder')
+            ->assertOk()
+            ->assertSee(__('partials/forms/new_medical_visit_form.unsuccess_visit'))
+            ->assertSee('Αιμοσφαιρίνη 13');
+    }
 }

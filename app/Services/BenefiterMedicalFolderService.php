@@ -620,11 +620,6 @@ class BenefiterMedicalFolderService
         return $byId;
     }
 
-    // get logged in user id
-    public function get_logged_in_user_id(){
-        $user_id = $this->auth->id();
-        return $user_id;
-    }
     // medical visits for each benefiter
     public function findMedicalVisitsForBenefiter($id){
         return MedicalVisit::where('benefiter_id', $id)->with('doctor', 'medicalLocation', 'medicalIncidentType')->orderBy('medical_visit_date', 'desc')->get();
@@ -677,16 +672,6 @@ class BenefiterMedicalFolderService
     public function findMedicalVisitExaminationResults($med_visit_id){
         $med_visit_exam_results = ExaminationResult::where('medical_visit_id', $med_visit_id)->with('icd10')->orderBy('results_lookup_id')->get();
         return $med_visit_exam_results;
-    }
-    // get all medical visits for a benefiter
-    public function get_all_medical_visits_for_benefiter($id){
-        $benefiter_medical_history_list = MedicalVisit::where('benefiter_id', $id)->with('doctor', 'medicalLocation')->get();
-        return $benefiter_medical_history_list;
-    }
-    // count benefiter's medical visits
-    public function count_medical_visits_for_a_benefiter($id){
-        $medical_visits_number = MedicalVisit::where('benefiter_id', $id)->count();
-        return $medical_visits_number;
     }
     // Lab results
     public function findMedicalVisitLabResults($med_visit_id){

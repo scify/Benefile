@@ -17,23 +17,7 @@
 @stop
 
 @section('main-window-content')
-@if (legacy_count($errors) > 0 || Session::has('flash_message'))
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@else
-    @if(isset($success) and $success != null)
-    <div class="alert alert-success">
-        <ul>
-            <li>{{ $success }}</li>
-        </ul>
-    </div>
-    @endif
-@endif
+<x-form-messages :success="$success ?? null" />
 <div class="add-new-location form-section">
     <div class="underline-header">
         <h1 class="record-section-header padding-left-right-15">@lang($p."add_location")</h1>

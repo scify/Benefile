@@ -143,13 +143,13 @@
 
 {{--------------- 2. MEDICAL HISTORY TABLE --------------------------------------------}}
 <div class="form-section medical-history">
-    @if(($visit_submited_succesfully == 1))
+    @if ($visit_result === \App\Enums\VisitResult::Saved)
         <div class="alert alert-success">
             <ul>
                 <li>@lang($p.'success_visit')</li>
             </ul>
         </div>
-    @elseif($visit_submited_succesfully == 2)
+    @elseif ($visit_result === \App\Enums\VisitResult::Failed)
         <div class="alert alert-danger">
             <ul>
                 <li>@lang($p.'unsuccess_visit')</li>
@@ -239,7 +239,7 @@
                                             @lang($p.('edit_visit'))
                                         </a>
                                     @endif
-                                        @if($benefiter_medical_visits_list[$i]['id'] == $selected_medical_visit_id && $visit_submited_succesfully == 3)
+                                        @if($benefiter_medical_visits_list[$i]['id'] == $selected_medical_visit_id && $visit_result === \App\Enums\VisitResult::Updated)
                                             <i class="glyphicon glyphicon-ok updated-visit"></i>
                                     @endif
                                     </div>

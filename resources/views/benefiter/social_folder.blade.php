@@ -15,34 +15,14 @@
 @stop
 
 @section('benefiter-info')
-    @if(isset($benefiter) and $benefiter != null)
-        <div class="benefiter-info">
-            <h2>{{$benefiter->name}} {{$benefiter->lastname}} / {{$benefiter->folder_number}}</h2>
-        </div>
-    @endif
+    <x-beneficiary-header :benefiter="$benefiter ?? null" />
 @stop
 
 @section('main-window-content')
 
     @include('partials.select-panel')
 
-    @if (legacy_count($errors) > 0 || Session::has('flash_message'))
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @else
-        @if(isset($success) and $success != null)
-        <div class="alert alert-success">
-            <ul>
-                <li>{{ $success }}</li>
-            </ul>
-        </div>
-        @endif
-    @endif
+    <x-form-messages :success="$success ?? null" />
 
     @include('partials.forms.social_folder_form')
 @stop

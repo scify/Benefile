@@ -10,6 +10,7 @@ use App\Models\Location;
 use App\Models\MedicalVisit;
 use App\Services\BasicInfoService;
 use App\Services\BenefiterMedicalFolderService;
+use App\Enums\VisitResult;
 use Illuminate\Http\Request;
 
 /**
@@ -27,36 +28,26 @@ class MedicalFolderController extends Controller
     public function getMedicalFolder($id){
         // POST result message
         $selected_medical_visit_id = session()->get('selected_medical_visit_id', function() { return 0; });
-        $visit_submited_succesfully = session()->get('visit_submited_succesfully', function() { return 0; });
-        session()->forget('visit_submited_succesfully'); // 0:initial value, 1:Success, 2:Unsuccess
+        $visit_result = VisitResult::fromSession();
 
         // ------ VALIDATION FAILURE SAVE TYPED DATA ------------------ //
             // chronic conditions
         $chronic_conditions_sesssion = session()->get('chronic_conditions_session');
-        session()->forget('chronic_conditions_session');
             // lab results
         $lab_results_session = session()->get('lab_results_session');
-        session()->forget('lab_results_session');
             // diagnosis results
         $diagnosis_results_session = session()->get('diagnosis_results_session');
-        session()->forget('diagnosis_results_session');
             // hospitalizations
         $hospitalization_session = session()->get('hospitalization_session');
-        session()->forget('hospitalization_session');
             // hospitalization dates
         $hospitalization_date_session = session()->get('hospitalization_date_session');
-        session()->forget('hospitalization_date_session');
             // referrals
         $referrals_session = session()->get('referrals_session');
-        session()->forget('referrals_session');
             // referrals is done
         $referrals_is_done_session = session()->get('referrals_is_done_session');
-        session()->forget('referrals_is_done_session');
             //Examination results (consists of selected conditions & descriptions)
         $examResultDescription_session = session()->get('examResultDescription_session');
-        session()->forget('examResultDescription_session');
         $examResultLoukup_session = session()->get('examResultLoukup_session');
-        session()->forget('examResultLoukup_session');
             // transform the above session ICD10 ids into respective description
         $examResultLoukup_session_description =[[]];
         for($i=0 ; $i<legacy_count($examResultLoukup_session) ; $i++){
@@ -68,23 +59,16 @@ class MedicalFolderController extends Controller
         }
             // medication (consists of lookup select options or typed name, dosage, duration, supplied by the organisation checkbox )
         $medication_name_from_lookup_session = session()->get('medication_name_from_lookup_session');
-        session()->forget('medication_name_from_lookup_session');
         $medication_name_from_lookup_session_description = [];
         for($i=0; $i<legacy_count($medication_name_from_lookup_session) ; $i++){
             $medication_name_from_lookup_session_description[$i] = $this->medicalVisit->getMedicationLookupBy_id($medication_name_from_lookup_session[$i]);
         }
         $medication_new_name_session = session()->get('medication_new_name_session');
-        session()->forget('medication_new_name_session');
         $medication_dosage_session = session()->get('medication_dosage_session');
-        session()->forget('medication_dosage_session');
         $medication_duration_session = session()->get('medication_duration_session');
-        session()->forget('medication_duration_session');
         $supply_from_praksis_hidden_session = session()->get('supply_from_praksis_hidden_session');
-        session()->forget('supply_from_praksis_hidden_session');
         $upload_file_description_session = session()->get('upload_file_description_session');
-        session()->forget('upload_file_description_session');
         $upload_file_title_session = session()->get('upload_file_title_session');
-        session()->forget('upload_file_title_session');
 
         // ------ END VALIDATION FAILURE SAVE TYPED DATA ------------------ //
 
@@ -132,7 +116,7 @@ class MedicalFolderController extends Controller
                         ->with('referrals', $referrals)
                         ->with('upload_file_description_session', $upload_file_description_session)
                         ->with('upload_file_title_session', $upload_file_title_session)
-                        ->with('visit_submited_succesfully', $visit_submited_succesfully);
+                        ->with('visit_result', $visit_result);
         }
     }
 
@@ -142,109 +126,49 @@ class MedicalFolderController extends Controller
         $request->validate(['upload_file_title.*' => ['nullable', 'file', 'max:10240', 'mimes:pdf,jpg,jpeg,png,gif,webp,doc,docx,odt,xls,xlsx,ods,txt,rtf']]);
         $benefiter = $this->basicInfoService->findExistentBenefiter($id);
         abort_if($benefiter === null, 404);
-        $benefiter_folder_number = $this->medicalVisit->find_benefiter_folder_number($id);
-        $benefiter_medical_history_list = $this->medicalVisit->get_all_medical_visits_for_benefiter($id);
-        $doctor_id = $this->medicalVisit->get_logged_in_user_id();
+        $folder = redirect('benefiter/'.$benefiter->id.'/medical-folder');
 
-        $benefiter_id = $benefiter->id;
-        $medical_visits_number = $this->medicalVisit->count_medical_visits_for_a_benefiter($id);
-        // brings the medical location array from db
-        $medical_locations = $this->medicalVisit->getAllMedicalLocations();
-        $medical_locations_array = $this->medicalVisit->reindex_array($medical_locations);
-        $ExamResultsLookup = $this->medicalVisit->examinationsResultsLookup();
-
-        // Post Validation
         $validator = $this->medicalVisit->medicalValidation($request->all());
-        if($validator->fails()){
-            //Fetch all array posts (if validation fails)
-            $new_medical_location = $request['new_medical_location'];
-            $chronic_conditions_session = $request['chronic_conditions'];
-            $lab_results_session = $request['lab_results'];
-            $diagnosis_results_session = $request['diagnosis_results'];
-            $hospitalization_session = $request['hospitalization'];
-            $hospitalization_date_session = $request['hospitalization_date'];
-            $referrals_session = $request['referrals'];
-            $referrals_is_done_session = $request['is_done_id'];
-            $examResultDescription_session = $request['examResultDescription'];
-            $examResultLoukup_session = $request['examResultLoukup'];
-            $medication_name_from_lookup_session = $request['medication_name_from_lookup'];
-            $medication_new_name_session = $request['medication_new_name'];
-            $medication_dosage_session = $request['medication_dosage'];
-            $medication_duration_session = $request['medication_duration'];
-            $supply_from_praksis_hidden_session = $request['supply_from_praksis_hidden'];
+        if ($validator->fails()) {
+            // The form shows the typed rows again. A browser cannot get a chosen file back, so only the file names return.
+            $fileNames = array_values(array_map(
+                fn ($file) => $file->getClientOriginalName(),
+                array_filter((array) $request->file('upload_file_title', []))
+            ));
 
-            $upload_file_description_session = $request['upload_file_description'];
-
-            $upload_file_title_session = array();
-            $upload_file_title_session_files = $request['upload_file_title'];
-            if(!empty($upload_file_title_session_files)) {
-                foreach ($upload_file_title_session_files as $uft) {
-                    if(!empty($uft)) {
-                        array_push($upload_file_title_session, $uft->getClientOriginalName());
-                    }
-                }
-            }
-            $visit_submited_succesfully = 2; // 0:initial value, 1:Success, 2:Unsuccess
-            return redirect('benefiter/'.$benefiter_id.'/medical-folder')
-                ->withInput(array(
-                    'examination_date' => $request['examination_date'],
-                    'medical_location_id' => $request['medical_location_id'],
-                    'incident_type' => $request['incident_type'],
-                    'height' => $request['height'],
-                    'weight' => $request['weight'],
-                    'temperature' => $request['temperature'],
-                    'blood_pressure_systolic' => $request['blood_pressure_systolic'],
-                    'blood_pressure_diastolic' => $request['blood_pressure_diastolic'],
-                    'skull_perimeter' => $request['skull_perimeter'],
-                ))
-                // ALL THE BELLOW ARE SEND BACK TO THE FORM IF THE POST FAIL
-                ->with('benefiter', $benefiter)
-                ->with('benefiter_folder_number', $benefiter_folder_number)
-                ->with('benefiter_medical_history_list', $benefiter_medical_history_list)
-                ->with('doctor_id', $doctor_id)
-                ->with('benefiter_id', $benefiter_id)
-                ->with('medical_locations_array', $medical_locations_array)
-                ->with('new_medical_location', $new_medical_location)
-                ->with('ExamResultsLookup', $ExamResultsLookup)
-                ->with('medical_visits_number', $medical_visits_number)
-                ->with('visit_submited_succesfully', $visit_submited_succesfully)
-                ->with('chronic_conditions_session', $chronic_conditions_session)
-                ->with('lab_results_session', $lab_results_session)
-                ->with('diagnosis_results_session', $diagnosis_results_session)
-                ->with('hospitalization_session', $hospitalization_session)
-                ->with('hospitalization_date_session', $hospitalization_date_session)
-                ->with('referrals_session', $referrals_session)
-                ->with('referrals_is_done_session', $referrals_is_done_session)
-                ->with('examResultDescription_session', $examResultDescription_session)
-                ->with('examResultLoukup_session', $examResultLoukup_session)
-                ->with('medication_name_from_lookup_session', $medication_name_from_lookup_session)
-                ->with('medication_new_name_session', $medication_new_name_session)
-                ->with('medication_dosage_session', $medication_dosage_session)
-                ->with('medication_duration_session', $medication_duration_session)
-                ->with('supply_from_praksis_hidden_session', $supply_from_praksis_hidden_session)
-                ->with('upload_file_description_session', $upload_file_description_session)
-                ->with('upload_file_title_session', $upload_file_title_session)
+            return $folder
+                ->withInput($request->only(['examination_date', 'medical_location_id', 'incident_type', 'height', 'weight',
+                    'temperature', 'blood_pressure_systolic', 'blood_pressure_diastolic', 'skull_perimeter']))
+                ->with([
+                    'visit_result' => VisitResult::Failed->value,
+                    'chronic_conditions_session' => $request['chronic_conditions'],
+                    'lab_results_session' => $request['lab_results'],
+                    'diagnosis_results_session' => $request['diagnosis_results'],
+                    'hospitalization_session' => $request['hospitalization'],
+                    'hospitalization_date_session' => $request['hospitalization_date'],
+                    'referrals_session' => $request['referrals'],
+                    'referrals_is_done_session' => $request['is_done_id'],
+                    'examResultDescription_session' => $request['examResultDescription'],
+                    'examResultLoukup_session' => $request['examResultLoukup'],
+                    'medication_name_from_lookup_session' => $request['medication_name_from_lookup'],
+                    'medication_new_name_session' => $request['medication_new_name'],
+                    'medication_dosage_session' => $request['medication_dosage'],
+                    'medication_duration_session' => $request['medication_duration'],
+                    'supply_from_praksis_hidden_session' => $request['supply_from_praksis_hidden'],
+                    'upload_file_description_session' => $request['upload_file_description'],
+                    'upload_file_title_session' => $fileNames,
+                ])
                 ->withErrors($validator->errors()->all());
-        } else {
-            // The visit belongs to the beneficiary of the address and to the logged-in doctor,
-            // whatever the form sends.
-            $saved = $this->medicalVisit->save_new_medical_visit_tables(array_merge($request->all(), [
-                'benefiter_id' => $benefiter->id,
-                'doctor_id' => auth()->id(),
-            ]));
-            $visit_submited_succesfully = $saved ? 1 : 2; // 0:initial value, 1:Success, 2:Unsuccess
-            return redirect('benefiter/'.$benefiter_id.'/medical-folder')
-                ->with('benefiter', $benefiter)
-                ->with('benefiter_folder_number', $benefiter_folder_number)
-                ->with('benefiter_medical_history_list', $benefiter_medical_history_list)
-                ->with('doctor_id', $doctor_id)
-                ->with('benefiter_id', $benefiter_id)
-                ->with('medical_locations_array', $medical_locations_array)
-                ->with('ExamResultsLookup', $ExamResultsLookup)
-                ->with('medical_visits_number', $medical_visits_number)
-                ->with('visit_submited_succesfully', $visit_submited_succesfully);
         }
 
+        // The visit belongs to the beneficiary of the address and to the logged-in doctor,
+        // whatever the form sends.
+        $saved = $this->medicalVisit->save_new_medical_visit_tables(array_merge($request->all(), [
+            'benefiter_id' => $benefiter->id,
+            'doctor_id' => auth()->id(),
+        ]));
+
+        return $folder->with('visit_result', ($saved ? VisitResult::Saved : VisitResult::Failed)->value);
     }
 
     // The window with a past visit, from the medical history.
@@ -289,16 +213,14 @@ class MedicalFolderController extends Controller
         // Post Validation
         $validator = $this->medicalVisit->medicalValidation($request->all());
         if($validator->fails()){
-            $visit_submited_succesfully = 2; // 0:initial value, 1:Success, 2:Unsuccess
             return redirect('benefiter/'.$benefiter_id.'/editMedicalVisit?medical_visit_id='.$selected_medical_visit_id)
-                ->with('visit_submited_succesfully', $visit_submited_succesfully)
+                ->with('visit_result', VisitResult::Failed->value)
                 ->withErrors($validator->errors()->all());
         } else {
             $saved = $this->medicalVisit->update_medical_visit_tables($request->all(), $selected_medical_visit_id);
-            $visit_submited_succesfully = $saved ? 3 : 2; // 0:initial value, 1:Success, 2:Unsuccess, 3: Success update
             return redirect('benefiter/'.$benefiter_id.'/medical-folder')
                 ->with('selected_medical_visit_id', $selected_medical_visit_id)
-                ->with('visit_submited_succesfully', $visit_submited_succesfully);
+                ->with('visit_result', ($saved ? VisitResult::Updated : VisitResult::Failed)->value);
         }
 
     }

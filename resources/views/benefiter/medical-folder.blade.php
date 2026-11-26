@@ -20,11 +20,7 @@
 @stop
 
 @section('benefiter-info')
-    @if(isset($benefiter) and $benefiter != null)
-        <div class="benefiter-info">
-            <h2>{{$benefiter->name}} {{$benefiter->lastname}} / {{$benefiter->folder_number}}</h2>
-        </div>
-    @endif
+    <x-beneficiary-header :benefiter="$benefiter ?? null" />
 @stop
 
 @section('main-window-content')
