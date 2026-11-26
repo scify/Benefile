@@ -592,6 +592,19 @@ code {
     }
 }
 
+/* Cookie consent (_consent/): the banner and the dialog in the colours of BeneFile.
+ * This file loads after consent.css, so these values win, also in dark mode. */
+
+:root {
+    --scc-bg: var(--white);
+    --scc-surface-2: var(--mist);
+    --scc-border: var(--line);
+    --scc-text: var(--ink);
+    --scc-dim: var(--muted);
+    --scc-accent: var(--plum);
+    --scc-on-accent: var(--white);
+}
+
 /* Footer ------------------------------------------------------------------ */
 
 .site-footer {
@@ -611,7 +624,18 @@ code {
         margin: 0;
     }
 
-    a {
+    a,
+    .footer-link {
         color: var(--white);
+    }
+
+    .footer-link {
+        padding: 0;
+        border: 0;
+        background: none;
+        font: inherit;
+        text-decoration: underline;
+        text-underline-offset: 0.15em;
+        cursor: pointer;
     }
 }
