@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Folders\BeneficiaryExportController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MainPanel\NewLocationController;
 use App\Http\Controllers\MainPanel\RecordsController;
@@ -115,8 +116,8 @@ Route::middleware(['auth', 'activated'])->group(function () use ($doctor, $lawye
         Route::post('benefiter/{id}/delete', [RecordsController::class, 'getDeleteBenefiter']);
         Route::get('new-benefiter/uploadCSV', [UploadFileController::class, 'getUploadCSV']);
         Route::post('new-benefiter/uploadCSV', [UploadFileController::class, 'excelUpload']);
-        Route::get('download-history-csv', [RecordsController::class, 'downloadCSVFileWithAllBenefitersFoldersHistory']);
-        Route::get('download-benefiters-csv', [RecordsController::class, 'downloadCSVFileWithAllBenefiters']);
+        Route::get('download-history-csv', [BeneficiaryExportController::class, 'folderHistory']);
+        Route::get('download-benefiters-csv', [BeneficiaryExportController::class, 'beneficiaries']);
         Route::get('new-location', [NewLocationController::class, 'getNewLocationView']);
         Route::post('save-location', [NewLocationController::class, 'postSaveNewLocation']);
         Route::get('main-panel/users-list', [UsersController::class, 'UsersList']);

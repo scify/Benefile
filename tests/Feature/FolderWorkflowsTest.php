@@ -237,4 +237,35 @@ class FolderWorkflowsTest extends FeatureTestCase
         $response->assertOk();
         $this->assertGreaterThan(1, substr_count((string) $response->getContent(), "\n"));
     }
+
+    public function test_the_history_names_the_right_person_when_user_ids_have_gaps(): void
+    {
+        $admin = User::factory()->role(User::ROLE_ADMIN)->create();
+        $doctor = User::factory()->create(['name' => 'Ιπποκράτης', 'lastname' => 'Κώος']);
+        // A gap in the user ids: a user with a lower id no longer exists.
+        DB::table('users')->where('id', 2)->delete();
+        DB::table('medical_visits')->insert([
+            'benefiter_id' => 1, 'doctor_id' => $doctor->id, 'medical_location_id' => 1,
+            'medical_incident_id' => 1, 'medical_visit_date' => '2026-11-20', 'created_at' => now(), 'updated_at' => now(),
+        ]);
+
+        $response = $this->actingAs($admin)->get('/download-history-csv');
+
+        $response->assertOk()->assertHeader('content-type', 'text/csv; charset=UTF-8');
+        $this->assertStringContainsString('Ιπποκράτης Κώος', (string) $response->getContent());
+    }
+
+    public function test_the_history_shows_session_notes_only_to_psychologists_and_administrators(): void
+    {
+        $folder = (int) DB::table('social_folder')->where('benefiter_id', 1)->value('id');
+        DB::table('psychosocial_sessions')->insert([
+            'social_folder_id' => $folder, 'psychologist_id' => 1, 'session_date' => '2026-11-20', 'psychosocial_theme_id' => 1,
+            'medical_location_id' => 1, 'session_comments' => 'Εμπιστευτική σημείωση', 'created_at' => now(), 'updated_at' => now(),
+        ]);
+
+        $this->actingAs(User::factory()->role(User::ROLE_LAWYER)->create())->get('/benefiter/1/basic-info')
+            ->assertOk()->assertDontSee('Εμπιστευτική σημείωση');
+        $this->actingAs(User::factory()->role(User::ROLE_PSYCHOLOGIST)->create())->get('/benefiter/1/basic-info')
+            ->assertOk()->assertSee('Εμπιστευτική σημείωση');
+    }
 }

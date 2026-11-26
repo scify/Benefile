@@ -107,7 +107,7 @@ class RecordsController extends Controller
                 $benefiterLanguagesAndLevels = $this->basicInfoService->getLanguagesAndLanguagesLevelsByBenefiterId($id);
                 $workTitle = $this->basicInfoService->getWorkTitleNameFromBenefiterId($id);
             }
-            $allFoldersHistory = $this->basicInfoService->getFoldersUsageHistory($id);
+            $allFoldersHistory = app(\App\Services\FolderHistoryService::class)->forBeneficiary((int) $id, auth()->user());
         } else {
             $benefiter = new Benefiter();
             $benefiter->country_abandon_reason_id = $country_abandon_reason;
@@ -892,31 +892,5 @@ class RecordsController extends Controller
         }
     }
 
-    public function downloadCSVFileWithAllBenefitersFoldersHistory(){
-        $export_data = $this->basicInfoService->formatFoldersHistoryToCSVFile();
-        $fileName = "benefiters_folders_history_" . $this->datesHelper->getCurrentTimeString() . ".csv";
-        if(!empty($export_data)) {
-            return response($export_data)
-                ->header('Content-Type', 'application/csv')
-                ->header('Content-Disposition', 'attachment; filename="'. $fileName .'"')
-                ->header('Pragma', 'no-cache')
-                ->header('Expires', '0');
-        } else {
-            return null;
-        }
-    }
 
-    public function downloadCSVFileWithAllBenefiters(){
-        $export_data = $this->basicInfoService->formatAllBenefitersToCSVFile();
-        $fileName = "benefiters_" . $this->datesHelper->getCurrentTimeString() . ".csv";
-        if(!empty($export_data)) {
-            return response($export_data)
-                ->header('Content-Type', 'application/csv')
-                ->header('Content-Disposition', 'attachment; filename="'. $fileName .'"')
-                ->header('Pragma', 'no-cache')
-                ->header('Expires', '0');
-        } else {
-            return null;
-        }
-    }
 }
