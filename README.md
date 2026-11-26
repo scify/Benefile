@@ -1,6 +1,6 @@
 # BeneFile
 
-BeneFile keeps the medical, legal and psychosocial records of the beneficiaries of an organisation in one digital file. Doctors, lawyers, social workers and psychologists work on the same file, each in their own folder. SciFY developed it in 2016, with feedback from the NGO PRAKSIS. The interface is in Greek.
+BeneFile keeps the medical, legal and psychosocial records of the beneficiaries of an organisation in one digital file. Doctors, lawyers, social workers and psychologists work on the same file, each in their own folder. SciFY developed it in 2016, with feedback from the NGO PRAKSIS. The interface is in Greek and English. Each user chooses the language at the top of the page.
 
 Website: https://scify.github.io/Benefile/ (the `gh-pages` branch).
 
@@ -11,7 +11,7 @@ Website: https://scify.github.io/Benefile/ (the `gh-pages` branch).
 - Composer 2
 - A web server whose document root is `public/`, with HTTPS
 
-The application is Laravel 13. Its pages use the files in `public/` (Bootstrap 3, jQuery): there is no front-end build.
+The application is Laravel 13. Its pages use the files in `public/` (Bootstrap 3 and plain JavaScript): there is no front-end build.
 
 ## Install
 
@@ -31,6 +31,18 @@ php artisan benefile:create-admin
 
 For production, set in `.env`: `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://…`, `SESSION_SECURE_COOKIE=true`, and the mail settings (`MAIL_*`), which the password reset uses.
 
+### The organisation
+
+The screens show the name, the logo and the contact page of the organisation that uses BeneFile. The defaults are those of PRAKSIS. To change them, set in `.env`:
+
+| Key | Value |
+|-----|-------|
+| `BENEFILE_ORGANISATION_NAME` | The name, for example in "Supplied by …" for a medicine. |
+| `BENEFILE_ORGANISATION_LOGO` | The logo, a path under `public/`. |
+| `BENEFILE_ORGANISATION_CONTACT_URL` | The contact page for users without access. Empty: no link. |
+
+`APP_LOCALE` is the language before a user chooses one (`gr` or `en`).
+
 The web server must be able to write to `storage/` and `bootstrap/cache/`. Make backups of the database and of `storage/app/private/` (the files of the medical visits).
 
 ## Roles and access
@@ -40,10 +52,10 @@ The web server must be able to write to `storage/` and `bootstrap/cache/`. Make 
 | Administrator | Everything. Activates and deactivates users, manages places of examination, imports and exports CSV files, deletes files. |
 | Doctor | Medical visits. Each doctor has a specialty. |
 | Lawyer | The legal folder and the legal sessions. |
-| Social worker | The social history in the psychosocial folder. |
+| Social worker | The basic information, new beneficiaries, and the social history in the psychosocial folder. |
 | Psychologist | The psychosocial sessions. Their notes are visible only to psychologists and administrators. |
 
-Every active user can read every folder and change the basic information. `routes/web.php` has the rules.
+Every active user can read every folder, and add referrals and incidents in the basic information. The abilities are in `AppServiceProvider::ABILITIES`. The routes (`routes/web.php`) and the views use the same abilities, for example `->can('edit-legal-folder')` and `Auth::user()->can('edit-legal-folder')`.
 
 ## Upgrade an installation from 2016 (Laravel 5.1)
 
@@ -85,7 +97,7 @@ ddev mysql -uroot -proot -e "CREATE DATABASE testing; GRANT ALL ON testing.* TO 
 ddev artisan test
 ```
 
-`tests/Feature` checks the access rules, login and registration, the password reset, SQL injection, the medical files, the CSV exports and the reports.
+`tests/Feature` checks the access rules, login and registration, the password reset, SQL injection, the medical files, the save of each folder, the CSV exports and the reports. `tests/Unit` checks the dates.
 
 ### Front-end libraries
 
@@ -93,12 +105,21 @@ The pages use no jQuery. The CSS is Bootstrap 3 (`public/bootstrap-3.3.6/dist/cs
 
 The other libraries are copies of npm packages in `public/vendor`, with exact versions in `package.json`: simple-datatables (tables), Tom Select (lists with search), vanillajs-datepicker (calendars) and Dropzone (CSV import). `public/vendor/README.md` tells how to update them. There is no build step.
 
-The scripts of the pages are in `public/js`, in plain JavaScript (ES2020). Their texts come from the language files (`lang/gr`, `lang/en`), through the page. The browser tests (`tests/e2e`) check each behaviour of the scripts:
+simple-datatables has the LGPL-3.0 licence. BeneFile uses an unchanged copy, which the LGPL allows.
+
+The scripts of the pages are in `public/js`, in plain JavaScript (ES2020). Their texts come from the language files (`lang/gr`, `lang/en`), through the page. The browser tests (`tests/e2e`) open every screen with each role, in both languages, and check each behaviour of the scripts. A screenshot of each screen goes to `storage/playwright-screens/`:
 
 ```shell
 npm install
 BASE_URL=https://benefile.ddev.site npx playwright test
 ```
+
+### Code structure
+
+- `app/Http/Controllers/Folders`: one controller for each folder (basic information, medical, legal, psychosocial) and for the beneficiary.
+- `app/Services`: the work of the controllers, for example `BeneficiaryRegistrar` (a new beneficiary and its folders, in one transaction), `BenefiterMedicalFolderService` (the medical visits), `FolderHistoryService` and `BeneficiaryCsvExporter`.
+- `app/Models`: the tables. The models of the legal and psychosocial folders are in `app/Models/Folders`.
+- `resources/views/components`: `<x-beneficiary-header>` and `<x-form-messages>`, which the folders share.
 
 ### Static analysis
 
@@ -127,6 +148,9 @@ Raise the level step by step: level 6 asks for the types of all parameters and r
 - **Registration:** a new user could choose the administrator role. Now only the four professional roles are possible, and only an administrator activates an account.
 - **Example accounts:** `migrate --seed` created two administrators with passwords that are public on GitHub. Now the example data is only for `local` and `testing`, and `benefile:create-admin` creates the first administrator.
 - **Requests that change data** are POST requests with a CSRF token. Before, deleting, logging out and some changes were links.
+- **Changes from other professions:** the basic information form was read-only for other roles, but the server saved it for every user. Now only social workers and administrators can save it. The new session button of the legal folder showed to psychologists, not to lawyers.
+- **Ownership:** a medical visit takes its beneficiary from the address and its doctor from the login, not from the form. A change or a delete of a visit, a referral, an incident or a psychosocial session finds it only among the records of that beneficiary.
+- **Data in the search:** the search sent every column of each beneficiary to the browser. Now it sends only the columns of its table.
 - **Login** is limited to five failed attempts a minute for an email address and IP address. The password reset gives the same answer for every address.
 
 ### Known issues
