@@ -3,10 +3,14 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Folders\BasicInfoController;
+use App\Http\Controllers\Folders\BeneficiaryController;
 use App\Http\Controllers\Folders\BeneficiaryExportController;
+use App\Http\Controllers\Folders\LegalFolderController;
+use App\Http\Controllers\Folders\MedicalFolderController;
+use App\Http\Controllers\Folders\SocialFolderController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MainPanel\NewLocationController;
-use App\Http\Controllers\MainPanel\RecordsController;
 use App\Http\Controllers\MainPanel\ReportsController;
 use App\Http\Controllers\MainPanel\SearchController;
 use App\Http\Controllers\MainPanel\UsersController;
@@ -61,43 +65,43 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth', 'activated'])->group(function () use ($doctor, $lawyer, $psychologist, $psychosocial) {
-    Route::get('home', [RecordsController::class, 'getBenefitersList']);
+    Route::get('home', [BeneficiaryController::class, 'getBenefitersList']);
     Route::get('main-panel', [HomeController::class, 'index']);
 
     // Beneficiaries.
-    Route::get('benefiters-list', [RecordsController::class, 'getBenefitersList']);
+    Route::get('benefiters-list', [BeneficiaryController::class, 'getBenefitersList']);
 
     // Basic information: every profession can change it.
-    Route::get('benefiter/{id}/basic-info', [RecordsController::class, 'getBasicInfo']);
-    Route::post('benefiter/{id}/basic-info', [RecordsController::class, 'postBasicInfo']);
-    Route::post('benefiter/{id}/basic-info/referrals', [RecordsController::class, 'postBasicInfoReferrals']);
-    Route::post('benefiter/{id}/basic-info/referral-delete/{referral_id}', [RecordsController::class, 'deleteBasicInfoReferral']);
-    Route::post('benefiter/{id}/new-occurrence-save', [RecordsController::class, 'saveOccurrencesBasicInfo']);
-    Route::post('benefiter/{id}/edit-occurrence/{occurrence_id}', [RecordsController::class, 'editOccurrencesBasicInfo']);
-    Route::post('benefiter/{id}/delete-occurrence/{occurrence_id}', [RecordsController::class, 'deleteOccurrencesBasicInfo']);
-    Route::post('check-for-possible-duplicates', [RecordsController::class, 'postCheckForDuplicatedFolders']);
+    Route::get('benefiter/{id}/basic-info', [BasicInfoController::class, 'getBasicInfo']);
+    Route::post('benefiter/{id}/basic-info', [BasicInfoController::class, 'postBasicInfo']);
+    Route::post('benefiter/{id}/basic-info/referrals', [BasicInfoController::class, 'postBasicInfoReferrals']);
+    Route::post('benefiter/{id}/basic-info/referral-delete/{referral_id}', [BasicInfoController::class, 'deleteBasicInfoReferral']);
+    Route::post('benefiter/{id}/new-occurrence-save', [BasicInfoController::class, 'saveOccurrencesBasicInfo']);
+    Route::post('benefiter/{id}/edit-occurrence/{occurrence_id}', [BasicInfoController::class, 'editOccurrencesBasicInfo']);
+    Route::post('benefiter/{id}/delete-occurrence/{occurrence_id}', [BasicInfoController::class, 'deleteOccurrencesBasicInfo']);
+    Route::post('check-for-possible-duplicates', [BasicInfoController::class, 'postCheckForDuplicatedFolders']);
 
     // Medical folder: doctors change it.
-    Route::get('benefiter/{id}/medical-folder', [RecordsController::class, 'getMedicalFolder']);
-    Route::post('benefiter/{id}/medical-folder', [RecordsController::class, 'postMedicalFolder'])->middleware($doctor);
-    Route::get('benefiter/getIC10List', [RecordsController::class, 'getICD10List']);
-    Route::get('benefiter/getMedicationList', [RecordsController::class, 'getMedicationList']);
-    Route::get('benefiter/{id}/getEachMedicalVisit', [RecordsController::class, 'getMedicalVisitModal']);
-    Route::get('benefiter/{id}/editMedicalVisit', [RecordsController::class, 'getMedicalVisitForEditing'])->middleware($doctor);
-    Route::post('benefiter/{id}/editMedicalVisit', [RecordsController::class, 'postMedicalVisitFromEditing'])->middleware($doctor);
+    Route::get('benefiter/{id}/medical-folder', [MedicalFolderController::class, 'getMedicalFolder']);
+    Route::post('benefiter/{id}/medical-folder', [MedicalFolderController::class, 'postMedicalFolder'])->middleware($doctor);
+    Route::get('benefiter/getIC10List', [MedicalFolderController::class, 'getICD10List']);
+    Route::get('benefiter/getMedicationList', [MedicalFolderController::class, 'getMedicationList']);
+    Route::get('benefiter/{id}/getEachMedicalVisit', [MedicalFolderController::class, 'getMedicalVisitModal']);
+    Route::get('benefiter/{id}/editMedicalVisit', [MedicalFolderController::class, 'getMedicalVisitForEditing'])->middleware($doctor);
+    Route::post('benefiter/{id}/editMedicalVisit', [MedicalFolderController::class, 'postMedicalVisitFromEditing'])->middleware($doctor);
     Route::get('medical-uploads/{upload}', [MedicalUploadController::class, 'show']);
 
     // Legal folder: lawyers change it.
-    Route::get('benefiter/{id}/legal-folder', [RecordsController::class, 'getLegalFolder']);
-    Route::post('benefiter/{id}/legal-folder', [RecordsController::class, 'postLegalFolder'])->middleware($lawyer);
-    Route::post('benefiter/{id}/legal-session', [RecordsController::class, 'postLegalSession'])->middleware($lawyer);
+    Route::get('benefiter/{id}/legal-folder', [LegalFolderController::class, 'getLegalFolder']);
+    Route::post('benefiter/{id}/legal-folder', [LegalFolderController::class, 'postLegalFolder'])->middleware($lawyer);
+    Route::post('benefiter/{id}/legal-session', [LegalFolderController::class, 'postLegalSession'])->middleware($lawyer);
 
     // Psychosocial folder.
-    Route::get('benefiter/{id}/social-folder', [RecordsController::class, 'getSocialFolder']);
-    Route::post('benefiter/{id}/social-folder', [RecordsController::class, 'postSocialFolder'])->middleware($psychosocial);
-    Route::post('benefiter/{id}/session-save', [RecordsController::class, 'postSessionSave'])->middleware($psychologist);
-    Route::post('benefiter/{id}/session-edit/{session_id}', [RecordsController::class, 'postSessionEdit'])->middleware($psychologist);
-    Route::post('benefiter/{id}/session-delete/{session_id}', [RecordsController::class, 'getSessionDelete'])->middleware($psychologist);
+    Route::get('benefiter/{id}/social-folder', [SocialFolderController::class, 'getSocialFolder']);
+    Route::post('benefiter/{id}/social-folder', [SocialFolderController::class, 'postSocialFolder'])->middleware($psychosocial);
+    Route::post('benefiter/{id}/session-save', [SocialFolderController::class, 'postSessionSave'])->middleware($psychologist);
+    Route::post('benefiter/{id}/session-edit/{session_id}', [SocialFolderController::class, 'postSessionEdit'])->middleware($psychologist);
+    Route::post('benefiter/{id}/session-delete/{session_id}', [SocialFolderController::class, 'getSessionDelete'])->middleware($psychologist);
 
     // Search and reports.
     Route::get('search', [SearchController::class, 'getSearch']);
@@ -113,7 +117,7 @@ Route::middleware(['auth', 'activated'])->group(function () use ($doctor, $lawye
 
     // Administration.
     Route::middleware('admin')->group(function () {
-        Route::post('benefiter/{id}/delete', [RecordsController::class, 'getDeleteBenefiter']);
+        Route::post('benefiter/{id}/delete', [BeneficiaryController::class, 'getDeleteBenefiter']);
         Route::get('new-benefiter/uploadCSV', [UploadFileController::class, 'getUploadCSV']);
         Route::post('new-benefiter/uploadCSV', [UploadFileController::class, 'excelUpload']);
         Route::get('download-history-csv', [BeneficiaryExportController::class, 'folderHistory']);
