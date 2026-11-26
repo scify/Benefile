@@ -452,81 +452,12 @@ class BasicInfoService{
         return $workTitleId;
     }
 
-    // ------------------------------------------------------------------ //
-    //----------- benefter basic_info_referrals table (REFERRALS) --------//
-    // DB save
-    public function basic_info_referrals($request){
-        $request_basic_info_referrals_id = $request['basic_info_referrals_id'];
-        $request_basic_info_referrals_text = $request['basic_info_referrals_text'];
-        $request_basic_info_referrals_date = $request['basic_info_referrals_date'];
-        $benefiter_id = $request['benefiter_id'];
 
-        // referrals added to be posted (same as text array and date array)
-        $ref_number = legacy_count($request_basic_info_referrals_id);
-        for($i=0 ; $i<$ref_number; $i++){
-            $basic_info_referral = new BenefiterReferrals();
-            $basic_info_referral->description = $request_basic_info_referrals_text[$i];
-            $basic_info_referral->referral_date = $this->datesHelper->makeDBFriendlyDate($request_basic_info_referrals_date[$i]);
-            $basic_info_referral->benefiter_id = $benefiter_id;
-            $basic_info_referral->referral_lookup_id = $request_basic_info_referrals_id[$i];
-            $basic_info_referral->user_id = $this->auth->id();
-            $basic_info_referral->save();
-        }
-    }
-    // get all basic info referrals
-    public function get_basic_info_referral_by_id($id){
-        $basic_info_referral_attributes = BenefiterReferrals::where('benefiter_id', $id)->orderBy('referral_date', 'desc')->get();
-        return $basic_info_referral_attributes;
-    }
 
-    public function get_basic_info_referral(){
-        $basic_info_referral_attributes = BenefiterReferrals::get();
-        return $basic_info_referral_attributes;
-    }
 
-    // get all referrals form lookup for benefiter's basic info
-    public function get_basic_info_referrals_from_lookup(){
-        $basic_info_referral = BenefiterReferrals_lookup::get()->all();
-        return $basic_info_referral;
-    }
 
-    // ------------------------------------------------------------------ //
-    //----------- benefter occurrences table (OCCURRENCES) ---------------//
-    public function saveNewOccurrence($request){
-        $occurrence_date = $request['occurrence_date'];
-        $occurrences_comments = $request['occurrences_comments'];
-        $user_who_added_occurrence = $this->auth->id();
-        $benefiter_id = $request['benefiter_id'];
 
-        // save to occurrences table
-        $benefiter_new_occurence = new benefiterOccurrences();
-        $benefiter_new_occurence->description = $occurrences_comments;
-        $benefiter_new_occurence->occurrence_date = $this->datesHelper->makeDBFriendlyDate($occurrence_date);
-        $benefiter_new_occurence->benefiter_id = $benefiter_id;
-        $benefiter_new_occurence->user_id = $user_who_added_occurrence;
 
-        $benefiter_new_occurence->save();
-    }
-
-    // get occurrences by benefiter
-    public function getAllOccurrencesByBenefiter($id){
-        $occurences = benefiterOccurrences::where('benefiter_id', $id)->get();
-        return $occurences;
-    }
-
-    // find occurrence by id
-    public function findOccurrence_by_id($request, $occurrence_id){
-        $occurence_by_id = benefiterOccurrences::find($occurrence_id);
-        // update the db row
-        $occurence_by_id->occurrence_date = $this->datesHelper->makeDBFriendlyDate($request['edited_occurrence_date']);
-        $occurence_by_id->description = $request['edited_occurrences_comments'];
-        $occurence_by_id->save();
-    }
-
-    // delete occurrence by id
-    public function deleteOccurrence_by_id($occurrence_id){
-        benefiterOccurrences::where('id','=',$occurrence_id)->delete();
-    }
 
     /**
      * The beneficiaries with the same name, last name, birth date and father's name as the form.

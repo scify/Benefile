@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Folders;
 
 use App\Http\Controllers\Controller;
 use App\Models\Benefiters_Tables_Models\Benefiter;
-use App\Models\Benefiters_Tables_Models\BenefiterReferrals;
 use App\Services\BasicInfoService;
+use App\Services\OccurrenceService;
+use App\Services\ReferralService;
 use App\Services\BenefiterMedicalFolderService;
 use Illuminate\Http\Request;
 
@@ -16,6 +17,8 @@ class BasicInfoController extends Controller
 {
     public function __construct(
         private readonly BasicInfoService $basicInfoService,
+        private readonly OccurrenceService $occurrences,
+        private readonly ReferralService $referrals,
         private readonly BenefiterMedicalFolderService $medicalVisit,
     ) {
     }
@@ -24,14 +27,14 @@ class BasicInfoController extends Controller
     public function getBasicInfo($id){
         $allFoldersHistory = null;
         // get all occurences from DB
-        $occurrences = $this->basicInfoService->getAllOccurrencesByBenefiter($id);
+        $occurrences = $this->occurrences->forBeneficiary((int) $id);
         // brings the referrals options array from db to view
 
-        $basic_info_referral = $this->basicInfoService->get_basic_info_referrals_from_lookup();
+        $basic_info_referral = $this->referrals->types();
         $countryAbandonReasons = $this->basicInfoService->getAllCountryAbandonReasons();
         $basic_info_referral_array = $this->medicalVisit->reindex_array($basic_info_referral);
         // brings all referrals saved to db for this benefiter id
-        $benefiter_referrals_list = $this->basicInfoService->get_basic_info_referral_by_id($id);
+        $benefiter_referrals_list = $this->referrals->forBeneficiary((int) $id);
         $workTitle = null;
         $languages = $this->basicInfoService->getAllLanguages();
         $languageLevels = $this->basicInfoService->getAllLanguageLevels();
@@ -156,39 +159,29 @@ class BasicInfoController extends Controller
         return $this->basicInfoService->checkForDuplicates($request->all());
     }
 
-    // save Occurrences to DB with AJAX
+    // An incident, from the AJAX form of the basic information.
     public function saveOccurrencesBasicInfo(Request $request, $id){
-        // saves in DB, with the benefiter->id
-        $this->basicInfoService->saveNewOccurrence($request);
-        // Then return from the DB all occurrences history and return it to the view
+        $this->occurrences->add((int) $id, $request);
         return redirect('benefiter/'.$id.'/basic-info');
     }
 
-    // EDIT OCCURRENCE
     public function editOccurrencesBasicInfo(Request $request, $id, $occurrence_id){
-        $this->basicInfoService->findOccurrence_by_id($request, $occurrence_id);
+        $this->occurrences->update((int) $id, (int) $occurrence_id, $request);
         return redirect('benefiter/'.$id.'/basic-info');
     }
 
-    // DELETE OCCURRENCE
     public function deleteOccurrencesBasicInfo($id, $occurrence_id){
-        $this->basicInfoService->deleteOccurrence_by_id($occurrence_id);
+        $this->occurrences->delete((int) $id, (int) $occurrence_id);
         return redirect('benefiter/'.$id.'/basic-info');
     }
 
-    //------ POST BASIC INFO REFERRALS -------------------------------//
-    public function postBasicInfoReferrals(Request $request){
-        // update basic info referrals table
-        $this->basicInfoService->basic_info_referrals($request);
-        // fetch all saved referrals
-        $basic_info_referrals = $this->basicInfoService->get_basic_info_referral();
-
-        return redirect('benefiter/'.$request['benefiter_id'].'/basic-info')->with('basic_info_referrals',$basic_info_referrals)->with("success", \Lang::get('records_controller_messages.referrals_create_success'));
+    public function postBasicInfoReferrals(Request $request, $id){
+        $this->referrals->add((int) $id, $request);
+        return redirect('benefiter/'.$id.'/basic-info')->with("success", \Lang::get('records_controller_messages.referrals_create_success'));
     }
 
     public function deleteBasicInfoReferral($id, $referral_id){
-        BenefiterReferrals::where('id', '=', $referral_id)->delete();
-
+        $this->referrals->delete((int) $id, (int) $referral_id);
         return redirect('benefiter/'.$id.'/basic-info')->with("success", \Lang::get('records_controller_messages.referrals_delete_success'));
     }
 }

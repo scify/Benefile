@@ -324,4 +324,41 @@ class FolderWorkflowsTest extends FeatureTestCase
             ->assertSee((string) DB::table('lawyer_action_lookup')->where('id', 2)->value('description'))
             ->assertSee((string) DB::table('medical_location_lookup')->where('id', 2)->value('description'));
     }
+
+    public function test_incidents_belong_to_the_beneficiary_of_the_address(): void
+    {
+        $user = User::factory()->role(User::ROLE_LAWYER)->create();
+
+        $this->actingAs($user)->post('/benefiter/1/new-occurrence-save', [
+            'occurrence_date' => '20-11-2026', 'occurrences_comments' => 'Συμβάν', 'benefiter_id' => '2',
+        ])->assertRedirect();
+        $incident = (int) DB::table('benefiter_occurrences')->where('description', 'Συμβάν')->value('id');
+        $this->assertDatabaseHas('benefiter_occurrences', ['id' => $incident, 'benefiter_id' => 1, 'user_id' => $user->id]);
+
+        // Through the address of another beneficiary, the incident does not change.
+        $this->actingAs($user)->post("/benefiter/2/edit-occurrence/$incident", ['edited_occurrence_date' => '21-11-2026', 'edited_occurrences_comments' => 'Άλλο']);
+        $this->actingAs($user)->post("/benefiter/2/delete-occurrence/$incident");
+        $this->assertDatabaseHas('benefiter_occurrences', ['id' => $incident, 'description' => 'Συμβάν']);
+
+        $this->actingAs($user)->post("/benefiter/1/edit-occurrence/$incident", ['edited_occurrence_date' => '21-11-2026', 'edited_occurrences_comments' => 'Αλλαγή']);
+        $this->assertDatabaseHas('benefiter_occurrences', ['id' => $incident, 'description' => 'Αλλαγή']);
+        $this->actingAs($user)->post("/benefiter/1/delete-occurrence/$incident");
+        $this->assertDatabaseMissing('benefiter_occurrences', ['id' => $incident]);
+    }
+
+    public function test_referrals_belong_to_the_beneficiary_of_the_address(): void
+    {
+        $user = User::factory()->role(User::ROLE_SOCIAL_WORKER)->create();
+
+        $this->actingAs($user)->post('/benefiter/1/basic-info/referrals', [
+            'benefiter_id' => '2', 'basic_info_referrals_id' => ['1'], 'basic_info_referrals_text' => ['Παραπομπή-Χ'], 'basic_info_referrals_date' => ['20-11-2026'],
+        ])->assertRedirect('benefiter/1/basic-info');
+        $referral = (int) DB::table('benefiter_referrals')->where('description', 'Παραπομπή-Χ')->value('id');
+        $this->assertDatabaseHas('benefiter_referrals', ['id' => $referral, 'benefiter_id' => 1, 'user_id' => $user->id]);
+
+        $this->actingAs($user)->post("/benefiter/2/basic-info/referral-delete/$referral");
+        $this->assertDatabaseHas('benefiter_referrals', ['id' => $referral]);
+        $this->actingAs($user)->post("/benefiter/1/basic-info/referral-delete/$referral");
+        $this->assertDatabaseMissing('benefiter_referrals', ['id' => $referral]);
+    }
 }
