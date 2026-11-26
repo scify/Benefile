@@ -87,6 +87,19 @@ ddev artisan test
 
 `tests/Feature` checks the access rules, login and registration, the password reset, SQL injection, the medical files, the CSV exports and the reports.
 
+### Front-end libraries
+
+The pages use no jQuery. The CSS is Bootstrap 3 (`public/bootstrap-3.3.6/dist/css`). `public/js/ui.js` gives the Bootstrap 3 data attributes of the dialogs, tabs, sections and menus (`data-toggle`, `data-target`, `data-dismiss`).
+
+The other libraries are copies of npm packages in `public/vendor`, with exact versions in `package.json`: simple-datatables (tables), Tom Select (lists with search), vanillajs-datepicker (calendars) and Dropzone (CSV import). `public/vendor/README.md` tells how to update them. There is no build step.
+
+The scripts of the pages are in `public/js`, in plain JavaScript (ES2020). Their texts come from the language files (`lang/gr`, `lang/en`), through the page. The browser tests (`tests/e2e`) check each behaviour of the scripts:
+
+```shell
+npm install
+BASE_URL=https://benefile.ddev.site npx playwright test
+```
+
 ### Static analysis
 
 [Larastan](https://github.com/larastan/larastan) checks the code at level 5 (`phpstan.neon`):
@@ -118,7 +131,6 @@ Raise the level step by step: level 6 asks for the types of all parameters and r
 
 ### Known issues
 
-- Three pages show a JavaScript error in the browser console, as before the upgrade: the new beneficiary page (`init` is not defined), the CSV import (`progressbar`) and the reports (a chart canvas). The pages work.
 - The views load Font Awesome and Google Fonts from other sites.
 
 ## Licence
