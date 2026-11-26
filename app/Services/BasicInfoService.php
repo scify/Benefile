@@ -5,12 +5,12 @@ use App\Models\Users_roles;
 use App\Models\Users_subroles;
 use App\Models\ViewModels\AllFoldersUsageHistory;
 use App\Models\BasicFolderHistory;
-use App\Models\Benefiters_Tables_Models\Benefiter;
-use App\Models\Benefiters_Tables_Models\BenefiterReferrals;
-use App\Models\Benefiters_Tables_Models\BenefiterReferrals_lookup;
-use App\Models\Benefiters_Tables_Models\benefiterOccurrences;
-use App\Models\Benefiters_Tables_Models\medical_location_lookup;
-use App\Models\Benefiters_Tables_Models\medical_visits;
+use App\Models\Beneficiary;
+use App\Models\Referral;
+use App\Models\ReferralType;
+use App\Models\BeneficiaryIncident;
+use App\Models\Location;
+use App\Models\MedicalVisit;
 use App\Models\PsychosocialSession;
 use App\Models\User;
 use App\Services\GreekStringConversionHelper;
@@ -87,8 +87,8 @@ class BasicInfoService{
         if(!array_key_exists('legal_status' ,$request)){
             $request['legal_status'] = null;
         }
-        $attributes = array_intersect_key($this->getBenefiterArrayForDBInsert($request), array_flip((new Benefiter())->getFillable()));
-        return app(BeneficiaryRegistrar::class)->register($attributes, function (Benefiter $benefiter) use ($request): void {
+        $attributes = array_intersect_key($this->getBenefiterArrayForDBInsert($request), array_flip((new Beneficiary())->getFillable()));
+        return app(BeneficiaryRegistrar::class)->register($attributes, function (Beneficiary $benefiter) use ($request): void {
             $languagesLevelsMerge = $this->mergeUniqueLanguagesLevelWithNoDuplicatedLanguageArrays($request);
             if(!empty($languagesLevelsMerge)) {
                 $this->saveLanguagesToDB($benefiter->id, $languagesLevelsMerge);
@@ -110,7 +110,7 @@ class BasicInfoService{
         }
         // get work title id from work title name
         $request['working_title'] = $this->getWorkTitleIdFromDBAndInsertNewWorkTitleIfNeeded($request['working_title']);
-        Benefiter::where('id', '=', $id)->update($this->getBenefiterArrayForDBInsert($request));
+        Beneficiary::where('id', '=', $id)->update($this->getBenefiterArrayForDBInsert($request));
         $this->editLanguagesInDB($id, $this->mergeUniqueLanguagesLevelWithNoDuplicatedLanguageArrays($request));
         if(!array_key_exists('legal_status' ,$request)){
             $request['legal_status'] = null;
@@ -142,7 +142,7 @@ class BasicInfoService{
 
     // finds a benefiter from its id
     public function findExistentBenefiter($id){
-        return Benefiter::where('id', '=', $id)->with('gender')->first();
+        return Beneficiary::where('id', '=', $id)->with('gender')->first();
     }
 
     // gets all benefiter's legal statuses
@@ -177,10 +177,10 @@ class BasicInfoService{
 
     // delete a benefiter from his id
     public function deleteBenefiter($benefiterId){
-        $benefiter = Benefiter::where('id', '=', $benefiterId)->first();
+        $benefiter = Beneficiary::where('id', '=', $benefiterId)->first();
         $benefiter->folder_number = $this->datesHelper->getCurrentTimeString() . "_" . $benefiter->folder_number;
         $benefiter->save();
-        Benefiter::where('id', '=', $benefiterId)->delete();
+        Beneficiary::where('id', '=', $benefiterId)->delete();
     }
 
     // returns the work title name using the benefiter's id

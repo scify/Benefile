@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Folders;
 
 use App\Http\Controllers\Controller;
-use App\Models\Benefiters_Tables_Models\Benefiter;
+use App\Models\Beneficiary;
 use App\Services\BasicInfoService;
 use App\Services\OccurrenceService;
 use App\Services\ReferralService;
@@ -73,7 +73,7 @@ class BasicInfoController extends Controller
             }
             $allFoldersHistory = app(\App\Services\FolderHistoryService::class)->forBeneficiary((int) $id, auth()->user());
         } else {
-            $benefiter = new Benefiter();
+            $benefiter = new Beneficiary();
             $benefiter->country_abandon_reason_id = $country_abandon_reason;
         }
         return view('benefiter.basic_info')->with("languages", $languages)
@@ -138,7 +138,7 @@ class BasicInfoController extends Controller
         } else {
             if($id > 0){
                 $this->basicInfoService->editBasicInfo($request->all(), $id);
-                $benefiter = new Benefiter();
+                $benefiter = new Beneficiary();
                 $benefiter->id = $id;
                 $successMsg = \Lang::get('records_controller_messages.basic_info_edit_success');
             } else {

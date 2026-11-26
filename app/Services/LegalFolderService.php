@@ -1,7 +1,7 @@
 <?php namespace App\Services;
 
 use App\Models\LegalSession;
-use App\Models\Benefiters_Tables_Models\medical_location_lookup;
+use App\Models\Location;
 use App\Models\User;
 use App\Models\ViewModels\LegalSessionsHistory;
 use App\Services\DatesHelper;
@@ -175,7 +175,7 @@ class LegalFolderService{
             if($legalSessions != null){
                 // Users and places by their id.
                 $users = User::get()->keyBy('id');
-                $locations = medical_location_lookup::pluck('description', 'id');
+                $locations = Location::pluck('description', 'id');
                 // fetch all lawyer actions from DB
                 $lawyerActions = \DB::table('lawyer_action_lookup')->pluck('description', 'id');
                 if($lawyerActions->isNotEmpty()) {

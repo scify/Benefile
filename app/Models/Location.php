@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models\Benefiters_Tables_Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class medical_location_lookup extends Model
+class Location extends Model
 {
     protected $table = 'medical_location_lookup';
 

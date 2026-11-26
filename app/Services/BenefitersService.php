@@ -1,12 +1,12 @@
 <?php namespace App\Services;
 
-use App\Models\Benefiters_Tables_Models\Benefiter;
+use App\Models\Beneficiary;
 use Validator;
 
 class BenefitersService{
 
     public function getAllBenefiters(){
-        $benefitersList = Benefiter::with('educationLookup', 'medical_visits')->get();
+        $benefitersList = Beneficiary::with('educationLookup', 'medical_visits')->get();
         return $benefitersList;
     }
 }

@@ -1,10 +1,10 @@
 <?php namespace App\Services;
 
-use App\Models\Benefiters_Tables_Models\Benefiter;
-use App\Models\Benefiters_Tables_Models\File_import_schema;
-use App\Models\Benefiters_Tables_Models\BenefiterReferrals;
-use App\Models\Benefiters_Tables_Models\BenefiterReferrals_lookup;
-use App\Models\Benefiters_Tables_Models\ImportCSV_BasicInfo;
+use App\Models\Beneficiary;
+use App\Models\ImportRow;
+use App\Models\Referral;
+use App\Models\ReferralType;
+use App\Models\ImportedFile;
 use App\Services\ConversionsForFileUpload;
 use App\Services\DatesHelper;
 use \Carbon\Carbon;
@@ -79,7 +79,7 @@ class UploadFileService{
 //            'social_history'                    // ??? not shown on excel
         ];
         // get max id in File_import_schema so that it won't try to insert benefiters already inserted via file
-        $maxIdInFileImportSchema = File_import_schema::max('id');
+        $maxIdInFileImportSchema = ImportRow::max('id');
         if($maxIdInFileImportSchema == null){
             $maxIdInFileImportSchema = 0;
         }
@@ -88,7 +88,7 @@ class UploadFileService{
         // Iterate between all rows of the csv file and add each value to the benefiters table
         for($i=1; $i<legacy_count($csvFile); $i++) {
             $colValues = str_getcsv( $csvFile[$i]);
-            $file_import = new File_import_schema();
+            $file_import = new ImportRow();
             // The columns after the known fields are not imported.
             for($j=1; $j<legacy_count($colValues); $j++){
                 if($j != legacy_count($colValues) - 1 && isset($file_import_Fields[$j])) {
@@ -112,20 +112,20 @@ class UploadFileService{
     // ----------------------------------------------------------------- //
     // Insert upload main info (file name & date) to DB
     public function importedFilesTable($filename){
-        $importedFile = new ImportCSV_BasicInfo();
+        $importedFile = new ImportedFile();
         $importedFile->csv_name = $filename;
         $importedFile->save();
     }
 
     // fetch all CSV import history from DB
     public function findImportedHistory(){
-        $importedHistory = ImportCSV_BasicInfo::get();
+        $importedHistory = ImportedFile::get();
         return $importedHistory;
     }
 
     // selects the appropriate DB table for each column of a row
     private function selectAppropriateDBTableForEachFileRowColumns($maxIdInFileImportSchema){
-        $allFileRows = File_import_schema::where('id', '>', $maxIdInFileImportSchema)->get();
+        $allFileRows = ImportRow::where('id', '>', $maxIdInFileImportSchema)->get();
         if($allFileRows->isNotEmpty()) {
             foreach ($allFileRows as $singleRow) {
                 try {
@@ -195,29 +195,29 @@ class UploadFileService{
     // for current imported benefiter add the respective referrals, from csv, to DB tables
     public function importReferrals($singleRow, $benefiter_id){
         // referrals lookup ids
-        $social_referrence_lookup_id = BenefiterReferrals_lookup::where('description', 'LIKE', '%οινων%')->first()->id;
-        $medical_referrence_lookup_id = BenefiterReferrals_lookup::where('description', 'LIKE', '%ατρικ%')->first()->id;
-        $legal_referrence_lookup_id = BenefiterReferrals_lookup::where('description', 'LIKE', '%ομικ%')->first()->id;
-        $educational_referrence_lookup_id = BenefiterReferrals_lookup::where('description', 'LIKE', '%δευση%')->first()->id;
+        $social_referrence_lookup_id = ReferralType::where('description', 'LIKE', '%οινων%')->first()->id;
+        $medical_referrence_lookup_id = ReferralType::where('description', 'LIKE', '%ατρικ%')->first()->id;
+        $legal_referrence_lookup_id = ReferralType::where('description', 'LIKE', '%ομικ%')->first()->id;
+        $educational_referrence_lookup_id = ReferralType::where('description', 'LIKE', '%δευση%')->first()->id;
 
         // if social referral
         if($this->greekStringConversion->grstrtoupper($singleRow->has_social_reference) == 'ΝΑΙ') {
-            BenefiterReferrals::insert($this->selectOnlyReferrals($singleRow->social_reference_actions,
+            Referral::insert($this->selectOnlyReferrals($singleRow->social_reference_actions,
                                                                     $singleRow->social_reference_date, $benefiter_id, $social_referrence_lookup_id));
         }
         // if medical referral
         if($this->greekStringConversion->grstrtoupper($singleRow->has_medical_reference) == 'ΝΑΙ'){
-            BenefiterReferrals::insert($this->selectOnlyReferrals($singleRow->medical_reference_actions,
+            Referral::insert($this->selectOnlyReferrals($singleRow->medical_reference_actions,
                                                                     $singleRow->medical_reference_date, $benefiter_id, $medical_referrence_lookup_id));
         }
         // if legal referral
         if($this->greekStringConversion->grstrtoupper($singleRow->has_legal_reference) == 'ΝΑΙ') {
-            BenefiterReferrals::insert($this->selectOnlyReferrals($singleRow->legal_reference_actions,
+            Referral::insert($this->selectOnlyReferrals($singleRow->legal_reference_actions,
                                                                     $singleRow->legal_reference_date, $benefiter_id, $legal_referrence_lookup_id));
         }
         // if educational referral
         if($this->greekStringConversion->grstrtoupper($singleRow->has_educational_reference) == 'ΝΑΙ') {
-            BenefiterReferrals::insert($this->selectOnlyReferrals($singleRow->educational_reference_actions,
+            Referral::insert($this->selectOnlyReferrals($singleRow->educational_reference_actions,
                                                                     $singleRow->educational_reference_date, $benefiter_id, $educational_referrence_lookup_id));
         }
     }

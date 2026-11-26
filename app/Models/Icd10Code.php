@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models\Benefiters_Tables_Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ICD10 extends Model
+class Icd10Code extends Model
 {
     protected $table = 'icd10';
     protected $primaryKey = 'id';

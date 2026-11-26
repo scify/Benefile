@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Folders;
 
 use App\Http\Controllers\Controller;
-use App\Models\Benefiters_Tables_Models\ICD10;
-use App\Models\Benefiters_Tables_Models\medical_examination_results_lookup;
-use App\Models\Benefiters_Tables_Models\medical_incident_type_lookup;
-use App\Models\Benefiters_Tables_Models\medical_location_lookup;
-use App\Models\Benefiters_Tables_Models\medical_visits;
+use App\Models\Icd10Code;
+use App\Models\ExaminationResultType;
+use App\Models\IncidentType;
+use App\Models\Location;
+use App\Models\MedicalVisit;
 use App\Services\BasicInfoService;
 use App\Services\BenefiterMedicalFolderService;
 use Illuminate\Http\Request;
@@ -89,16 +89,16 @@ class MedicalFolderController extends Controller
         // ------ END VALIDATION FAILURE SAVE TYPED DATA ------------------ //
 
         $benefiter = $this->basicInfoService->findExistentBenefiter($id);
-        $medical_visits_number = $this->medicalVisit->benefiter_medical_visits_number($id) ; //medical_visits::where('benefiter_id', $id)->count();
-        $benefiter_medical_visits_list = $this->medicalVisit->findMedicalVisitsForBenefiter($id); // medical_visits::where('benefiter_id', $id)->with('doctor', 'medicalLocation', 'medicalIncidentType')->get();
+        $medical_visits_number = $this->medicalVisit->benefiter_medical_visits_number($id) ; //MedicalVisit::where('benefiter_id', $id)->count();
+        $benefiter_medical_visits_list = $this->medicalVisit->findMedicalVisitsForBenefiter($id); // MedicalVisit::where('benefiter_id', $id)->with('doctor', 'medicalLocation', 'medicalIncidentType')->get();
         $referrals = $this->medicalVisit->findAllMedicalVisitsReferralsForBenefiter($benefiter_medical_visits_list);
         if ($benefiter == null) {
             return view('errors.404');
         } else {
-            $ExamResultsLookup = $this->medicalVisit->examinationsResultsLookup(); //medical_examination_results_lookup::get()->all();
+            $ExamResultsLookup = $this->medicalVisit->examinationsResultsLookup(); //ExaminationResultType::get()->all();
             // brings the medical location array from db
-            $medical_locations = $this->medicalVisit->medicalLocationsLookup();  //medical_location_lookup::get();
-            $medical_incident_type = $this->medicalVisit->medicalIncidentTypeLookup();  //medical_incident_type_lookup::get();
+            $medical_locations = $this->medicalVisit->medicalLocationsLookup();  //Location::get();
+            $medical_incident_type = $this->medicalVisit->medicalIncidentTypeLookup();  //IncidentType::get();
             $medical_locations_array = $this->medicalVisit->reindex_array($medical_locations);
             $medical_incident_type_array = $this->medicalVisit->reindex_array($medical_incident_type);
             $doctor_id = $this->medicalVisit->findDoctorId();  //auth()->id();
@@ -280,7 +280,7 @@ class MedicalFolderController extends Controller
         // The files of a visit: common document and image types, 10 MB at most each.
         $request->validate(['upload_file_title.*' => ['nullable', 'file', 'max:10240', 'mimes:pdf,jpg,jpeg,png,gif,webp,doc,docx,odt,xls,xlsx,ods,txt,rtf']]);
         // Only a visit of the beneficiary of the address.
-        $visit = \App\Models\Benefiters_Tables_Models\medical_visits::where('id', (int) $request['selected_medical_visit_id'])
+        $visit = \App\Models\MedicalVisit::where('id', (int) $request['selected_medical_visit_id'])
             ->where('benefiter_id', (int) $id)
             ->firstOrFail();
         $selected_medical_visit_id = $visit->id;

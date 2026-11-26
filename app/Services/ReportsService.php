@@ -2,11 +2,11 @@
 
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
-use App\Models\Benefiters_Tables_Models\Benefiter;
-use App\Models\Benefiters_Tables_Models\EducationLookup;
-use App\Models\Benefiters_Tables_Models\medical_visits;
-use App\Models\Benefiters_Tables_Models\medical_examination_results_lookup;
-use App\Models\Benefiters_Tables_Models\medical_examination_results;
+use App\Models\Beneficiary;
+use App\Models\Education;
+use App\Models\MedicalVisit;
+use App\Models\ExaminationResultType;
+use App\Models\ExaminationResult;
 use App\Models\PsychosocialSession;
 use App\Models\Psychosocial_support_lookup;
 
@@ -148,9 +148,9 @@ class ReportsService{
     public function getReport_benefiters_vs_gender(){
         // count benefiters regarding each gender type
         // male
-        $males_count = count(Benefiter::where('gender_id',1)->get());
-        $females_count = count(Benefiter::where('gender_id',2)->get());
-        $others_count = count(Benefiter::where('gender_id',3)->get());
+        $males_count = count(Beneficiary::where('gender_id',1)->get());
+        $females_count = count(Beneficiary::where('gender_id',2)->get());
+        $others_count = count(Beneficiary::where('gender_id',3)->get());
 
         // percentages
         $total = $males_count + $females_count + $others_count;
@@ -173,10 +173,10 @@ class ReportsService{
         // count benefiters regarding each education type
         $results = array();
         // get all lookup education levels
-        $education_lookup = EducationLookup::get();
+        $education_lookup = Education::get();
         // for each education level add to results array a pair of the total count of benefiters with this edu. level and the title of the education level.
         foreach($education_lookup as $edu_lookup){
-            $count_benefiters_with_this_education_title = count(Benefiter::where('education_id',$edu_lookup['id'])->get());
+            $count_benefiters_with_this_education_title = count(Beneficiary::where('education_id',$edu_lookup['id'])->get());
             $education_level_result = ['benefiters_count_with_this_education_title'=> $count_benefiters_with_this_education_title,
                                 'education_title'=>$edu_lookup['education_title']];
             array_push($results,$education_level_result);
@@ -212,7 +212,7 @@ class ReportsService{
         // get all doctors from user table
         $subscribed_doctors = User::with('subrole')->where('user_role_id', 2)->orWhere('user_role_id', 1)->get();
         foreach($subscribed_doctors as $doctor){
-            $benefiters_visits_with_same_doctor_id = medical_visits::select('benefiter_id')->where('doctor_id', $doctor['id'])->get();
+            $benefiters_visits_with_same_doctor_id = MedicalVisit::select('benefiter_id')->where('doctor_id', $doctor['id'])->get();
 
             $benefiter_per_doctor_array = array();
             foreach($benefiters_visits_with_same_doctor_id as $ben){
@@ -242,16 +242,16 @@ class ReportsService{
     public function getReport_benefiters_vs_clinical_conditions(){
         $results = array();
         // get all clinical conditions from lookup
-        $clinical_conditions_lookup = medical_examination_results_lookup::get();
+        $clinical_conditions_lookup = ExaminationResultType::get();
 
         // count benefiters regarding their medical condition
         foreach($clinical_conditions_lookup as $condition){
             // first we will make a benefiters id list with the current clinical condition.
-            $medical_examination_results_with_same_clinical_condition = medical_examination_results::where('results_lookup_id',$condition['id'])->get();
+            $medical_examination_results_with_same_clinical_condition = ExaminationResult::where('results_lookup_id',$condition['id'])->get();
             // then make an array with all benefiter_id with the current clinical condition.
             $benefiters_with_same_clinical_condition =array();
             foreach($medical_examination_results_with_same_clinical_condition as $med_exam_same_clinical){
-                array_push($benefiters_with_same_clinical_condition, medical_visits::find($med_exam_same_clinical['medical_visit_id'])['benefiter_id']);
+                array_push($benefiters_with_same_clinical_condition, MedicalVisit::find($med_exam_same_clinical['medical_visit_id'])['benefiter_id']);
             }
             // then find the duplicities in the above array and count the result.
             $current_clinical_condition_counter = count(array_count_values($benefiters_with_same_clinical_condition));
@@ -272,7 +272,7 @@ class ReportsService{
         $results = array();
         $months = array();
         // get all medical visits
-        $medical_visits = medical_visits::get();
+        $medical_visits = MedicalVisit::get();
         // for each visit remove the day part of the string (last three characters) and create a new array.
         foreach ($medical_visits as $visit) {
             $time = strtotime($visit['medical_visit_date']);
@@ -329,7 +329,7 @@ class ReportsService{
         $results = array();
         $months = array();
         // get all benefiters
-        $benefiters = Benefiter::get();
+        $benefiters = Beneficiary::get();
         foreach ($benefiters as $benefiter) {
             $time = strtotime($benefiter['created_at']);
             $current_month = date('Y-m', $time);

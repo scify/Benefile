@@ -1,6 +1,6 @@
 <?php namespace App\Services;
 
-use App\Models\Benefiters_Tables_Models\Origin_country_lookup;
+use App\Models\Country;
 
 class ConversionsForFileUpload{
 
@@ -70,7 +70,7 @@ class ConversionsForFileUpload{
             // TODO: } else { return $error }
         }
         // country is not found, so insert to DB and then return it
-        $newCountry = new Origin_country_lookup();
+        $newCountry = new Country();
         $newCountry->name = $countryFromFileUpper;
         $newCountry->save();
         $this->countryList->push($newCountry);

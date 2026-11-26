@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Benefiters_Tables_Models\medical_uploads;
+use App\Models\MedicalUpload;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -16,7 +16,7 @@ class MedicalUploadController extends Controller
 {
     public function show(int $upload): StreamedResponse
     {
-        $file = medical_uploads::findOrFail($upload);
+        $file = MedicalUpload::findOrFail($upload);
         $path = (string) $file->path;
 
         // Files of an installation before this change: their path is the old public folder.

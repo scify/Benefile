@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\Benefiters_Tables_Models\BenefiterReferrals;
-use App\Models\Benefiters_Tables_Models\BenefiterReferrals_lookup;
+use App\Models\Referral;
+use App\Models\ReferralType;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Collection;
 
@@ -25,7 +25,7 @@ class ReferralService
     {
         $types = (array) ($request['basic_info_referrals_id'] ?? []);
         foreach (array_values($types) as $i => $type) {
-            $referral = new BenefiterReferrals();
+            $referral = new Referral();
             $referral->description = $request['basic_info_referrals_text'][$i] ?? '';
             $referral->referral_date = $this->dates->makeDBFriendlyDate($request['basic_info_referrals_date'][$i] ?? '');
             $referral->benefiter_id = $benefiterId;
@@ -40,22 +40,22 @@ class ReferralService
      */
     public function delete(int $benefiterId, int $referralId): void
     {
-        BenefiterReferrals::where('id', $referralId)->where('benefiter_id', $benefiterId)->delete();
+        Referral::where('id', $referralId)->where('benefiter_id', $benefiterId)->delete();
     }
 
     /**
-     * @return Collection<int, BenefiterReferrals> The latest first.
+     * @return Collection<int, Referral> The latest first.
      */
     public function forBeneficiary(int $benefiterId): Collection
     {
-        return BenefiterReferrals::where('benefiter_id', $benefiterId)->orderBy('referral_date', 'desc')->get();
+        return Referral::where('benefiter_id', $benefiterId)->orderBy('referral_date', 'desc')->get();
     }
 
     /**
-     * @return list<BenefiterReferrals_lookup> The types of referral.
+     * @return list<ReferralType> The types of referral.
      */
     public function types(): array
     {
-        return BenefiterReferrals_lookup::get()->all();
+        return ReferralType::get()->all();
     }
 }

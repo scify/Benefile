@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Models\Benefiters_Tables_Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Benefiter extends Model
+class Beneficiary extends Model
 {
     use SoftDeletes;
 
@@ -57,16 +57,16 @@ class Benefiter extends Model
 
     public function educationLookup(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne(\App\Models\Benefiters_Tables_Models\EducationLookup::class, 'id', 'education_id');
+        return $this->hasOne(\App\Models\Education::class, 'id', 'education_id');
     }
 
     public function medical_visits(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(\App\Models\Benefiters_Tables_Models\medical_visits::class, 'benefiter_id', 'id');
+        return $this->hasMany(\App\Models\MedicalVisit::class, 'benefiter_id', 'id');
     }
 
     public function gender(): \Illuminate\Database\Eloquent\Relations\HasOne{
-        return $this->hasOne(\App\Models\Benefiters_Tables_Models\Genders_lookup::class, 'id', 'gender_id');
+        return $this->hasOne(\App\Models\Gender::class, 'id', 'gender_id');
     }
 
     public function socialFolder(): \Illuminate\Database\Eloquent\Relations\HasOne
@@ -94,7 +94,7 @@ class Benefiter extends Model
      */
     protected static function booted(): void
     {
-        static::created(function (Benefiter $benefiter): void {
+        static::created(function (Beneficiary $benefiter): void {
             \App\Models\Folders\SocialFolder::firstOrCreate(['benefiter_id' => $benefiter->id], ['comments' => '']);
         });
     }

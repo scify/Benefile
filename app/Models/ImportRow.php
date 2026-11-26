@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models\Benefiters_Tables_Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class File_import_schema extends Model
+class ImportRow extends Model
 {
     protected $table = 'File_Import_Schema';
     protected $primaryKey = 'id';

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models\Benefiters_Tables_Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class medical_chronic_conditions_lookup extends Model
+class ChronicCondition extends Model
 {
     protected $table = 'medical_chronic_conditions_lookup';
     protected $fillable = ['description'];

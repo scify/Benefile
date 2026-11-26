@@ -1,22 +1,22 @@
 <?php namespace App\Services;
 
-use App\Models\Benefiters_Tables_Models\Benefiter;
-use App\Models\Benefiters_Tables_Models\medical_chronic_conditions;
-use App\Models\Benefiters_Tables_Models\medical_chronic_conditions_lookup;
-use App\Models\Benefiters_Tables_Models\medical_diagnosis_results;
-use App\Models\Benefiters_Tables_Models\medical_examination_results;
-use App\Models\Benefiters_Tables_Models\medical_examinations;
-use App\Models\Benefiters_Tables_Models\medical_hospitalizations;
-use App\Models\Benefiters_Tables_Models\medical_visits;
-use App\Models\Benefiters_Tables_Models\medical_laboratory_results;
-use App\Models\Benefiters_Tables_Models\medical_examination_results_lookup;
-use App\Models\Benefiters_Tables_Models\medical_medication;
-use App\Models\Benefiters_Tables_Models\medical_medication_lookup;
-use App\Models\Benefiters_Tables_Models\medical_referrals;
-use App\Models\Benefiters_Tables_Models\medical_uploads;
-use App\Models\Benefiters_Tables_Models\medical_incident_type_lookup;
-use App\Models\Benefiters_Tables_Models\ICD10;
-use App\Models\Benefiters_Tables_Models\medical_location_lookup;
+use App\Models\Beneficiary;
+use App\Models\VisitChronicCondition;
+use App\Models\ChronicCondition;
+use App\Models\DiagnosisResult;
+use App\Models\ExaminationResult;
+use App\Models\PhysicalExamination;
+use App\Models\Hospitalization;
+use App\Models\MedicalVisit;
+use App\Models\LabResult;
+use App\Models\ExaminationResultType;
+use App\Models\Medication;
+use App\Models\Medicine;
+use App\Models\MedicalReferral;
+use App\Models\MedicalUpload;
+use App\Models\IncidentType;
+use App\Models\Icd10Code;
+use App\Models\Location;
 use App\Services\DatesHelper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -171,7 +171,7 @@ class BenefiterMedicalFolderService
 
     //----------- medical_visit table ------------------------------------DONE//
     private function create_medical_visit($request){
-        $newMedicalVisit = new medical_visits();
+        $newMedicalVisit = new MedicalVisit();
         $newMedicalVisit->benefiter_id = $request['benefiter_id'];
         $newMedicalVisit->doctor_id = $request['doctor_id'];
 
@@ -184,7 +184,7 @@ class BenefiterMedicalFolderService
     private function add_dynamically_medical_locations_to_lookup($request){
         if(!is_int($request['medical_location_id']) && !empty($request['new_medical_location'])){
             // add the input value to medical locations table and return the table id
-            $new_medical_location = new medical_location_lookup();
+            $new_medical_location = new Location();
             $new_medical_location->description = $request['new_medical_location'];
             $new_medical_location->save();
 
@@ -202,9 +202,9 @@ class BenefiterMedicalFolderService
         $request_medical_chronic_conditions = $this->get_medical_chronic_conditions($request);
         foreach($request_medical_chronic_conditions as $cc){
             if(!empty($cc)){
-                $medical_chronic_conditions = new medical_chronic_conditions();
+                $medical_chronic_conditions = new VisitChronicCondition();
                 // save to lookup first
-                $medical_chronic_conditions_lookup = new medical_chronic_conditions_lookup();
+                $medical_chronic_conditions_lookup = new ChronicCondition();
                 $medical_chronic_conditions_lookup->description = $cc;
                 $medical_chronic_conditions_lookup->save();
                 // then to chronic conditions table
@@ -236,12 +236,12 @@ class BenefiterMedicalFolderService
                 if(!empty($request_med_exams_results[$i])) {
                     for ($j = 0; $j < legacy_count($request_med_exams_results[$i]); $j++) {
                         if (!empty($request_med_exams_results[$i][$j])) {
-                            $medical_examination_results = new medical_examination_results();
+                            $medical_examination_results = new ExaminationResult();
                             $medical_examination_results->description = $request_med_exams_description[$i];
                             $medical_examination_results->icd10_id = $request_med_exams_results[$i][$j];
                             $medical_examination_results->medical_visit_id = $id;
                             // get medical examinations list from the lookup table
-                            $med_exams_lookup_item = medical_examination_results_lookup::where('id', '=', $i + 1)->value('id');
+                            $med_exams_lookup_item = ExaminationResultType::where('id', '=', $i + 1)->value('id');
                             $medical_examination_results->results_lookup_id = $med_exams_lookup_item;
 
                             $medical_examination_results->save();
@@ -255,7 +255,7 @@ class BenefiterMedicalFolderService
     //----------- medical_examinations table ----------------------------DONE//
     // DB save
     private function save_medical_examinations($request, $id){
-        $medical_examination = new medical_examinations();
+        $medical_examination = new PhysicalExamination();
 
         $medical_examination->height = $request['height'];
         $medical_examination->weight = $request['weight'];
@@ -275,7 +275,7 @@ class BenefiterMedicalFolderService
         $request_lab_results = $this->medical_laboratory_results($request);
         foreach($request_lab_results as $rlr){
             if(!empty($rlr)){
-                $lab_results = new medical_laboratory_results();
+                $lab_results = new LabResult();
 
                 $lab_results->laboratory_results = $rlr;
                 $lab_results->medical_visit_id = $id;
@@ -300,7 +300,7 @@ class BenefiterMedicalFolderService
         $request_diagnosis_results = $this->medical_diagnosis_results($request);
         foreach($request_diagnosis_results as $rdr){
             if(!empty($rdr)){
-                $diagnosis_results = new medical_diagnosis_results();
+                $diagnosis_results = new DiagnosisResult();
 
                 $diagnosis_results->diagnosis_results = $rdr;
                 $diagnosis_results->medical_visit_id = $id;
@@ -326,7 +326,7 @@ class BenefiterMedicalFolderService
         $request_hospitalization_dates = $this->medical_hospitalization_dates($request);
         foreach($request_hospitalizations as $i=>$rh){
             if(!empty($rh)){
-                $hospitalization = new medical_hospitalizations();
+                $hospitalization = new Hospitalization();
 
                 $hospitalization->hospitalizations = $rh;
                 $hospitalization->hospitalization_date = $this->datesHelper->makeDBFriendlyDate($request_hospitalization_dates[$i]);
@@ -380,7 +380,7 @@ class BenefiterMedicalFolderService
         for($i=0; $i<$request_medication_Number ; $i++){
             // Medicinal condition DB entry (save to DB only if all fields are filled)
             if(!empty($request_medication_dosage[$i]) && !empty($request_medication_duration[$i])) {
-                $med_medication = new medical_medication();
+                $med_medication = new Medication();
 
                 // check if the request comes from the auto complete select (from lookup)
                 if (empty($request_medication_new_name[$i]) && !empty($request_medication_name_from_lookup[$i])) {
@@ -402,7 +402,7 @@ class BenefiterMedicalFolderService
                 else if(!empty($request_medication_new_name[$i])){
                     $request_medication_name[$i] = $request_medication_new_name[$i];
 
-                    $med_medication_lookup = new medical_medication_lookup();
+                    $med_medication_lookup = new Medicine();
                     $med_medication_lookup->description = $request_medication_name[$i];
                     $med_medication_lookup->save();
 
@@ -430,7 +430,7 @@ class BenefiterMedicalFolderService
         $request_medical_referrals_is_done = $this->medical_referrals_is_done($request);
         foreach($request_medical_referrals as $i => $rmr){
             if(!empty($rmr)){
-                $med_referral = new medical_referrals();
+                $med_referral = new MedicalReferral();
                 $med_referral->referrals = $rmr;
                 $med_referral->medical_visit_id = $id;
                 $med_referral->is_done_id = $request_medical_referrals_is_done[$i];
@@ -470,7 +470,7 @@ class BenefiterMedicalFolderService
             if(!empty($file[$i])){
 
                 [$fileName, $storedPath] = $this->storeMedicalUpload($file[$i], (int) $id);
-                $medical_upload = new medical_uploads();
+                $medical_upload = new MedicalUpload();
                 $medical_upload->title = $fileName;
                 $medical_upload->description = $request_upload_file_description[$i];
                 $medical_upload->path = $storedPath;
@@ -509,11 +509,11 @@ class BenefiterMedicalFolderService
     private function update_medical_visit_rows($request, $selected_medical_visit_id){
         $visitId = $this->update_medical_visit($request, $selected_medical_visit_id);
         // The rows belong to the beneficiary of the visit, whatever the form sends.
-        $request = array_merge($request, ['benefiter_id' => medical_visits::whereKey($visitId)->value('benefiter_id')]);
+        $request = array_merge($request, ['benefiter_id' => MedicalVisit::whereKey($visitId)->value('benefiter_id')]);
 
-        foreach ([medical_chronic_conditions::class, medical_examination_results::class, medical_examinations::class,
-                  medical_laboratory_results::class, medical_diagnosis_results::class, medical_hospitalizations::class,
-                  medical_medication::class, medical_referrals::class] as $section) {
+        foreach ([VisitChronicCondition::class, ExaminationResult::class, PhysicalExamination::class,
+                  LabResult::class, DiagnosisResult::class, Hospitalization::class,
+                  Medication::class, MedicalReferral::class] as $section) {
             $section::where('medical_visit_id', $visitId)->delete();
         }
 
@@ -530,7 +530,7 @@ class BenefiterMedicalFolderService
 
     //----------- medical_visit table ------------------------------------DONE//
     private function update_medical_visit($request, $selected_medical_visit_id){
-        $updateddMedicalVisit = medical_visits::findOrFail($selected_medical_visit_id);
+        $updateddMedicalVisit = MedicalVisit::findOrFail($selected_medical_visit_id);
 
         // The beneficiary and the doctor of a visit do not change.
         $updateddMedicalVisit->medical_location_id = $this->add_dynamically_medical_locations_to_lookup($request);
@@ -548,7 +548,7 @@ class BenefiterMedicalFolderService
         $file = request()->file('upload_file_title');
         $requests_count = legacy_count($request_upload_file_title);
 
-        $saved_files = medical_uploads::where("medical_visit_id", $selected_medical_visit_id)->get();
+        $saved_files = MedicalUpload::where("medical_visit_id", $selected_medical_visit_id)->get();
         $saved_files_count = legacy_count($saved_files);
         $counter = 0;
         // if the request array is bigger than the saved then update what is saved and then add new rows for the new requests
@@ -557,7 +557,7 @@ class BenefiterMedicalFolderService
                 if ($counter < $saved_files_count) {
                     if(!empty($file[$i])){
                         [$fileName, $storedPath] = $this->storeMedicalUpload($file[$i], (int) $selected_medical_visit_id);
-                        $medical_upload = medical_uploads::find($saved_files[$counter]['id']);
+                        $medical_upload = MedicalUpload::find($saved_files[$counter]['id']);
                         $medical_upload->title = $fileName;
                         $medical_upload->description = $request_upload_file_description[$i];
                         $medical_upload->path = $storedPath;
@@ -567,7 +567,7 @@ class BenefiterMedicalFolderService
                 } else {
                     if(!empty($file[$i])){
                         [$fileName, $storedPath] = $this->storeMedicalUpload($file[$i], (int) $selected_medical_visit_id);
-                        $medical_upload = new medical_uploads();
+                        $medical_upload = new MedicalUpload();
                         $medical_upload->title = $fileName;
                         $medical_upload->description = $request_upload_file_description[$i];
                         $medical_upload->path = $storedPath;
@@ -581,7 +581,7 @@ class BenefiterMedicalFolderService
         }else{
             for($j=0; $j<$saved_files_count; $j++){
                 if ($counter < $requests_count) {
-                    $medical_upload = medical_uploads::find($saved_files[$counter]['id']);
+                    $medical_upload = MedicalUpload::find($saved_files[$counter]['id']);
                     $medical_upload->description = $request_upload_file_description[$j];
                     if(!empty($file[$j])){
                         [$fileName, $storedPath] = $this->storeMedicalUpload($file[$j], (int) $selected_medical_visit_id);
@@ -591,7 +591,7 @@ class BenefiterMedicalFolderService
                     }
                     $medical_upload->save();
                 } else {
-                    $medical_upload = medical_uploads::find($saved_files[$counter]['id']);
+                    $medical_upload = MedicalUpload::find($saved_files[$counter]['id']);
                     $medical_upload->delete();
                 }
                 $counter++;
@@ -627,40 +627,40 @@ class BenefiterMedicalFolderService
     }
     // medical visits for each benefiter
     public function findMedicalVisitsForBenefiter($id){
-        return medical_visits::where('benefiter_id', $id)->with('doctor', 'medicalLocation', 'medicalIncidentType')->orderBy('medical_visit_date', 'desc')->get();
+        return MedicalVisit::where('benefiter_id', $id)->with('doctor', 'medicalLocation', 'medicalIncidentType')->orderBy('medical_visit_date', 'desc')->get();
     }
     // chronic conditions for each benefiter
     public function findMedicalChronicConditionsForBenefiter($benefiter_id, $medical_visit_id){
-        return medical_chronic_conditions::where('benefiters_id', $benefiter_id)->where('medical_visit_id', $medical_visit_id)->with('chronic_conditions_lookup')->get();;
+        return VisitChronicCondition::where('benefiters_id', $benefiter_id)->where('medical_visit_id', $medical_visit_id)->with('chronic_conditions_lookup')->get();;
     }
     // number of medical visits foreach benefiter
     public function benefiter_medical_visits_number($id){
-        $medical_visits_number = medical_visits::where('benefiter_id', $id)->count();
+        $medical_visits_number = MedicalVisit::where('benefiter_id', $id)->count();
         return $medical_visits_number;
     }
     // find benefiter folder number
     public function find_benefiter_folder_number($id){
-        $benefiter_folder_number = Benefiter::where('id', '=', $id)->first()->folder_number;
+        $benefiter_folder_number = Beneficiary::where('id', '=', $id)->first()->folder_number;
         return $benefiter_folder_number;
     }
     // examination results
     public function examinationsResultsLookup(){
-        $examResultsLookup = medical_examination_results_lookup::get()->all();
+        $examResultsLookup = ExaminationResultType::get()->all();
         return $examResultsLookup;
     }
     // get all medical examinaiton results from lookup
     public function get_medical_examination_results_from_lookup(){
-        $ExamResultsLookup = medical_examination_results_lookup::get()->all();
+        $ExamResultsLookup = ExaminationResultType::get()->all();
         return $ExamResultsLookup;
     }
     // Medical Visit location
     public function medicalLocationsLookup(){
-        $medical_locations = medical_location_lookup::get();
+        $medical_locations = Location::get();
         return $medical_locations;
     }
     // Incident type
     public function medicalIncidentTypeLookup(){
-        $medical_incident_type = medical_incident_type_lookup::get();
+        $medical_incident_type = IncidentType::get();
         return $medical_incident_type;
     }
     // doctor id
@@ -670,77 +670,77 @@ class BenefiterMedicalFolderService
     }
     // physical examinations
     public function findMedicalVisitExamination($med_visit_id){
-        $med_visit_examination = medical_examinations::where('medical_visit_id', $med_visit_id)->first();
+        $med_visit_examination = PhysicalExamination::where('medical_visit_id', $med_visit_id)->first();
         return $med_visit_examination;
     }
     // Examination results
     public function findMedicalVisitExaminationResults($med_visit_id){
-        $med_visit_exam_results = medical_examination_results::where('medical_visit_id', $med_visit_id)->with('icd10')->orderBy('results_lookup_id')->get();
+        $med_visit_exam_results = ExaminationResult::where('medical_visit_id', $med_visit_id)->with('icd10')->orderBy('results_lookup_id')->get();
         return $med_visit_exam_results;
     }
     // get all medical visits for a benefiter
     public function get_all_medical_visits_for_benefiter($id){
-        $benefiter_medical_history_list = medical_visits::where('benefiter_id', $id)->with('doctor', 'medicalLocation')->get();
+        $benefiter_medical_history_list = MedicalVisit::where('benefiter_id', $id)->with('doctor', 'medicalLocation')->get();
         return $benefiter_medical_history_list;
     }
     // count benefiter's medical visits
     public function count_medical_visits_for_a_benefiter($id){
-        $medical_visits_number = medical_visits::where('benefiter_id', $id)->count();
+        $medical_visits_number = MedicalVisit::where('benefiter_id', $id)->count();
         return $medical_visits_number;
     }
     // Lab results
     public function findMedicalVisitLabResults($med_visit_id){
-        $med_visit_lab_results = medical_laboratory_results::where('medical_visit_id', $med_visit_id)->get();
+        $med_visit_lab_results = LabResult::where('medical_visit_id', $med_visit_id)->get();
         return $med_visit_lab_results;
     }
     // Diagnosis results
     public function findMedicalVisitDiagnosisResults($med_visit_id){
-        $med_visit_diagnosis_results = medical_diagnosis_results::where('medical_visit_id', $med_visit_id)->get();
+        $med_visit_diagnosis_results = DiagnosisResult::where('medical_visit_id', $med_visit_id)->get();
         return $med_visit_diagnosis_results;
     }
     // Medication
     public function findMedicalVisitMedication($med_visit_id){
-        $med_visit_medication = medical_medication::where('medical_visit_id', $med_visit_id)->with('medical_medication_lookup')->get();
+        $med_visit_medication = Medication::where('medical_visit_id', $med_visit_id)->with('medical_medication_lookup')->get();
         return $med_visit_medication;
     }
     // Hospitalization
     public function findMedicalVisitHospitalizations($med_visit_id){
-        $med_visit_hospitalizations = medical_hospitalizations::where('medical_visit_id', $med_visit_id)->get();
+        $med_visit_hospitalizations = Hospitalization::where('medical_visit_id', $med_visit_id)->get();
         return $med_visit_hospitalizations;
     }
     // Referrals
     public function findMedicalVisitReferrals($med_visit_id){
-        $med_visit_referrals = medical_referrals::where('medical_visit_id', $med_visit_id)->get();
+        $med_visit_referrals = MedicalReferral::where('medical_visit_id', $med_visit_id)->get();
         return $med_visit_referrals;
     }
     // Uploads
     public function findMedicalVisitUploads($med_visit_id){
-        $med_visit_uploads = medical_uploads::where('medical_visit_id', $med_visit_id)->get();
+        $med_visit_uploads = MedicalUpload::where('medical_visit_id', $med_visit_id)->get();
         return $med_visit_uploads;
     }
     // find name of ICD10 list by id
     public function getICD10By_id($id){
-        $description = ICD10::where('id', '=', $id)->first()->description;
-        $code = ICD10::where('id', '=', $id)->first()->code;
+        $description = Icd10Code::where('id', '=', $id)->first()->description;
+        $code = Icd10Code::where('id', '=', $id)->first()->code;
         $result = $code .': '. $description;
         return $result;
     }
     // find medication name by id
     public function getMedicationLookupBy_id($id){
-        $medicine_name = medical_medication_lookup::where('id', '=', $id)->first()->description;
+        $medicine_name = Medicine::where('id', '=', $id)->first()->description;
         return $medicine_name;
     }
     public function getAllMedicalLocations(){
-        return medical_location_lookup::get()->all();
+        return Location::get()->all();
     }
     // find medical medicinal name from lookup using partial name
     public function get_full_medication_name($partial_name){
-        $full_medication_name = medical_medication_lookup::where('description','LIKE', '%'.$partial_name.'%' );
+        $full_medication_name = Medicine::where('description','LIKE', '%'.$partial_name.'%' );
         return $full_medication_name;
     }
     // find ICD10 from lookup using partial name
     public function get_full_icd10_description($partial_name){
-        $full_icd10_description = ICD10::where('description','LIKE', '%'.$partial_name.'%' )
+        $full_icd10_description = Icd10Code::where('description','LIKE', '%'.$partial_name.'%' )
                                         ->orWhere('code', 'LIKE', '%'.$partial_name.'%')->get();
         return $full_icd10_description;
     }
@@ -748,7 +748,7 @@ class BenefiterMedicalFolderService
     public function findAllMedicalVisitsReferralsForBenefiter($visitsList){
         $result = array();
         foreach($visitsList as $visit){
-            $tmp = medical_referrals::where('medical_visit_id', '=', $visit->id)->get();
+            $tmp = MedicalReferral::where('medical_visit_id', '=', $visit->id)->get();
             array_push($result, $tmp);
         }
         return $result;

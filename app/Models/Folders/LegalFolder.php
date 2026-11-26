@@ -2,7 +2,7 @@
 
 namespace App\Models\Folders;
 
-use App\Models\Benefiters_Tables_Models\Benefiter;
+use App\Models\Beneficiary;
 use App\Models\LegalSession;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,10 +19,10 @@ class LegalFolder extends Model
     /** @var list<string> */
     protected $fillable = ['legal_folder_status_id', 'penalty_id', 'penalty_text', 'benefiter_id'];
 
-    /** @return BelongsTo<Benefiter, $this> */
+    /** @return BelongsTo<Beneficiary, $this> */
     public function benefiter(): BelongsTo
     {
-        return $this->belongsTo(Benefiter::class, 'benefiter_id');
+        return $this->belongsTo(Beneficiary::class, 'benefiter_id');
     }
 
     /** @return HasOne<AsylumRequest, $this> */

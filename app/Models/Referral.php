@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models\Benefiters_Tables_Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class BenefiterReferrals extends Model
+class Referral extends Model
 {
     protected $table = 'benefiter_referrals';
 
@@ -16,7 +16,7 @@ class BenefiterReferrals extends Model
         'referral_lookup_id'];
 
     public function referralType(): \Illuminate\Database\Eloquent\Relations\HasOne{
-        return $this->hasOne(\App\Models\Benefiters_Tables_Models\BenefiterReferrals_lookup::class, 'id', 'referral_lookup_id');
+        return $this->hasOne(\App\Models\ReferralType::class, 'id', 'referral_lookup_id');
     }
 
     public function user(): \Illuminate\Database\Eloquent\Relations\HasOne{

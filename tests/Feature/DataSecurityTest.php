@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\Benefiters_Tables_Models\medical_uploads;
+use App\Models\MedicalUpload;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -59,7 +59,7 @@ class DataSecurityTest extends FeatureTestCase
     {
         Storage::fake('local');
         Storage::disk('local')->put('medical-uploads/abc.pdf', 'PDF content');
-        $upload = new medical_uploads();
+        $upload = new MedicalUpload();
         $upload->title = 'medical_visit-1-lab-results.pdf';
         $upload->description = 'Lab results';
         $upload->path = 'medical-uploads/abc.pdf';

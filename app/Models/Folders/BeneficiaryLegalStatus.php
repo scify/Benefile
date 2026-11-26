@@ -2,7 +2,7 @@
 
 namespace App\Models\Folders;
 
-use App\Models\Benefiters_Tables_Models\Benefiter;
+use App\Models\Beneficiary;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -16,9 +16,9 @@ class BeneficiaryLegalStatus extends Model
     /** @var list<string> */
     protected $fillable = ['description', 'exp_date', 'benefiter_id', 'legal_lookup_id'];
 
-    /** @return BelongsTo<Benefiter, $this> */
+    /** @return BelongsTo<Beneficiary, $this> */
     public function benefiter(): BelongsTo
     {
-        return $this->belongsTo(Benefiter::class, 'benefiter_id');
+        return $this->belongsTo(Beneficiary::class, 'benefiter_id');
     }
 }

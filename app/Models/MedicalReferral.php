@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models\Benefiters_Tables_Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class medical_referrals extends Model
+class MedicalReferral extends Model
 {
     protected $table = 'medical_referrals';
 
@@ -14,6 +14,6 @@ class medical_referrals extends Model
 
     public function medical_visits(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne(\App\Models\Benefiters_Tables_Models\medical_visits::class, 'medical_visit_id');
+        return $this->hasOne(\App\Models\MedicalVisit::class, 'medical_visit_id');
     }
 }

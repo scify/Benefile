@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models\Benefiters_Tables_Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class medical_diagnosis_results extends Model
+class DiagnosisResult extends Model
 {
     protected $table = 'medical_diagnosis_results';
 
@@ -14,6 +14,6 @@ class medical_diagnosis_results extends Model
 
     public function medical_visits(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(\App\Models\Benefiters_Tables_Models\medical_visits::class, 'medical_visit_id');
+        return $this->belongsTo(\App\Models\MedicalVisit::class, 'medical_visit_id');
     }
 }

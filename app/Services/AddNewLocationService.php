@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Benefiters_Tables_Models\medical_location_lookup;
+use App\Models\Location;
 use Illuminate\Support\Facades\Validator;
 
 class AddNewLocationService{
@@ -15,7 +15,7 @@ class AddNewLocationService{
     }
 
     public function saveNewLocationToDB($request){
-        $location = new medical_location_lookup();
+        $location = new Location();
         $location->description = $request['new_location'];
         $location->save();
     }

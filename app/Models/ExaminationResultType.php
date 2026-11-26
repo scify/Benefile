@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models\Benefiters_Tables_Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class medical_examination_results_lookup extends Model
+class ExaminationResultType extends Model
 {
     protected $table = 'medical_examination_results_lookup';
     protected $primaryKey = 'id';

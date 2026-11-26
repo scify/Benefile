@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Support\Facades\DB;
 
-use App\Models\Benefiters_Tables_Models\Benefiter as Benefiter;
+use App\Models\Beneficiary;
 use Illuminate\Database\Seeder;
 
 class TestBenefitersSeeder extends Seeder
@@ -23,7 +23,7 @@ class TestBenefitersSeeder extends Seeder
             )
         );
 
-        Benefiter::create(array(
+        Beneficiary::create(array(
                 'folder_number'                 => 'KK1',
                 'name'                          => 'Ben-name-1',
                 'lastname'                      => 'Ben-lastname-1',
@@ -58,7 +58,7 @@ class TestBenefitersSeeder extends Seeder
                 'work_title_id'                 => 1
         ));
 
-        Benefiter::create(array(
+        Beneficiary::create(array(
             'folder_number'                 => 'KK2',
             'name'                          => 'Ben-name-2',
             'lastname'                      => 'Ben-lastname-2',
@@ -93,7 +93,7 @@ class TestBenefitersSeeder extends Seeder
             'work_title_id'                 => 1
         ));
 
-        Benefiter::create(array(
+        Beneficiary::create(array(
             'folder_number'                 => 'KK3',
             'name'                          => 'Ben-name-1',
             'lastname'                      => 'Ben-lastname-1',
@@ -128,7 +128,7 @@ class TestBenefitersSeeder extends Seeder
             'work_title_id'                 => 2
         ));
 
-        Benefiter::create(array(
+        Beneficiary::create(array(
             'folder_number'                 => 'KK4',
             'name'                          => 'Ben-name-3',
             'lastname'                      => 'Ben-lastname-3',
@@ -163,7 +163,7 @@ class TestBenefitersSeeder extends Seeder
             'work_title_id'                 => 3
         ));
 
-        Benefiter::create(array(
+        Beneficiary::create(array(
             'folder_number'                 => 'KK5',
             'name'                          => 'Ben-name-4',
             'lastname'                      => 'Ben-lastname-4',
@@ -199,7 +199,7 @@ class TestBenefitersSeeder extends Seeder
             'created_at'                    => date('2015-01-25')
         ));
 
-        Benefiter::create(array(
+        Beneficiary::create(array(
             'folder_number'                 => 'KK6',
             'name'                          => 'Ben-name-5',
             'lastname'                      => 'Ben-lastname-5',

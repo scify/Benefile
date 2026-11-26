@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models\Benefiters_Tables_Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class EducationLookup extends Model
+class Education extends Model
 {
     protected $table = 'education_lookup';
     protected $primaryKey = 'id';

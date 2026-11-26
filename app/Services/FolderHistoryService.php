@@ -3,9 +3,9 @@
 namespace App\Services;
 
 use App\Models\BasicFolderHistory;
-use App\Models\Benefiters_Tables_Models\Benefiter;
-use App\Models\Benefiters_Tables_Models\medical_location_lookup;
-use App\Models\Benefiters_Tables_Models\medical_visits;
+use App\Models\Beneficiary;
+use App\Models\Location;
+use App\Models\MedicalVisit;
 use App\Models\LegalSession;
 use App\Models\PsychosocialSession;
 use App\Models\User;
@@ -37,7 +37,7 @@ class FolderHistoryService
      */
     public function forBeneficiary(int $benefiterId, ?User $viewer): array
     {
-        $benefiter = Benefiter::find($benefiterId);
+        $benefiter = Beneficiary::find($benefiterId);
         if ($benefiter === null) {
             return [];
         }
@@ -52,11 +52,11 @@ class FolderHistoryService
      */
     public function forAllBeneficiaries(?User $viewer): array
     {
-        return $this->build(Benefiter::orderBy('id')->get(), $viewer);
+        return $this->build(Beneficiary::orderBy('id')->get(), $viewer);
     }
 
     /**
-     * @param  Collection<int, Benefiter>  $benefiters
+     * @param  Collection<int, Beneficiary>  $benefiters
      * @return array<int, list<AllFoldersUsageHistory>>
      */
     private function build(Collection $benefiters, ?User $viewer): array
@@ -69,7 +69,7 @@ class FolderHistoryService
         foreach (BasicFolderHistory::whereIn('benefiter_id', $ids)->get() as $row) {
             $history[$row->benefiter_id][] = $this->entry($byId[$row->benefiter_id], (int) $row->user_id, (int) $row->medical_location_id, $row->update_date, (string) $row->comments, 'basic', false);
         }
-        foreach (medical_visits::whereIn('benefiter_id', $ids)->get() as $row) {
+        foreach (MedicalVisit::whereIn('benefiter_id', $ids)->get() as $row) {
             $history[$row->benefiter_id][] = $this->entry($byId[$row->benefiter_id], (int) $row->doctor_id, (int) $row->medical_location_id, $row->medical_visit_date, '', 'medical', true);
         }
 
@@ -92,7 +92,7 @@ class FolderHistoryService
         return $history;
     }
 
-    private function entry(Benefiter $benefiter, int $userId, int $locationId, mixed $date, string $comments, string $folder, bool $withSpecialty): AllFoldersUsageHistory
+    private function entry(Beneficiary $benefiter, int $userId, int $locationId, mixed $date, string $comments, string $folder, bool $withSpecialty): AllFoldersUsageHistory
     {
         $user = $this->users()->get($userId);
         $role = (string) ($user?->role->role ?? '');
@@ -121,6 +121,6 @@ class FolderHistoryService
     /** @return Collection<int, string> */
     private function locations(): Collection
     {
-        return $this->locations ??= medical_location_lookup::pluck('description', 'id');
+        return $this->locations ??= Location::pluck('description', 'id');
     }
 }
