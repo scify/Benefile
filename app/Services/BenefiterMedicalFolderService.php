@@ -33,9 +33,6 @@ class BenefiterMedicalFolderService
         $this->datesHelper = new DatesHelper();
     }
 
-    //-----------------------------------------------//
-    // PART 1 : validate the medical info frm the post
-    //-----------------------------------------------//
     public function medicalValidation($request){
         $rules = array(
             'examination_date'         => 'required|date',
@@ -54,7 +51,6 @@ class BenefiterMedicalFolderService
         foreach ($chronic_conditions as $i=>$cc){
             $rules['chronic_conditions.'.$i] = 'max:255';
         }
-
 
         // VALIDATE - clinical results
         if(!empty($request['examResultLoukup'])){
@@ -135,18 +131,6 @@ class BenefiterMedicalFolderService
         });
         return $validator;
     }
-
-
-
-
-
-
-
-
-
-    //--------------------------------------------------------------------//
-    // PART 2 : insert into DB benefiter medical tables
-    //--------------------------------------------------------------------//
 
     /**
      * Saves a new visit with all its sections, in one transaction: all or nothing.
@@ -498,20 +482,9 @@ class BenefiterMedicalFolderService
         }
     }
 
-
-
-
-
-
-
-
-
-
-
     // ------------------------------------------------------------------ //
     // PART 3 : EDIT SAVED MEDICAL VISIT
     //--------------------------------------------------------------------//
-
 
     /**
      * Saves the changes of a visit with all its sections, in one transaction: all or nothing.
@@ -568,14 +541,6 @@ class BenefiterMedicalFolderService
         return $updateddMedicalVisit->id;
     }
 
-
-
-
-
-
-
-
-
     //----------- medical_uploads table ----------------------------//
     // DB save
     private function update_medical_uploads($request, $selected_medical_visit_id){
@@ -602,7 +567,6 @@ class BenefiterMedicalFolderService
                     }
                 } else {
                     if(!empty($file[$i])){
-//                    if(!empty($request_medical_referrals[$i])){
                         [$fileName, $storedPath] = $this->storeMedicalUpload($file[$i], (int) $selected_medical_visit_id);
                         $medical_upload = new medical_uploads();
                         $medical_upload->title = $fileName;
@@ -635,30 +599,11 @@ class BenefiterMedicalFolderService
             }
         }
 
-//        for ($i = 0; $i < $requests_count; $i++) {
-//            if(!empty($file[$i])){
-//                $path = base_path() . '/public/uploads/medical-visit-uploads/';
-//                $fileName = $file[$i]->getClientOriginalName() . '-medical_visit-' . $selected_medical_visit_id;
-//                $file[$i]->move($path, $fileName); // uploading file to given path
-//
-//                $medical_upload = new medical_uploads();
-//                $medical_upload->title = $fileName;
-//                $medical_upload->description = $request_upload_file_description[$i];
-//                $medical_upload->path = $path;
-//                $medical_upload->medical_visit_id = $selected_medical_visit_id;
-//
-//                $medical_upload->save();
-//            }
-//        }
     }
-
 
     // ------------------------------------------------------------------ //
     // PART 3 : END
     //--------------------------------------------------------------------//
-
-
-
 
     // FUNCTIONS USED BY MANY
 
@@ -744,11 +689,6 @@ class BenefiterMedicalFolderService
         $medical_visits_number = medical_visits::where('benefiter_id', $id)->count();
         return $medical_visits_number;
     }
-    // find medical examination results by id
-    public function find_medical_examination_results_lookup_id($id){
-        $medical_examination_results_lookup_id = medical_examination_results_lookup::where('id', '=', $id)->value('id');
-        return $medical_examination_results_lookup_id;
-    }
     // Lab results
     public function findMedicalVisitLabResults($med_visit_id){
         $med_visit_lab_results = medical_laboratory_results::where('medical_visit_id', $med_visit_id)->get();
@@ -791,7 +731,6 @@ class BenefiterMedicalFolderService
         $medicine_name = medical_medication_lookup::where('id', '=', $id)->first()->description;
         return $medicine_name;
     }
-    // return all the medical locations
     public function getAllMedicalLocations(){
         return medical_location_lookup::get()->all();
     }

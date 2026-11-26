@@ -35,22 +35,18 @@ class ReportsService{
 
     public function getReportDataForUsersMaritalStatus() {
         try {
-            // $maritalStatuses = \DB::select("select id, marital_status_title from marital_status_lookup group by id");
             $benefitersMaritalStatuses = \DB::select("select marital_status_lookup.id, marital_status_lookup.marital_status_title, count(benefiters.marital_status_id) as marital_counter from marital_status_lookup left join benefiters on (marital_status_lookup.id = benefiters.marital_status_id) group by marital_status_lookup.id");
         } catch (\Exception $e) {
             Log::error("A problem occured while trying to count the users based on marital status.");
             return null;
         }
         Log::info("Returning result with users based on their marital status.");
-        // dd($benefitersMaritalStatuses);
         return $benefitersMaritalStatuses;
     }
 
     public function getReportDataForBenefitersAge() {
         try {
-            // $benefitersAge = \DB::select("select datediff(current_date, str_to_date(t.birth_date, '%Y-%m-%d'))/365 as ageInYears from benefiters t");
             $benefitersAge = \DB::select(" select count(*) as counter, floor(datediff(current_date, str_to_date(t.birth_date, '%Y-%m-%d'))/365/10)*10 as ageInYears from benefiters t group by ageInYears");
-            // dd($benefitersAge);
         } catch (\Exception $e) {
             return null;
         }
@@ -69,7 +65,6 @@ class ReportsService{
         return $benefitersLegalStatuses;
     }
 
-
     // returns data needed to display the benefiters work titles report
     public function getReportDataForBenefitersWorkTitle(){
         try {
@@ -82,7 +77,6 @@ class ReportsService{
         // get array of the form 'work_title' => 'counter'
         $result = $this->getBenefitersWorkTitleNameCountArray($benefitersCountByWork, $workTitles);
         Log::info("Returning results with users based on their work title.");
-        // return the newly created array
         return $result;
     }
 
@@ -94,7 +88,6 @@ class ReportsService{
             Log::error("A problem occurred while trying to count the medical visits based on their location.\n" . $e);
             return null;
         }
-        // return the results to the controller
         Log::info("Returning results with medical visits based on their location.");
         return $medicalVisitsByLocation;
     }
@@ -117,7 +110,6 @@ class ReportsService{
         try {
             // get benefiter registration number for any particular month.
             $benefitersCount = \DB::select("select date_format(created_at, '%Y-%m') as created_at, count(id) as idcounter from benefiters group by date_format(created_at, '%Y %m')");
-            // $benefitersCount = \DB::select("select created_at, count(id) as idcounter from benefiters group by year(created_at), month(created_at)");
         } catch (\Exception $e) {
             Log::error("A problem occured while trying to count the users based on registration date.\n" . $e);
             return null;
@@ -146,7 +138,6 @@ class ReportsService{
                     }
                 }
             }
-            // return the correctly formatted array
             Log::info("Array of the form 'work_title' => 'counter' created and will be returned right now.");
             return $tmp;
         }
@@ -173,7 +164,6 @@ class ReportsService{
                         'female'=>$females_count,'female_percentage'=>$female_percentage,
                         'other'=>$others_count, 'other_percentage'=>$other_percentage,
                         'total_icons'=>$total_icons);
-        // return array with gender_type => number
         return $result;
     }
 
@@ -244,7 +234,6 @@ class ReportsService{
                 array_push($results, $doctor_type_result);
             }
         }
-        // return array with doctor => number of benefiters
         return $results;
     }
 
@@ -271,7 +260,6 @@ class ReportsService{
                                             'clinical_condition_count' => $current_clinical_condition_counter];
             array_push($results, $clinical_conditions_result);
         }
-        // return array with medical condition => number of benefiters with this medical condition
         return $results;
     }
 
@@ -304,7 +292,6 @@ class ReportsService{
         }
         array_multisort($sort, SORT_ASC, $results);
 
-        // return array with time_period => number of medical visits
         return $results;
     }
 
@@ -318,7 +305,6 @@ class ReportsService{
         // get all phycological visits
         $phycological_visits = PsychosocialSession::select('social_folder_id', 'psychosocial_theme_id')->get();
 
-        // foreach phycological support type count the benefiters avoiding duplicities
         foreach($phycological_support_types_lookup as $phycological_type){
             // benefiters with same psychosocial support type
             $benefiters_same_psychosocial_support_type = array();
@@ -334,7 +320,6 @@ class ReportsService{
             $phycological_support_result = ['$phycological_support_type'=> $phycological_type['description'], 'type_count'=> $benefiters_count];
             array_push($results, $phycological_support_result);
         }
-        // return array with number of benefiters per phycological support type
         return $results;
     }
     

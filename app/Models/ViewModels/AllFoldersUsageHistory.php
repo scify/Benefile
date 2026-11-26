@@ -72,5 +72,4 @@ class AllFoldersUsageHistory{
         return $this->speciality;
     }
 
-
 }

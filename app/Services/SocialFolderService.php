@@ -86,8 +86,6 @@ class SocialFolderService{
         );
     }
 
-
-
     // saves a row to the psychosocial_sessions table in DB
     private function savePsychosocialSessionToDB($request, $socialFolderId){
         if(isset($request['session_date']) && isset($request['session_comments'])) {

@@ -17,7 +17,6 @@ class ReportsController extends Controller
         $this->reportsService = new ReportsService();
     }
 
-    // return reports view with all necessary data
     public function getReports(){
         /* variables for charts */
         // count users by roles

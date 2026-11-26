@@ -64,7 +64,6 @@ class ConversionsForFileUpload{
         // Find if country is listed in table. If not, output error
         foreach ($this->countryList as $country){
             $countryRes = $country->name;
-//            $countryResUpper = $this->greekStringConversion->grstrtoupper($countryRes);
             if (strcasecmp($countryFromFileUpper, $countryRes) == 0) {
                 return $countryFromFileUpper;
             }

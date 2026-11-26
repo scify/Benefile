@@ -113,8 +113,6 @@ class BasicInfoService{
         $request['working_title'] = $this->getWorkTitleIdFromDBAndInsertNewWorkTitleIfNeeded($request['working_title']);
         Benefiter::where('id', '=', $id)->update($this->getBenefiterArrayForDBInsert($request));
         $this->editLanguagesInDB($id, $this->mergeUniqueLanguagesLevelWithNoDuplicatedLanguageArrays($request));
-//        $this->saveLanguagesToDB($id, $this->mergeUniqueLanguagesLevelWithNoDuplicatedLanguageArrays($request));
-        // if legal status is not existent, add it
         if(!array_key_exists('legal_status' ,$request)){
             $request['legal_status'] = null;
         }
@@ -404,7 +402,6 @@ class BasicInfoService{
     private function saveLegalStatusesToDB($benefiterId, $request){
         $legal_statuses_checked = $request['legal_status'];
         if($legal_statuses_checked != null) {
-//            $this->makeLegalStatusDatesAndTextsArrays($request);
             foreach ($legal_statuses_checked as $legal_status_checked) {
                 \App\Models\Folders\BeneficiaryLegalStatus::query()->insert($this->getLegalStatusArrayForDBInsert($benefiterId, intval($legal_status_checked), $request));
             }
@@ -494,13 +491,6 @@ class BasicInfoService{
         return $basic_info_referral;
     }
 
-    // get all referrals saved to db for this benefiter id
-    public function get_referrals_for_a_benefiter($id){
-        $benefiter_referrals_list = BenefiterReferrals::join('users', 'benefiter_referrals.user_id', '=', 'users.id')->where('benefiter_id', $id)->with('referralType')->orderBy('referral_date', 'desc')->get();
-        return $benefiter_referrals_list;
-    }
-
-
     // ------------------------------------------------------------------ //
     //----------- benefter occurrences table (OCCURRENCES) ---------------//
     public function saveNewOccurrence($request){
@@ -539,12 +529,6 @@ class BasicInfoService{
         benefiterOccurrences::where('id','=',$occurrence_id)->delete();
     }
 
-
-
-
-
-
-
     /**
      * The beneficiaries with the same name, last name, birth date and father's name as the form.
      *
@@ -572,11 +556,5 @@ class BasicInfoService{
         }
         return $query->get()->all();
     }
-
-
-
-
-
-
 
 }

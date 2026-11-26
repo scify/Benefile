@@ -88,7 +88,6 @@ class MedicalFolderController extends Controller
 
         // ------ END VALIDATION FAILURE SAVE TYPED DATA ------------------ //
 
-
         $benefiter = $this->basicInfoService->findExistentBenefiter($id);
         $medical_visits_number = $this->medicalVisit->benefiter_medical_visits_number($id) ; //medical_visits::where('benefiter_id', $id)->count();
         $benefiter_medical_visits_list = $this->medicalVisit->findMedicalVisitsForBenefiter($id); // medical_visits::where('benefiter_id', $id)->with('doctor', 'medicalLocation', 'medicalIncidentType')->get();
@@ -243,7 +242,6 @@ class MedicalFolderController extends Controller
                 ->with('medical_locations_array', $medical_locations_array)
                 ->with('ExamResultsLookup', $ExamResultsLookup)
                 ->with('medical_visits_number', $medical_visits_number)
-//                ->with('icd10', $icd10)
                 ->with('visit_submited_succesfully', $visit_submited_succesfully);
         }
 
@@ -287,7 +285,6 @@ class MedicalFolderController extends Controller
             ->firstOrFail();
         $selected_medical_visit_id = $visit->id;
         $benefiter_id = $visit->benefiter_id;
-//        dd($request->all());
 
         // Post Validation
         $validator = $this->medicalVisit->medicalValidation($request->all());

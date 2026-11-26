@@ -133,17 +133,12 @@ class UploadFileService{
                         // The import file has no details and no expiry date for the legal status.
                         $this->insertLegalStatusToDBFromFile($singleRow->legal_status, null, null, $benefiter->id);
                     });
-//                    $this->importReferrals($singleRow, $imported_benefiter_id);
                 } catch(\Exception $e) {
                     array_push($this->__errors, \Lang::get('upload_file_errors.insert_benefiter_error') . $singleRow->folder_number);
                     Log::error($e);
                 }
-                // TODO (not for now) Add table to view to display the files that uploaded successfully. Only names and dates, to help while uploading.
-//                $benefiterReferralsColumns = $this->selectBenefitersReferralsColumnsAndValuesFromFileRow($singleRow);
             }
         }
-        // delete all content form the imported data after populating all relative tables
-//        File_import_schema::truncate();
     }
 
     // selects and returns all the columns - values inserted from file that correspond to the benefiters DB table
@@ -194,9 +189,6 @@ class UploadFileService{
             'created_at' => $tmpdate,
         );
     }
-
-
-
 
     // ---------------------------------------------------------------------------------- //
     // for current imported benefiter add the respective referrals, from csv, to DB tables
@@ -283,7 +275,6 @@ class UploadFileService{
                 $this->__langNames[$id] = $tmp;
             }
         }
-        // return the ID
         return $id;
     }
 
@@ -314,7 +305,6 @@ class UploadFileService{
             $id = null;
             array_push($this->__errors, \Lang::get('upload_file_errors.level_not_found_error') . $sLevel);
         }
-        // return the ID
         return $id;
     }
 
@@ -371,7 +361,6 @@ class UploadFileService{
             array_push($resultArray, array('language_id' => $key, 'language_level_id' => $value, 'benefiter_id' => $id));
         }
 
-        // return result array
         return $resultArray;
     }
 
@@ -404,8 +393,6 @@ class UploadFileService{
         // normalize $legal_status
         $tmp = $this->greekStringConversion->grstrtoupper($legal_status);
         $id = array_search($tmp, $this->__legalStatuses);
-        // if legal status was not found in $legalStatuses array
-        // return null
         if(!$id){
             $id = null;
         }

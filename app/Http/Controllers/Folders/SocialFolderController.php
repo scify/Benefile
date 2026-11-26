@@ -37,13 +37,6 @@ class SocialFolderController extends Controller
         } else {
             $socialFolder = $this->socialFolderService->getSocialFolderFromBenefiterId($id);
             $psychosocialSubjects = $this->socialFolderService->getAllPsychosocialSupportSubjects();
-//            if($socialFolder == null){
-//                return view('benefiter.social_folder')
-//                    ->with("tab", "social")
-//                    ->with("psychosocialSubjects", $psychosocialSubjects)
-//                    ->with("benefiter", $benefiter)
-//                    ->with("psychologist_id", $psychologist_id);
-//            } else {
                 $benefiter_sessions = $this->socialFolderService->getAllSessionsFromBenefiterId($id);
                 $psychosocialSupport = $this->socialFolderService->getBenefiterPsychosocialSupport($id);
                 return view('benefiter.social_folder')
@@ -57,7 +50,6 @@ class SocialFolderController extends Controller
                     ->with('benefiter_sessions', $benefiter_sessions)
                     ->with('medical_locations_array', $medical_locations_array)
                     ->with('success', $successMsg);
-//            }
         }
     }
 

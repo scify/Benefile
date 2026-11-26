@@ -9,7 +9,6 @@ class medical_visits extends Model
     protected $table = 'medical_visits';
     protected $fillable = ['medical_visit_date'];
 
-
     public function benefiter(): \Illuminate\Database\Eloquent\Relations\HasOne{
         return $this->hasOne(\App\Models\Benefiters_Tables_Models\Benefiter::class,'id', 'benefiter_id');
     }
