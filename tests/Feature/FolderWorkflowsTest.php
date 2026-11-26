@@ -361,4 +361,31 @@ class FolderWorkflowsTest extends FeatureTestCase
         $this->actingAs($user)->post("/benefiter/1/basic-info/referral-delete/$referral");
         $this->assertDatabaseMissing('benefiter_referrals', ['id' => $referral]);
     }
+
+    public function test_a_visit_without_files_is_saved(): void
+    {
+        $payload = $this->medicalVisit();
+        // A browser sends no upload_file_title when no file is chosen.
+        unset($payload['upload_file_title'], $payload['upload_file_description']);
+
+        $this->actingAs(User::factory()->create())->post('/benefiter/1/medical-folder', $payload)->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('medical_laboratory_results', ['medical_visit_id' => $this->latestVisitId(), 'laboratory_results' => 'Αιμοσφαιρίνη 13']);
+    }
+
+    public function test_the_medicine_and_icd10_lists_find_by_part_of_the_name(): void
+    {
+        DB::table('medical_medication_lookup')->insert([['description' => 'Depon 500'], ['description' => 'Panadol'], ['description' => '100% Depon']]);
+        $doctor = User::factory()->create();
+
+        $medicines = $this->actingAs($doctor)->getJson('/benefiter/getMedicationList?q=depon')->assertOk()->json();
+        $this->assertEqualsCanonicalizing(['Depon 500', '100% Depon'], array_column($medicines, 'description'));
+        // A % in the query is a character to find, not a wildcard.
+        $percent = $this->actingAs($doctor)->getJson('/benefiter/getMedicationList?q=%25')->assertOk()->json();
+        $this->assertSame(['100% Depon'], array_column($percent, 'description'));
+
+        $codes = $this->actingAs($doctor)->getJson('/benefiter/getIC10List?q=A0')->assertOk()->json();
+        $this->assertNotEmpty($codes);
+        $this->assertLessThanOrEqual(50, count($codes));
+    }
 }

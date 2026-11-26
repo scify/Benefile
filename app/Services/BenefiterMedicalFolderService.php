@@ -120,7 +120,7 @@ class BenefiterMedicalFolderService
         }
 
         // VALIDATE - Uploaded files
-        $upload_file_description = $request['upload_file_description'];
+        $upload_file_description = $request['upload_file_description'] ?? [];
         foreach ($upload_file_description as $i=>$fd){
             $rules['upload_file_description.'.$i] = 'max:255';
         }
@@ -460,8 +460,8 @@ class BenefiterMedicalFolderService
     //----------- medical_uploads table ----------------------------//
     // DB save
     private function save_medical_uploads($request, $id){
-        $request_upload_file_description = $request['upload_file_description'];
-        $request_upload_file_title = $request['upload_file_title'];
+        $request_upload_file_description = $request['upload_file_description'] ?? [];
+        $request_upload_file_title = $request['upload_file_title'] ?? []; // A form with no file has no upload_file_title.
 
         $file = request()->file('upload_file_title');
 
@@ -543,8 +543,8 @@ class BenefiterMedicalFolderService
     //----------- medical_uploads table ----------------------------//
     // DB save
     private function update_medical_uploads($request, $selected_medical_visit_id){
-        $request_upload_file_description = $request['upload_file_description'];
-        $request_upload_file_title = $request['upload_file_title'];
+        $request_upload_file_description = $request['upload_file_description'] ?? [];
+        $request_upload_file_title = $request['upload_file_title'] ?? []; // A form with no file has no upload_file_title.
         $file = request()->file('upload_file_title');
         $requests_count = legacy_count($request_upload_file_title);
 
@@ -734,14 +734,19 @@ class BenefiterMedicalFolderService
         return Location::get()->all();
     }
     // find medical medicinal name from lookup using partial name
+    /**
+     * The medicines whose name contains the text: at most 50, for the autocomplete.
+     */
     public function get_full_medication_name($partial_name){
-        $full_medication_name = Medicine::where('description','LIKE', '%'.$partial_name.'%' );
-        return $full_medication_name;
+        $like = '%'.addcslashes((string) $partial_name, '%_\\').'%';
+        return Medicine::where('description', 'LIKE', $like)->orderBy('description')->limit(50)->get(['id', 'description']);
     }
     // find ICD10 from lookup using partial name
     public function get_full_icd10_description($partial_name){
-        $full_icd10_description = Icd10Code::where('description','LIKE', '%'.$partial_name.'%' )
-                                        ->orWhere('code', 'LIKE', '%'.$partial_name.'%')->get();
+        // At most 50, for the autocomplete: the list has more than 10,000 codes.
+        $like = '%'.addcslashes((string) $partial_name, '%_\\').'%';
+        $full_icd10_description = Icd10Code::where('description', 'LIKE', $like)
+                                        ->orWhere('code', 'LIKE', $like)->orderBy('code')->limit(50)->get();
         return $full_icd10_description;
     }
     // finds and returns all the benefiter's referrals ordered by medical visit
