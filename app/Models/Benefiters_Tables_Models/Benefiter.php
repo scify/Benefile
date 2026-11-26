@@ -88,4 +88,14 @@ class Benefiter extends Model
     {
         return $this->hasMany(\App\Models\Folders\BeneficiaryLanguage::class, 'benefiter_id');
     }
+
+    /**
+     * Every beneficiary has a psychosocial folder: it is created with the beneficiary.
+     */
+    protected static function booted(): void
+    {
+        static::created(function (Benefiter $benefiter): void {
+            \App\Models\Folders\SocialFolder::firstOrCreate(['benefiter_id' => $benefiter->id], ['comments' => '']);
+        });
+    }
 }

@@ -17,13 +17,11 @@ class UploadFileService{
     private $__levelNames = array();
     private $__legalStatuses = array();
     private $__errors = array();
-    private $socialService;
     private $conversionForFile;
     private GreekStringConversionHelper $greekStringConversion;
 
     public function __construct(){
         $this->greekStringConversion = new GreekStringConversionHelper();
-        $this->socialService = new SocialFolderService();
     }
 
     // inserts all values to DB
@@ -130,11 +128,11 @@ class UploadFileService{
         if($allFileRows->isNotEmpty()) {
             foreach ($allFileRows as $singleRow) {
                 try {
-                    $imported_benefiter_id = \DB::table('benefiters')->insertGetId($this->selectBenefitersColumnsAndValuesFromFileRow($singleRow));
-                    $this->socialService->saveSocialFolderToDB(array('comments' => ''), $imported_benefiter_id);
-                    $this->insertLanguagesToDBFromFile($singleRow->language, $singleRow->language_level, $imported_benefiter_id);
-                    // The import file has no details and no expiry date for the legal status.
-                    $this->insertLegalStatusToDBFromFile($singleRow->legal_status, null, null, $imported_benefiter_id);
+                    app(BeneficiaryRegistrar::class)->register($this->selectBenefitersColumnsAndValuesFromFileRow($singleRow), function ($benefiter) use ($singleRow): void {
+                        $this->insertLanguagesToDBFromFile($singleRow->language, $singleRow->language_level, $benefiter->id);
+                        // The import file has no details and no expiry date for the legal status.
+                        $this->insertLegalStatusToDBFromFile($singleRow->legal_status, null, null, $benefiter->id);
+                    });
 //                    $this->importReferrals($singleRow, $imported_benefiter_id);
                 } catch(\Exception $e) {
                     array_push($this->__errors, \Lang::get('upload_file_errors.insert_benefiter_error') . $singleRow->folder_number);

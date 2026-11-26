@@ -84,25 +84,19 @@ class BasicInfoService{
         }
         // get work title id from work title name
         $request['working_title'] = $this->getWorkTitleIdFromDBAndInsertNewWorkTitleIfNeeded($request['working_title']);
-        $benefiter = new Benefiter(
-            $this->getBenefiterArrayForDBInsert($request)
-        );
-        $benefiter->save();
-        $languagesLevelsMerge = $this->mergeUniqueLanguagesLevelWithNoDuplicatedLanguageArrays($request);
-        // if $languagesLevelsMerge is not an empty array, save them to DB
-        if(!empty($languagesLevelsMerge)) {
-            $this->saveLanguagesToDB($benefiter->id, $languagesLevelsMerge);
-        }
         // if legal status is not existent, add it
         if(!array_key_exists('legal_status' ,$request)){
             $request['legal_status'] = null;
         }
-        $this->saveLegalStatusesToDB($benefiter->id, $request);
-        // initialize SocialFolderService to use the saveSocialFolderToDB function
-        $socialService = new SocialFolderService();
-        $socialService->saveSocialFolderToDB(array('comments' => ''), $benefiter->id);
-        $this->saveBasicFolderUpdateHistory($benefiter->id, $request['medical_location_id'], $request['updated_by_date'], $request['updated_by_comments']);
-        return $benefiter;
+        $attributes = array_intersect_key($this->getBenefiterArrayForDBInsert($request), array_flip((new Benefiter())->getFillable()));
+        return app(BeneficiaryRegistrar::class)->register($attributes, function (Benefiter $benefiter) use ($request): void {
+            $languagesLevelsMerge = $this->mergeUniqueLanguagesLevelWithNoDuplicatedLanguageArrays($request);
+            if(!empty($languagesLevelsMerge)) {
+                $this->saveLanguagesToDB($benefiter->id, $languagesLevelsMerge);
+            }
+            $this->saveLegalStatusesToDB($benefiter->id, $request);
+            $this->saveBasicFolderUpdateHistory($benefiter->id, $request['medical_location_id'], $request['updated_by_date'], $request['updated_by_comments']);
+        });
     }
 
     // edit an already saved benefiter
