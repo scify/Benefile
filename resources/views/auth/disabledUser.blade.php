@@ -18,7 +18,7 @@
 
            <div class="white">
                <div class="bottomDiv" >
-                  @lang($p.'need_help')<a class="white" href="#"><b>@lang($p.'contact')</b></a>
+                  @if (config('benefile.organisation.contact_url'))@lang($p.'need_help')<a class="white" target="_blank" rel="noopener" href="{{ config('benefile.organisation.contact_url') }}"><b>@lang($p.'contact')</b></a>@endif
               </div>
           </div>
         </div>

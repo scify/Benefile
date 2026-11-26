@@ -29,7 +29,7 @@
     <div class="white margin-top-100">
         <div class="row">
             <div class="bottomDiv">
-               @lang($p.'need_help')<a class="white" target="_blank" href="http://www.praksis.gr/el/επικοινωνια"><b>@lang($p.'contact')</b></a>
+               @if (config('benefile.organisation.contact_url'))@lang($p.'need_help')<a class="white" target="_blank" rel="noopener" href="{{ config('benefile.organisation.contact_url') }}"><b>@lang($p.'contact')</b></a>@endif
             </div>
         </div>
     </div>

@@ -398,9 +398,9 @@
                             </div>
 
                         </div>
-                        {{-- supplied from PRAKSIS --}}
+                        {{-- supplied by the organisation --}}
                         <div class="col-xs-3 @if(empty($med_medication['supply_from_praksis']) or $med_medication['supply_from_praksis'] == 0) non-printable @endif">
-                            {!! Form::label('supply', Lang::get($p.'supply_from_praksis')) !!}
+                            {!! Form::label('supply', Lang::get($p.'supply_from_praksis', ['organisation' => config('benefile.organisation.name')])) !!}
                             @if($med_medication['supply_from_praksis'] == 1)
                                 {!! Form::checkbox('supply', 1, true, array('class'=>'supply_from_praksis make-inline', 'disabled' => 'disabled')) !!}
                             @else

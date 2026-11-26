@@ -66,7 +66,7 @@ class MedicalFolderController extends Controller
                 }
             }
         }
-            // medication (consists of lookup select options or typed name, dosage, duration, supplied from PRAKSIS checkbox )
+            // medication (consists of lookup select options or typed name, dosage, duration, supplied by the organisation checkbox )
         $medication_name_from_lookup_session = session()->get('medication_name_from_lookup_session');
         session()->forget('medication_name_from_lookup_session');
         $medication_name_from_lookup_session_description = [];

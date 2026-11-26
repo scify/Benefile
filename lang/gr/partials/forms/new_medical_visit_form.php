@@ -61,7 +61,7 @@ return array(
     'medicinal_dosage'     =>  'Δοσολογία',
     'medicinal_duration'   =>  'Διάρκεια θεραπείας σε ημέρες',
     'days'                 =>  'ΗΜΕΡΕΣ',
-    'supply_from_praksis'  =>  'Προμήθεια από Praksis',
+    'supply_from_praksis'  =>  'Προμήθεια από :organisation',
 
     'lab_results'          =>  'Εργαστηριακά αποτελέσματα',
     'lab_results_info'     =>  'ΕΡΓΑΣΤΗΡΙΑΚΑ ΑΠΟΤΕΛΕΣΜΑΤΑ: ',

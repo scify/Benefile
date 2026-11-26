@@ -348,7 +348,7 @@
                                         {!! Form::text('medication_duration[]', "$medication_duration_session[$i]", array('class' => 'custom-input-text display-inline text-align-right width-60-percent', 'placeholder' => Lang::get($p.'medicinal_duration'))) !!} @lang($p."days")
                                     </div>
                                     <div class="form-group float-left col-md-4">
-                                        {!! Form::label('supply_from_praksis[]', Lang::get($p.'supply_from_praksis'), array('class' => 'radio-value margin-right-10px')) !!}
+                                        {!! Form::label('supply_from_praksis[]', Lang::get($p.'supply_from_praksis', ['organisation' => config('benefile.organisation.name')]), array('class' => 'radio-value margin-right-10px')) !!}
                                         {!! Form::hidden('supply_from_praksis_hidden[]', $supply_from_praksis_hidden_session[$i], array('class'=>'supply_from_praksis_hidden'))!!}
                                         @if($supply_from_praksis_hidden_session[$i] != 0)
                                         {{--{!! Form::checkbox('supply_from_praksis[]', "$supply_from_praksis_hidden_session[$i]", true, array('class'=>'supply_from_praksis make-inline')) !!}--}}
@@ -403,7 +403,7 @@
                                     {!! Form::text('medication_duration[]', null, array('class' => 'custom-input-text display-inline text-align-right width-60-percent', 'placeholder' => Lang::get($p.'medicinal_duration'))) !!} @lang($p."days")
                                 </div>
                                 <div class="form-group float-left col-md-4">
-                                    {!! Form::label('supply_from_praksis[]', Lang::get($p.'supply_from_praksis'), array('class' => 'radio-value margin-right-10px')) !!}
+                                    {!! Form::label('supply_from_praksis[]', Lang::get($p.'supply_from_praksis', ['organisation' => config('benefile.organisation.name')]), array('class' => 'radio-value margin-right-10px')) !!}
                                     {!! Form::hidden('supply_from_praksis_hidden[]', 0, array('class'=>'supply_from_praksis_hidden'))!!}
                                     {!! Form::checkbox('supply_from_praksis[]', 1, false, array('class'=>'supply_from_praksis make-inline')) !!}
 

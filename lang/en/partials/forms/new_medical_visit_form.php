@@ -61,7 +61,7 @@ return [
     'medicinal_dosage' => 'Dosage',
     'medicinal_duration' => 'Duration of treatment in days',
     'days' => 'DAYS',
-    'supply_from_praksis' => 'Supplied by PRAKSIS',
+    'supply_from_praksis' => 'Supplied by :organisation',
 
     'lab_results' => 'Laboratory results',
     'lab_results_info' => 'LABORATORY RESULTS: ',
