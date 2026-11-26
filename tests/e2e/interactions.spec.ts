@@ -359,6 +359,17 @@ test.describe('medical visit form', () => {
         await expect(added.locator('input[name="medication_new_name[]"]')).toBeHidden();
     });
 
+    test('the medicine list gets its suggestions from the server', async ({ page }) => {
+        runPhp('\\DB::table("medical_medication_lookup")->insertOrIgnore([["id" => 990001, "description" => "E2E PARACETAMOL 500MG"]]);');
+        await page.goto('/benefiter/1/medical-folder');
+        await page.locator('#new-med-visit-button').click();
+        const select = page.locator('#medication .medicationList select[name="medication_name_from_lookup[]"]');
+        const answer = page.waitForResponse((response) => response.url().includes('/benefiter/getMedicationList'));
+        await chooseRemoteOption(page, select, 'paracet', /E2E PARACETAMOL/);
+        expect((await answer).status()).toBe(200);
+        await expect(select).toHaveValue('990001');
+    });
+
     test('the clinical results choose ICD-10 conditions', async ({ page }) => {
         await page.goto('/benefiter/1/medical-folder');
         await page.locator('#new-med-visit-button').click();

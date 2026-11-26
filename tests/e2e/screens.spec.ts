@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { authFile, type Role } from './global-setup';
+import { runPhp } from './helpers';
 
 /**
  * Opens every screen of BeneFile with the role that uses it. Each screen must
@@ -36,6 +37,7 @@ test.describe('screens without login', () => {
     test('login', async ({ page }) => openScreen(page, '/auth/login', 'login', 'input[name=password]'));
     test('registration', async ({ page }) => openScreen(page, '/auth/register', 'register', 'select[name=user_role_id]'));
     test('forgotten password', async ({ page }) => openScreen(page, '/password/email', 'password-email', 'input[name=email]'));
+    test('new password', async ({ page }) => openScreen(page, '/password/reset/e2e-token?email=nobody@example.test', 'password-reset', 'input[name=password_confirmation]'));
     test('a guest goes to the login page', async ({ page }) => {
         await page.goto('/benefiters-list');
         await expect(page).toHaveURL(/\/auth\/login$/);
@@ -110,5 +112,26 @@ test.describe('screens of the other roles', () => {
                 }
             });
         });
+    }
+
+    // Each role sees the buttons and fields of its own folder only.
+    // The session button of the legal folder shows only when the folder exists.
+    test.beforeAll(() => runPhp('\\App\\Models\\Folders\\LegalFolder::firstOrCreate(["benefiter_id" => 2], ["legal_folder_status_id" => 1, "penalty_id" => 1]);'));
+    const ownWork = [
+        { role: 'doctor', path: '/benefiter/1/medical-folder', control: '#new-med-visit-button' },
+        { role: 'lawyer', path: '/benefiter/2/legal-folder', control: '#add-new-session' },
+        { role: 'psychologist', path: '/benefiter/1/social-folder', control: '#add-new-session' },
+        { role: 'social', path: '/benefiter/1/basic-info', control: 'input[name=lastname]:enabled' },
+    ] as const;
+    for (const own of ownWork) {
+        for (const role of ['doctor', 'lawyer', 'social', 'psychologist'] as const) {
+            test.describe(`${role} on ${own.path}`, () => {
+                asRole(role);
+                test(role === own.role ? 'can change it' : 'cannot change it', async ({ page }) => {
+                    await page.goto(own.path);
+                    await expect(page.locator(own.control)).toHaveCount(role === own.role ? 1 : 0);
+                });
+            });
+        }
     }
 });
