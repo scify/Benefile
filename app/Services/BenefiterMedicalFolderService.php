@@ -662,22 +662,20 @@ class BenefiterMedicalFolderService
 
     // FUNCTIONS USED BY MANY
 
-    public function reindex_array($array){
-        $reindexed_array = [];
-        for($i=0 ; $i<legacy_count($array) ; $i++){
-            $reindexed_array[$i+1] = $array[$i]->description;
+    /**
+     * The rows of a lookup table as id => description, for the drop-down lists.
+     *
+     * @param  iterable<object>  $rows
+     * @return array<int, string>
+     */
+    public function reindex_array($rows){
+        $byId = [];
+        foreach ($rows as $row) {
+            $byId[(int) $row->id] = (string) $row->description;
         }
-        return $reindexed_array;
+        return $byId;
     }
 
-    // keeps every element and reindex only the array from 1 to n
-    public function general_reindex_array($array){
-        $reindexed_array = [];
-        for($i=0 ; $i<legacy_count($array) ; $i++){
-            $reindexed_array[$i+1] = $array[$i];
-        }
-        return $reindexed_array;
-    }
     // get logged in user id
     public function get_logged_in_user_id(){
         $user_id = auth()->id();

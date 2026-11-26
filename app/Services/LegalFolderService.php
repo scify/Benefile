@@ -174,13 +174,12 @@ class LegalFolderService{
         if($legal_folder != null){
             $legalSessions = $this->findLegalSessionsFromLegalFolderIdOrderedByDateDesc($legal_folder->id);
             if($legalSessions != null){
-                // fetch all users from DB
-                $users = User::get()->toArray();
-                // fetch all locations from DB
-                $locations = medical_location_lookup::get()->toArray();
+                // Users and places by their id.
+                $users = User::get()->keyBy('id');
+                $locations = medical_location_lookup::pluck('description', 'id');
                 // fetch all lawyer actions from DB
-                $lawyerActions = \DB::table('lawyer_action_lookup')->get();
-                if($users != null and $locations != null and $lawyerActions->isNotEmpty()) {
+                $lawyerActions = \DB::table('lawyer_action_lookup')->pluck('description', 'id');
+                if($lawyerActions->isNotEmpty()) {
                     $this->pushLegalSessionsToHistoryArray(
                         $legalSessions, $users, $locations, $lawyerActions, $history);
                 }
@@ -202,10 +201,10 @@ class LegalFolderService{
             $sessionLawyerActionsDescriptionList = null;
             $this->displaySessionLawyerActionsAsCommaSeparatedString($legalSession->id,
                 $lawyerActions, $sessionLawyerActionsDescriptionList);
+            $user = $users->get($legalSession->user_id);
             $temp = new LegalSessionsHistory(
-                $users[$legalSession->user_id - 1]['name'] . ' ' .
-                $users[$legalSession->user_id - 1]['lastname'],
-                $locations[$legalSession->medical_location_id - 1]['description'],
+                $user !== null ? $user->name . ' ' . $user->lastname : '',
+                $locations->get($legalSession->medical_location_id, ''),
                 new Carbon($legalSession->legal_date),
                 $sessionLawyerActionsDescriptionList,
                 $legalSession->legal_comments
@@ -222,7 +221,7 @@ class LegalFolderService{
         if($sessionLawyerActions != null) {
             foreach($sessionLawyerActions as $i => $singleSessionLawyerAction){
                 $sessionLawyerActionsDescriptionList .=
-                    $lawyerActions[$singleSessionLawyerAction->lawyer_action_id - 1]->description;
+                    $lawyerActions->get($singleSessionLawyerAction->lawyer_action_id, '');
                 if($i < legacy_count($sessionLawyerActions) - 1){
                     $sessionLawyerActionsDescriptionList .= ", ";
                 }

@@ -62,7 +62,7 @@ class Benefiter extends Model
 
     public function medical_visits(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(\App\Models\Benefiters_Tables_Models\medical_visits::class, 'id', 'benefiter_id');
+        return $this->hasMany(\App\Models\Benefiters_Tables_Models\medical_visits::class, 'benefiter_id', 'id');
     }
 
     public function gender(): \Illuminate\Database\Eloquent\Relations\HasOne{

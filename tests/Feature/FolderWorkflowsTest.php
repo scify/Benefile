@@ -305,4 +305,23 @@ class FolderWorkflowsTest extends FeatureTestCase
         $this->assertSame(1, DB::table('medical_examinations')->where('medical_visit_id', $visit)->count());
         $this->assertSame(1, DB::table('medical_examination_results')->where('medical_visit_id', $visit)->count());
     }
+
+    public function test_the_legal_history_names_the_lawyer_the_place_and_the_actions(): void
+    {
+        $lawyer = User::factory()->role(User::ROLE_LAWYER)->create(['name' => 'Σόλων', 'lastname' => 'Αθηναίος']);
+        DB::table('users')->where('id', 2)->delete();
+        $this->actingAs($lawyer)->post('/benefiter/1/legal-folder', [
+            'legal_folder_status' => '1', 'asylum_request_date' => '10-01-2026', 'procedure' => '1', 'request_status' => '1',
+            'request_progress' => '', 'action' => '1', 'result' => '1', 'penalty' => '1', 'penalty_text' => '',
+        ]);
+        $this->actingAs($lawyer)->post('/benefiter/1/legal-session', [
+            'legal_date' => '12-01-2026', 'legal_comments' => 'Νομική συνάντηση', 'lawyer_action' => ['2'], 'medical_location_id' => '2',
+        ]);
+
+        $page = $this->actingAs($lawyer)->get('/benefiter/1/legal-folder');
+
+        $page->assertOk()->assertSee('Σόλων Αθηναίος')->assertSee('Νομική συνάντηση')
+            ->assertSee((string) DB::table('lawyer_action_lookup')->where('id', 2)->value('description'))
+            ->assertSee((string) DB::table('medical_location_lookup')->where('id', 2)->value('description'));
+    }
 }
