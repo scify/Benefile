@@ -52,4 +52,9 @@
         'download_folders_history_csv'  => 'Κατέβασμα του ιστορικού των φακέλων',
         'download_all_benefiters_csv'   => 'Κατέβασμα των πληροφοριών των ωφελούμενων',
         'download_csv'                  => 'Κατέβασμα αρχείων .csv',
+        'period_10_days'                => '10 ημέρες',
+        'period_1_month'                => '1 μήνας',
+        'period_1_year'                 => '1 έτος',
+        'period_max'                    => 'Όλα',
+        'balloon_benefiters'            => 'ωφελούμενοι',
     );

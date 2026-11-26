@@ -8,8 +8,9 @@
     @lang('layouts/mainPanel.reports')
 @stop
 
+@section('menu-item', 'reports')
+
 @section('panel-headLinks')
-    <link href="{{ asset('/plugins/datepicker/css/datepicker.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('css/records/record_form.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('css/reports/reports.css') }}" rel="stylesheet" type="text/css">
 @stop
@@ -249,486 +250,56 @@
 @stop
 
 @section('panel-scripts')
-    <script src="{{ asset('js/chart.min.js') }}"></script>
+    @php
+        $reportData = [
+            'texts' => [
+                'periods' => [
+                    'days' => __('reports.period_10_days'),
+                    'month' => __('reports.period_1_month'),
+                    'year' => __('reports.period_1_year'),
+                    'max' => __('reports.period_max'),
+                ],
+                'benefiters' => __('reports.balloon_benefiters'),
+                'doctorsTitle' => __('reports.benefiters-Vs-doctors-tile'),
+                'workTitle' => __('reports.benefiters_registered'),
+                'numberOfBenefiters' => __('reports.number_of_benefiters'),
+                'visitsPerMonth' => __('reports.medical_visits_per_month'),
+                'registrationsPerMonth' => __('reports.registrations_per_month'),
+                'visitsX' => __('reports.medical-visit-x-title'),
+                'visitsY' => __('reports.medical-visit-y-title'),
+            ],
+            'ages' => collect($benefiters_age)->map(fn ($age) => [
+                'title' => $age->ageInYears === null ? 'n/a' : $age->ageInYears.' - '.($age->ageInYears + 9),
+                'value' => $age->counter,
+            ])->values(),
+            'maritalStatuses' => collect($benefitersMaritalStatuses)->map(fn ($status) => [
+                'title' => $status->marital_status_title,
+                'value' => $status->marital_counter,
+            ])->values(),
+            'legalStatuses' => collect($benefiters_legal_statuses)->map(fn ($status) => [
+                'title' => $status->description,
+                'value' => $status->legal_counter,
+            ])->values(),
+            'visitLocations' => collect($medical_visits_location)->map(fn ($visit) => [
+                'title' => $visit->location,
+                'value' => $visit->counter,
+            ])->values(),
+            'workTitles' => collect($benefiters_work_title)->map(fn ($count, $title) => [
+                'title' => (string) $title !== '' ? (string) $title : '-',
+                'value' => (string) $count,
+            ])->values(),
+            'visitsPerBenefiter' => collect($benefiters_medical_visits)->map(fn ($visits) => [
+                'title' => (string) $visits->visits_counter,
+                'value' => $visits->benefiters_counter,
+            ])->values(),
+        ];
+    @endphp
+    {{-- The texts and the data of the charts. --}}
+    <script type="application/json" id="reports-data">@json($reportData)</script>
     <script src="{{ asset('js/amcharts/amcharts.js') }}"></script>
     <script src="{{ asset('js/amcharts/pie.js') }}"></script>
     <script src="{{ asset('js/amcharts/serial.js') }}"></script>
-    <script src="{{ asset('js/amcharts/radar.js') }}"></script>
     <script src="{{ asset('js/amcharts/themes/light.js') }}"></script>
     <script src="{{ asset('js/amcharts/amstock.js') }}"></script>
     <script src="{{ asset('js/reports/reports.js') }}"></script>
-    <script src="{{ asset('js/records/selectReports.js') }}"></script>
-    <script src="{{ asset('js/canvasjs.min.js') }}"></script>
-    <script src="{{ asset('/plugins/datepicker/js/bootstrap-datepicker.js') }}"></script>
-    <script src="{{ asset('js/records/custom_datepicker.js') }}"></script>
-    <script src="{{ asset('js/forms.js') }}"></script>
-    <script>
-        // The texts of the charts, in the language of the page.
-        window.Lang = { messages: @json(['reports' => __('reports')]), get: function (key) { return key.split('.').reduce(function (o, k) { return o && o[k]; }, this.messages) || key; } };
-    </script>
-    {{-- Benefiter counter status graph --}}
-	<script>
-	</script>
-    <script>
-    {{-- Age report status graph --}}
-    $(document).ready(function(){
-        var chart = AmCharts.makeChart("ageReport", {
-            "titles":[{'text':'','size':22}],
-            "type": "pie",
-            "fontSize": 16,
-            "startDuration": 0,
-            "theme": "light",
-            "addClassNames": true,
-            "legend":{
-                "position":"right",
-                "marginRight":100,
-                "autoMargins":false,
-                "fontSize": 16
-            },
-            "innerRadius": "30%",
-            "defs": {
-                "filter": [{
-                    "id": "shadow",
-                    "width": "200%",
-                    "height": "200%",
-                    "feOffset": {
-                        "result": "offOut",
-                        "in": "SourceAlpha",
-                        "dx": 0,
-                        "dy": 0
-                    },
-                    "feGaussianBlur": {
-                        "result": "blurOut",
-                        "in": "offOut",
-                        "stdDeviation": 5
-                    },
-                    "feBlend": {
-                        "in": "SourceGraphic",
-                        "in2": "blurOut",
-                        "mode": "normal"
-                    }
-                }]
-            },
-            "dataProvider": [
-            @foreach ($benefiters_age as $age)
-            {
-                "benefiters": @if(json_encode($age->ageInYears) == 'null') "n/a" @else {!! json_encode($age->ageInYears) !!} + ' - ' + {!! json_encode($age->ageInYears + 9) !!} @endif ,
-                "counter": {!! json_encode($age->counter) !!}
-            },
-            @endforeach
-            ],
-            "valueField": "counter",
-            "titleField": "benefiters",
-            "export": {
-                "enabled": true
-            }
-        });
-
-
-    chart.addListener("init", handleInit);
-
-    chart.addListener("rollOverSlice", function(e) {
-        handleRollOver(e);
-    });
-
-    function handleInit(){
-        chart.legend.addListener("rollOverItem", handleRollOver);
-    }
-
-    function handleRollOver(e){
-        var wedge = e.dataItem.wedge.node;
-        wedge.parentNode.appendChild(wedge);
-    }
-    });
-    </script>
-    <script>
-    {{-- Marital report status graph --}}
-    $(document).ready(function(){
-        var chart = AmCharts.makeChart("maritalStatusReport", {
-            "titles":[{'text':'','size':22}],
-            "type": "pie",
-            "startDuration": 0,
-            "theme": "light",
-            "addClassNames": true,
-            "fontSize": 16,
-            "legend":{
-                "position":"right",
-                "marginRight":100,
-                "autoMargins":false,
-                "fontSize": 16
-            },
-            "innerRadius": "30%",
-            "defs": {
-                "filter": [{
-                    "id": "shadow",
-                    "width": "200%",
-                    "height": "200%",
-                    "feOffset": {
-                        "result": "offOut",
-                        "in": "SourceAlpha",
-                        "dx": 0,
-                        "dy": 0
-                    },
-                    "feGaussianBlur": {
-                        "result": "blurOut",
-                        "in": "offOut",
-                        "stdDeviation": 5
-                    },
-                    "feBlend": {
-                        "in": "SourceGraphic",
-                        "in2": "blurOut",
-                        "mode": "normal"
-                    }
-                }]
-            },
-            "dataProvider": [
-            @foreach ($benefitersMaritalStatuses as $maritalStatus)
-            {
-                "benefiters": {!! json_encode($maritalStatus->marital_status_title) !!},
-                "counter": {!! json_encode($maritalStatus->marital_counter) !!}
-            },
-            @endforeach
-            ],
-            "valueField": "counter",
-            "titleField": "benefiters",
-            "export": {
-                "enabled": true
-            }
-        });
-
-
-    chart.addListener("init", handleInit);
-
-    chart.addListener("rollOverSlice", function(e) {
-        handleRollOver(e);
-    });
-
-    function handleInit(){
-        chart.legend.addListener("rollOverItem", handleRollOver);
-    }
-
-    function handleRollOver(e){
-        var wedge = e.dataItem.wedge.node;
-        wedge.parentNode.appendChild(wedge);
-    }
-    });
-    </script>
-    <script>
-    {{-- Legal status graph --}}
-    $(document).ready(function(){
-        var chart = AmCharts.makeChart("legalStatusReport", {
-            "titles":[{'text':'','size':22}],
-            "type": "pie",
-            "startDuration": 0,
-            "theme": "light",
-            "fontSize": 16,
-            "addClassNames": true,
-            "legend":{
-                "position":"right",
-                "marginRight":100,
-                "autoMargins":false,
-                "fontSize": 16
-            },
-            "innerRadius": "30%",
-            "defs": {
-                "filter": [{
-                    "id": "shadow",
-                    "width": "200%",
-                    "height": "200%",
-                    "feOffset": {
-                        "result": "offOut",
-                        "in": "SourceAlpha",
-                        "dx": 0,
-                        "dy": 0
-                    },
-                    "feGaussianBlur": {
-                        "result": "blurOut",
-                        "in": "offOut",
-                        "stdDeviation": 5
-                    },
-                    "feBlend": {
-                        "in": "SourceGraphic",
-                        "in2": "blurOut",
-                        "mode": "normal"
-                    }
-                }]
-            },
-            "dataProvider": [
-            @foreach ($benefiters_legal_statuses as $legalStatus)
-            {
-                "benefiters": {!! json_encode($legalStatus->description) !!},
-                "litres": {!! json_encode($legalStatus->legal_counter) !!}
-            },
-            @endforeach
-            ],
-            "valueField": "litres",
-            "titleField": "benefiters",
-            "export": {
-                "enabled": true
-            }
-        });
-
-
-    chart.addListener("init", handleInit);
-
-    chart.addListener("rollOverSlice", function(e) {
-        handleRollOver(e);
-    });
-
-    function handleInit(){
-        chart.legend.addListener("rollOverItem", handleRollOver);
-    }
-
-    function handleRollOver(e){
-        var wedge = e.dataItem.wedge.node;
-        wedge.parentNode.appendChild(wedge);
-    }
-    });
-    </script>
-    <script>
-    {{-- Medical report status graph --}}
-    $(document).ready(function(){
-        var chart = AmCharts.makeChart("medicalStatusReport", {
-            "titles":[{'text':'','size':22}],
-            "type": "pie",
-            "startDuration": 0,
-            "theme": "light",
-            "fontSize": 16,
-            "addClassNames": true,
-            "legend":{
-                "position":"right",
-                "marginRight":100,
-                "autoMargins":false,
-                "fontSize": 16
-            },
-            "innerRadius": "30%",
-            "defs": {
-                "filter": [{
-                    "id": "shadow",
-                    "width": "200%",
-                    "height": "200%",
-                    "feOffset": {
-                        "result": "offOut",
-                        "in": "SourceAlpha",
-                        "dx": 0,
-                        "dy": 0
-                    },
-                    "feGaussianBlur": {
-                        "result": "blurOut",
-                        "in": "offOut",
-                        "stdDeviation": 5
-                    },
-                    "feBlend": {
-                        "in": "SourceGraphic",
-                        "in2": "blurOut",
-                        "mode": "normal"
-                    }
-                }]
-            },
-            "dataProvider": [
-            @foreach ($medical_visits_location as $medicalVisit)
-            {
-                "benefiters": {!! json_encode($medicalVisit->location) !!},
-                "counter": {!! json_encode($medicalVisit->counter) !!}
-            },
-            @endforeach
-            ],
-            "valueField": "counter",
-            "titleField": "benefiters",
-            "export": {
-                "enabled": true
-            }
-        });
-
-
-    chart.addListener("init", handleInit);
-
-    chart.addListener("rollOverSlice", function(e) {
-        handleRollOver(e);
-    });
-
-    function handleInit(){
-        chart.legend.addListener("rollOverItem", handleRollOver);
-    }
-
-    function handleRollOver(e){
-        var wedge = e.dataItem.wedge.node;
-        wedge.parentNode.appendChild(wedge);
-    }
-    });
-    </script>
-    <script>
-    var chart = AmCharts.makeChart("benefiters-work-title-chart", {
-        "type": "serial",
-        "theme": "light",
-        "fontSize": 16,
-        "fontFamily": "Arial",
-        "marginRight": 70,
-        "rotate": true,
-        "dataProvider": [
-        @foreach($benefiters_work_title as $key => $value)
-            {
-            "benefiters": @if ($key != "") {!! json_encode((string) $key, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!} @else "-" @endif,
-            "work description": {!! json_encode((string) $value, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!},
-            },
-        @endforeach
-        ],
-        "valueAxes": [{
-            "axisAlpha": 0,
-            "position": "left",
-            "title": $("#benefiters-work-title-chart").data("benefiters-registered"),
-            "fontSize": 16
-        }],
-        "startDuration": 1,
-        "graphs": [{
-            "balloonText": "<b>[[category]]: [[value]]</b> benefiters",
-            "fillColorsField": "color",
-            "fillAlphas": 0.9,
-            "lineAlpha": 0.2,
-            "type": "column",
-            "valueField": "work description"
-        }],
-        "chartCursor": {
-            "categoryBalloonEnabled": false,
-            "cursorAlpha": 0,
-            "zoomable": false
-        },
-        "categoryField": "benefiters",
-        "categoryAxis": {
-            "gridPosition": "start",
-            "labelRotation": 45
-        },
-        "export": {
-            "enabled": true
-        }
-
-    });
-    </script>
-    <script>
-    var chart = AmCharts.makeChart("benefiters-per-medical-visits-chart", {
-        "type": "serial",
-        "theme": "light",
-        "fontSize": 16,
-        "fontFamily": "Arial",
-        "marginRight": 70,
-        "dataProvider": [
-        @foreach($benefiters_medical_visits as $single_benefiters_medical_visit)
-            {
-            "benefiters": "{!! $single_benefiters_medical_visit->visits_counter !!}",
-            "work description": "{!! $single_benefiters_medical_visit->benefiters_counter !!}",
-            },
-        @endforeach
-        ],
-        "valueAxes": [{
-            "axisAlpha": 0,
-            "position": "left",
-            "title": "@lang($p."medical-visit-y-title")",
-            "fontSize": 16
-        }],
-        "startDuration": 1,
-        "graphs": [{
-            "balloonText": "<b>[[category]]: [[value]]</b> benefiters",
-            "fillColorsField": "color",
-            "fillAlphas": 0.9,
-            "lineAlpha": 0.2,
-            "type": "column",
-            "valueField": "work description",
-            "lineColor" : "#3D6139"
-        }],
-        "chartCursor": {
-            "categoryBalloonEnabled": false,
-            "cursorAlpha": 0,
-            "zoomable": false
-        },
-        "categoryField": "benefiters",
-        "categoryAxis": {
-            "title": "@lang($p."medical-visit-x-title")",
-            "gridPosition": "start",
-            "labelRotation": 0
-        },
-        "export": {
-            "enabled": true
-        }
-
-    });
-    </script>
-    <script>
-        (function(){
-            var $benefiters_per_medical_visits_canvas = $("#benefiters-per-medical-visits-canvas").get(0).getContext("2d");
-            var $data = {
-                @if(!empty($benefiters_medical_visits))
-                labels: [ @foreach($benefiters_medical_visits as $single_benefiters_medical_visits) "{!! $single_benefiters_medical_visits->visits_counter !!}@if($single_benefiters_medical_visits->visits_counter == "1") @lang($p."visit")", @else @lang($p."visits")", @endif @endforeach ],
-                datasets: [
-                    {
-                        label: "",
-                        fillColor: "rgba(151,187,205,0.5)",
-                        strokeColor: "rgba(151,187,205,0.8)",
-                        highlightFill: "rgba(151,187,205,0.75)",
-                        highlightStroke: "rgba(151,187,205,1)",
-                        data: [ @foreach($benefiters_medical_visits as $single_benefiters_medical_visits) {!! $single_benefiters_medical_visits->benefiters_counter !!}, @endforeach ]
-                    }
-                ]
-                @else
-                labels: [ "" ],
-                datasets: [
-                    {
-                        label: "-",
-                        fillColor: "rgba(151,187,205,0.5)",
-                        strokeColor: "rgba(151,187,205,0.8)",
-                        highlightFill: "rgba(151,187,205,0.75)",
-                        highlightStroke: "rgba(151,187,205,1)",
-                        data: [ 0 ]
-                    }
-                ]
-                @endif
-            };
-            new Chart($benefiters_per_medical_visits_canvas).Bar($data, {});
-        })();
-    </script>
-    <script>
-    var chart = AmCharts.makeChart("registrationStatusReport", {
-        "type": "serial",
-        "theme": "light",
-        "fontSize": 16,
-        "fontFamily": "Arial",
-        "marginRight": 70,
-        "dataProvider": [
-        @foreach ($benefiters_count as $count)
-            {
-            "benefiters": {!! json_encode($count->created_at) !!},
-            "registrations": {!! json_encode($count->idcounter) !!},
-            },
-        @endforeach
-        ],
-        "valueAxes": [{
-            "axisAlpha": 0,
-            "position": "left",
-            "title": "Benefiters registered",
-            "fontSize": 16
-        }],
-        "startDuration": 1,
-        "graphs": [{
-            "balloonText": "<b>[[category]]: [[value]]</b> benefiters",
-            "fillColorsField": "color",
-            "fillAlphas": 0.9,
-            "lineAlpha": 0.2,
-            "type": "column",
-            "valueField": "registrations"
-        }],
-        "chartCursor": {
-            "categoryBalloonEnabled": false,
-            "cursorAlpha": 0,
-            "zoomable": false
-        },
-        "categoryField": "benefiters",
-        "categoryAxis": {
-            "gridPosition": "start",
-            "labelRotation": 45
-        },
-        "export": {
-            "enabled": true
-        }
-
-    });
-    </script>
 @stop

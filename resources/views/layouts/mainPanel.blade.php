@@ -17,16 +17,16 @@
 
     <!-- Styles -->
     <link href="{{asset('bootstrap-3.3.6/dist/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css">
-    <link href="{{asset('DataTables/datatables.min.css')}}" rel="stylesheet" type="text/css">
-    <link href="{{asset('DataTables/DataTables-1.10.10/css/jquery.dataTables.min.css')}}" rel="stylesheet" type="text/css">
+    <link href="{{asset('vendor/simple-datatables/style.css')}}" rel="stylesheet" type="text/css">
     {{--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">--}}
     <link href="{{asset('css/common/mainLayout.css')}}" rel="stylesheet" type="text/css">
     <link href="{{asset('css/common/common.css')}}" rel="stylesheet" type="text/css">
     <link href="{{asset('css/main-panel/users-list.css')}}" rel="stylesheet" type="text/css">
+    <link href="{{asset('css/common/ui.css')}}" rel="stylesheet" type="text/css">
 
     @yield('panel-headLinks')
 </head>
-<body id="main-layout" data-url="{{ URL::to('/') }}" data-medication-placeholder="@lang('ui.medication_placeholder')">
+<body id="main-layout" data-url="{{ URL::to('/') }}" data-menu="@yield('menu-item')" data-medication-placeholder="@lang('ui.medication_placeholder')">
     <div class="panel-container">
         {{-- User name row --}}
         <div class="no-margin purple-background pos-relative height-6per" id="header">
@@ -134,11 +134,11 @@
 
     <!-- JavaScripts -->
 
-    <script src="{{asset('js/jquery-2.1.4.min.js')}}"></script>
-    <script src="{{asset('js/jquery-ui.min.js')}}"></script>
-    <script src="{{asset('bootstrap-3.3.6/dist/js/bootstrap.min.js')}}"></script>
-    <script src="{{asset('DataTables/datatables.min.js')}}" type="text/javascript" ></script>
-    <script src="{{asset('DataTables/DataTables-1.10.10/js/jquery.dataTables.min.js')}}" type="text/javascript" ></script>
+    {{-- The texts of the scripts, in the language of the page. --}}
+    @php($scriptTexts = ['table' => __('ui.table'), 'loading' => __('ui.loading'), 'no_results' => __('ui.no_results'), 'clear' => __('ui.clear'), 'remove' => __('ui.remove')])
+    <script type="application/json" id="benefile-texts">@json($scriptTexts)</script>
+    <script src="{{asset('vendor/simple-datatables/simple-datatables.js')}}"></script>
+    <script src="{{asset('js/ui.js')}}"></script>
     <script src="{{asset('js/main-panel/common.js')}}"></script>
     @yield('panel-scripts')
 </body>

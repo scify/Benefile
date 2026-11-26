@@ -1,417 +1,177 @@
 /**
-* Created by cdimitzas on 16/3/2016.
-*/
-// -------------------------------------------------------------------------------------------------------- //
-// -------- REPORT: Benefiters vs education (script) -------------------------------------------------------//
-var educationData = [];
+ * Reports: the charts (amCharts 3).
+ *
+ * #reports-data holds the texts in the language of the page, and the data that the page
+ * has from the start. The other charts ask the server for their data.
+ * Category names come from the database, so the pop-up texts (HTML) escape them.
+ */
+(() => {
+    'use strict';
 
-function fetchEducationDataReport(){
-    $.ajax({
-        url: $('body').attr('data-url') + "/benefites-VS-education-Report-get-data",
-        success:function(response){
-            educationData = response;
+    const { baseUrl, getJson } = window.Benefile;
+    const dataElement = document.getElementById('reports-data');
+    const report = dataElement ? JSON.parse(dataElement.textContent) : {};
+    const texts = report.texts ?? {};
+
+    const escape = (value) => {
+        const element = document.createElement('span');
+        element.textContent = value === null || value === undefined ? '' : String(value);
+        return element.innerHTML;
+    };
+
+    const shadow = {
+        filter: [{
+            id: 'shadow',
+            width: '200%',
+            height: '200%',
+            feOffset: { result: 'offOut', in: 'SourceAlpha', dx: 0, dy: 0 },
+            feGaussianBlur: { result: 'blurOut', in: 'offOut', stdDeviation: 5 },
+            feBlend: { in: 'SourceGraphic', in2: 'blurOut', mode: 'normal' },
+        }],
+    };
+
+    /** A ring chart with a legend on the right. The slice under the pointer comes to the front. */
+    function pieChart(id, data, { titleField = 'title', valueField = 'value' } = {}) {
+        if (!document.getElementById(id)) {
+            return;
         }
-    }).done(function(){
-        var chart = AmCharts.makeChart("benefiter_vs_education", {
-            "type": "pie",
-            // "groupPercent": 10,
-            "startDuration": 0,
-            "theme": "light",
-            "addClassNames": true,
-            "legend":{
-                "position":"right",
-                "marginRight":100,
-                "autoMargins":false,
-                "fontSize": 16
-            },
-            "innerRadius": "30%",
-            "defs": {
-                "filter": [{
-                    "id": "shadow",
-                    "width": "200%",
-                    "height": "200%",
-                    "feOffset": {
-                        "result": "offOut",
-                        "in": "SourceAlpha",
-                        "dx": 0,
-                        "dy": 0
-                    },
-                    "feGaussianBlur": {
-                        "result": "blurOut",
-                        "in": "offOut",
-                        "stdDeviation": 5
-                    },
-                    "feBlend": {
-                        "in": "SourceGraphic",
-                        "in2": "blurOut",
-                        "mode": "normal"
-                    }
-                }]
-            },
-            "dataProvider":educationData,
-            "valueField": "benefiters_count_with_this_education_title",
-            "titleField": "education_title",
-            "outlineAlpha": 0.4,
-            "balloonText": "[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>",
-            "fontSize": 16,
-            "export": {
-                "enabled": true
-            }
+        const chart = window.AmCharts.makeChart(id, {
+            type: 'pie',
+            theme: 'light',
+            fontSize: 16,
+            startDuration: 0,
+            addClassNames: true,
+            legend: { position: 'right', marginRight: 100, autoMargins: false, fontSize: 16 },
+            innerRadius: '30%',
+            defs: shadow,
+            dataProvider: data,
+            titleField,
+            valueField,
+            outlineAlpha: 0.4,
+            balloonFunction: (item) => `${escape(item.title)}<br><span style='font-size:14px'><b>${escape(item.value)}</b> (${escape(item.percents.toFixed(2))}%)</span>`,
+            export: { enabled: true },
         });
-
-        chart.addListener("init", handleInit);
-
-        chart.addListener("rollOverSlice", function(e) {
-            handleRollOver(e);
-        });
-
-        function handleInit(){
-            chart.legend.addListener("rollOverItem", handleRollOver);
-        }
-
-        function handleRollOver(e){
-            var wedge = e.dataItem.wedge.node;
+        const toFront = (event) => {
+            const wedge = event.dataItem.wedge.node;
             wedge.parentNode.appendChild(wedge);
+        };
+        chart.addListener('init', () => chart.legend.addListener('rollOverItem', toFront));
+        chart.addListener('rollOverSlice', toFront);
+    }
+
+    /** A column chart. With rotate, the bars are horizontal. */
+    function columnChart(id, data, { categoryField = 'title', valueField = 'value', title = '', suffix = '', rotate = false, theme = 'light', fontSize = 16, color, labelRotation = 0, categoryTitle } = {}) {
+        if (!document.getElementById(id)) {
+            return;
         }
-    });
-}
-fetchEducationDataReport();
-
-
-// -------------------------------------------------------------------------------------------------------- //
-// -------- REPORT: Benefiters vs doctor type needed (script) ----------------------------------------------//
-var doctorData = [];
-
-function fetchPerDoctorDataReport(){
-    $.ajax({
-        url: $('body').attr('data-url') + "/benefites-VS-doctor-Report-get-data",
-        success:function(response){
-            doctorData = response;
-        }
-    }).done(function(){
-        var chart = AmCharts.makeChart("benefiter_vs_doctor_type", {
-            "type": "serial",
-            "theme": "light",
-            "fontSize": 20,
-            "fontFamily": "Arial",
-            "marginRight": 70,
-            "dataProvider": doctorData,
-            "valueAxes": [{
-                "axisAlpha": 0,
-                "position": "left",
-                //"title": Lang.get('reports.benefiters-Vs-doctors-tile'),
-                "title": Lang.get('reports.benefiters-Vs-doctors-tile'),
-                "fontSize": 16
+        window.AmCharts.makeChart(id, {
+            type: 'serial',
+            theme,
+            fontSize,
+            rotate,
+            ...(rotate ? {} : { marginRight: 70 }),
+            gridAboveGraphs: rotate,
+            dataProvider: data,
+            valueAxes: [{ axisAlpha: 0, position: 'left', title, fontSize }],
+            startDuration: 1,
+            graphs: [{
+                balloonFunction: (item) => `<b>${escape(item.category)}: ${escape(item.values.value)}</b>${suffix ? ` ${escape(suffix)}` : ''}`,
+                fillColorsField: 'color',
+                fillAlphas: 0.9,
+                lineAlpha: 0.2,
+                type: 'column',
+                valueField,
+                ...(color ? { lineColor: color } : {}),
             }],
-            "startDuration": 1,
-            "graphs": [{
-                "balloonText": "<b>[[category]]: [[value]]</b>",
-                "fillColorsField": "color",
-                "fillAlphas": 0.9,
-                "lineAlpha": 0.2,
-                "type": "column",
-                "valueField": "count_benefiters_with_same_doctor"
-            }],
-            "chartCursor": {
-                "categoryBalloonEnabled": false,
-                "cursorAlpha": 0,
-                "zoomable": false
-            },
-            "categoryField": "doctor",
-            "categoryAxis": {
-                "gridPosition": "start",
-                "labelRotation": 0,
-                "fontSize": 16
-            },
-            "export": {
-                "enabled": true
-            }
-
+            chartCursor: { categoryBalloonEnabled: false, cursorAlpha: 0, zoomable: false },
+            categoryField,
+            categoryAxis: { gridPosition: 'start', labelRotation, fontSize, ...(rotate ? { gridAlpha: 0 } : {}), ...(categoryTitle ? { title: categoryTitle } : {}) },
+            export: { enabled: true },
         });
-    });
-}
-fetchPerDoctorDataReport();
+    }
 
-
-// -------------------------------------------------------------------------------------------------------- //
-// -------- REPORT: Benefiters vs clinical condition type (script) -----------------------------------------//
-var clinicalConditionsData = [];
-
-function fetchClinicalConditionsDataReport() {
-    $.ajax({
-        url: $('body').attr('data-url') + "/benefites-VS-ClinicalConditions-Report-get-data",
-        success: function (response) {
-            clinicalConditionsData = response;
+    /** A line over time with a scrollbar and buttons for the period. */
+    function stockChart(id, data, { field, title, fontSize = 11 }) {
+        if (!document.getElementById(id)) {
+            return;
         }
-    }).done(function () {
-        var chart = AmCharts.makeChart( "benefiter_vs_clinical_conditions", {
-            "type": "serial",
-            "theme": "dark",
-            "fontSize": 14,
-            fontFamily: "Helvetica Neue",
-            "dataProvider": clinicalConditionsData,
-            "gridAboveGraphs": true,
-            "startDuration": 1,
-            "graphs": [ {
-                "balloonText": "[[category]]: <b>[[value]]</b>",
-                "fillAlphas": 0.8,
-                "lineAlpha": 0.2,
-                "type": "column",
-                "valueField": "clinical_condition_count"
-            } ],
-            "chartCursor": {
-                "categoryBalloonEnabled": false,
-                "cursorAlpha": 0,
-                "zoomable": false
-            },
-            "rotate": true,
-            "categoryField": "clinical_condition_name",
-            "categoryAxis": {
-                "gridPosition": "start",
-                "gridAlpha": 0,
-                "tickPosition": "start",
-                "tickLength": 20,
-                "fontSize": 14
-            },
-            "valueAxes": [{
-                "axisAlpha": 0,
-                "position": "left",
-                "title": $("#benefiter_vs_clinical_conditions").data("number-of-benefiters")
+        const periods = texts.periods ?? {};
+        window.AmCharts.makeChart(id, {
+            type: 'stock',
+            theme: 'light',
+            fontSize,
+            dataSets: [{
+                color: '#b0de09',
+                fieldMappings: [{ fromField: field, toField: field }],
+                dataProvider: data,
+                categoryField: 'per_month_date',
             }],
-            "export": {
-                "enabled": true
-            }
-        } );
-    });
-}
-fetchClinicalConditionsDataReport();
-
-
-// -------------------------------------------------------------------------------------------------------- //
-// -------- REPORT: Number of visits per month (script) ----------------------------------------------------//
-var medicalVisitsPerMonth = [];
-
-function fetchmedicalVisitsPerMonthDataReport() {
-    $.ajax({
-        url: $('body').attr('data-url') + "/medical_visits-PER-month-Report-get-data",
-        success: function (response) {
-            medicalVisitsPerMonth = response;
-        }
-    }).done(function () {
-        var chart = AmCharts.makeChart( "medical_visits_per_month", {
-
-            type: "stock",
-            "theme": "light",
-
-            dataSets: [ {
-                color: "#b0de09",
-                fieldMappings: [ {
-                    fromField: "visits_per_month",
-                    toField: "visits_per_month"
-                } ],
-                dataProvider: medicalVisitsPerMonth,
-                categoryField: "per_month_date"
-            } ],
-
-            panels: [ {
+            panels: [{
                 showCategoryAxis: true,
-                title: $("#medical_visits_per_month").data("medical-visits-per-month"),
+                title,
                 eraseAll: false,
-                allLabels: [ {
-                    x: 0,
-                    y: 115,
-                    //text: "Click on the pencil icon on top-right to start drawing",
-                    text: "",
-                    align: "center",
-                    size: 16
-                } ],
-
-                stockGraphs: [ {
-                    id: "g1",
-                    valueField: "visits_per_month",
-                    useDataSetColors: false,
-                    "bullet": "round"
-                } ],
-
-
-                stockLegend: {
-                    valueTextRegular: " ",
-                    markerType: "none"
-                },
-
-                drawingIconsEnabled: false
-            } ],
-
-            chartScrollbarSettings: {
-                graph: "g1"
-            },
-            chartCursorSettings: {
-                valueBalloonsEnabled: true
-            },
+                stockGraphs: [{ id: 'g1', valueField: field, useDataSetColors: false, bullet: 'round' }],
+                stockLegend: { valueTextRegular: ' ', markerType: 'none' },
+                drawingIconsEnabled: false,
+            }],
+            chartScrollbarSettings: { graph: 'g1' },
+            chartCursorSettings: { valueBalloonsEnabled: true },
             periodSelector: {
-                position: "bottom",
-                periods: [ {
-                    period: "DD",
-                    count: 10,
-                    label: "10 days"
-                }, {
-                    period: "MM",
-                    count: 1,
-                    label: "1 month"
-                }, {
-                    period: "YYYY",
-                    count: 1,
-                    label: "1 year"
-                }, {
-                    period: "MAX",
-                    label: "MAX"
-                } ]
-            }
-        } );
-    });
-}
-fetchmedicalVisitsPerMonthDataReport();
-
-
-// -------------------------------------------------------------------------------------------------------- //
-// -------- REPORT: Benefiters vs phycological support ---------------------------------------------------- //
-var phycologicalSupportType = [];
-
-function fetchBenefitersVSphycologicalSupportType(){
-    $.ajax({
-        url: $('body').attr('data-url') + "/benefites-VS-phycological-support-type",
-        success: function (response) {
-            phycologicalSupportType = response;
-        }
-    }).done(function () {
-        var chart = AmCharts.makeChart( "benefiter_vs_phycological_support", {
-            "type": "serial",
-            "theme": "light",
-            "dataProvider": phycologicalSupportType,
-            "fontSize": 16,
-            "valueAxes": [ {
-                "gridColor": "#FFFFFF",
-                "gridAlpha": 0.2,
-                "dashLength": 0,
-                //"fontSize": 16,
-                "position": "left",
-                "title": $("#benefiter_vs_phycological_support").data("number-of-benefiters")
-
-            } ],
-            "gridAboveGraphs": true,
-            "startDuration": 1,
-            "graphs": [ {
-                "balloonText": "[[category]]: <b>[[value]]</b>",
-                "fillAlphas": 0.8,
-                "lineAlpha": 0.2,
-                "type": "column",
-                "valueField": "type_count",
-                "lineColor" : "#A57251",
-            } ],
-            "chartCursor": {
-                "categoryBalloonEnabled": false,
-                "cursorAlpha": 0,
-                "zoomable": false
+                position: 'bottom',
+                periods: [
+                    { period: 'DD', count: 10, label: periods.days },
+                    { period: 'MM', count: 1, label: periods.month },
+                    { period: 'YYYY', count: 1, label: periods.year },
+                    { period: 'MAX', label: periods.max },
+                ],
             },
-            "rotate": true,
-            "categoryField": "$phycological_support_type",
-            "categoryAxis": {
-                "gridPosition": "start",
-                "gridAlpha": 0,
-                "tickPosition": "start",
-                "tickLength": 20,
-                "fontSize": 16
-            },
-            "export": {
-                "enabled": true
-            }
+        });
+    }
 
-        } );
-    });
-}
-fetchBenefitersVSphycologicalSupportType();
+    /** Draws a chart with the data that the server gives for it. */
+    const fromServer = (path, draw) => getJson(`${baseUrl}/${path}`).then((data) => draw(data ?? [])).catch(() => {});
 
-// -------------------------------------------------------------------------------------------------------- //
-// -------- REPORT: Registrations per month ---------------------------------------------------- //
-var benefitersRegistrationsPerMonth = [];
+    // Data of the page
+    pieChart('maritalStatusReport', report.maritalStatuses ?? []);
+    pieChart('medicalStatusReport', report.visitLocations ?? []);
+    pieChart('ageReport', report.ages ?? []);
+    pieChart('legalStatusReport', report.legalStatuses ?? []);
+    columnChart('benefiters-work-title-chart', report.workTitles ?? [], { title: texts.workTitle, suffix: texts.benefiters, rotate: true });
+    columnChart('benefiters-per-medical-visits-chart', report.visitsPerBenefiter ?? [], { title: texts.visitsY, categoryTitle: texts.visitsX, suffix: texts.benefiters, color: '#3D6139' });
 
-function fetchBenefitersRegistrationsPerMonthDataReport() {
-    $.ajax({
-        url: $('body').attr('data-url') + "/registrations-PER-month-Report-get-data",
-        success: function (response) {
-            benefitersRegistrationsPerMonth = response;
-        }
-    }).done(function () {
-        var chart = AmCharts.makeChart( "registrations_per_month", {
-
-            type: "stock",
-            "theme": "light",
-            "fontSize": 16,
-            dataSets: [ {
-                color: "#b0de09",
-                fieldMappings: [ {
-                    fromField: "registrations_per_month",
-                    toField: "registrations_per_month"
-                } ],
-                dataProvider: benefitersRegistrationsPerMonth,
-                categoryField: "per_month_date"
-            } ],
-
-            panels: [ {
-                showCategoryAxis: true,
-                title: $("#registrations_per_month").data("registrations-per-month"),
-                eraseAll: false,
-                allLabels: [ {
-                    x: 0,
-                    y: 115,
-                    //text: "Click on the pencil icon on top-right to start drawing", [this feature is currently removed]
-                    text: "",
-                    align: "center",
-                    size: 16
-                } ],
-
-                stockGraphs: [ {
-                    id: "g1",
-                    valueField: "registrations_per_month",
-                    useDataSetColors: false,
-                    "bullet": "round"
-                } ],
-
-
-                stockLegend: {
-                    valueTextRegular: " ",
-                    markerType: "none"
-                },
-
-                drawingIconsEnabled: false
-            } ],
-
-            chartScrollbarSettings: {
-                graph: "g1"
-            },
-            chartCursorSettings: {
-                valueBalloonsEnabled: true
-            },
-            periodSelector: {
-                position: "bottom",
-                periods: [ {
-                    period: "DD",
-                    count: 10,
-                    label: "10 days"
-                }, {
-                    period: "MM",
-                    count: 1,
-                    label: "1 month"
-                }, {
-                    period: "YYYY",
-                    count: 1,
-                    label: "1 year"
-                }, {
-                    period: "MAX",
-                    label: "MAX"
-                } ]
-            }
-        } );
-    });
-}
-fetchBenefitersRegistrationsPerMonthDataReport();
+    // Data from the server
+    fromServer('benefites-VS-education-Report-get-data', (data) => pieChart('benefiter_vs_education', data, {
+        titleField: 'education_title',
+        valueField: 'benefiters_count_with_this_education_title',
+    }));
+    fromServer('benefites-VS-doctor-Report-get-data', (data) => columnChart('benefiter_vs_doctor_type', data, {
+        categoryField: 'doctor',
+        valueField: 'count_benefiters_with_same_doctor',
+        title: texts.doctorsTitle,
+        fontSize: 16,
+    }));
+    fromServer('benefites-VS-ClinicalConditions-Report-get-data', (data) => columnChart('benefiter_vs_clinical_conditions', data, {
+        categoryField: 'clinical_condition_name',
+        valueField: 'clinical_condition_count',
+        title: texts.numberOfBenefiters,
+        rotate: true,
+        theme: 'dark',
+        fontSize: 14,
+    }));
+    fromServer('benefites-VS-phycological-support-type', (data) => columnChart('benefiter_vs_phycological_support', data, {
+        categoryField: '$phycological_support_type',
+        valueField: 'type_count',
+        title: texts.numberOfBenefiters,
+        rotate: true,
+        color: '#A57251',
+    }));
+    fromServer('medical_visits-PER-month-Report-get-data', (data) => stockChart('medical_visits_per_month', data, {
+        field: 'visits_per_month',
+        title: texts.visitsPerMonth,
+    }));
+    fromServer('registrations-PER-month-Report-get-data', (data) => stockChart('registrations_per_month', data, {
+        field: 'registrations_per_month',
+        title: texts.registrationsPerMonth,
+        fontSize: 16,
+    }));
+})();

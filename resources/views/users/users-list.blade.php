@@ -7,6 +7,8 @@
     @lang($p.'users_list')
 @endsection
 
+@section('menu-item', 'users-list')
+
 @section('main-window-content')
     {{-- actions refering to users --}}
     <div class="light-green-background row" id="actions">

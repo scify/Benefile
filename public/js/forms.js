@@ -1,27 +1,22 @@
-$(document).ready(function() {
-    // when input of type text is focused, change the color of the label
-    $("body").on("focus", "input", function () {
-        if ($(this).attr("type") == "text") {
-            var $labelParent = $(this).parents(".form-group").first();
-            var $label = $labelParent.find("label").first();
-            $label.addClass("focused");
+/**
+ * The label of a text field or a text area changes colour while the field has the focus.
+ */
+(() => {
+    'use strict';
+
+    const labelOf = (field) => field.closest('.form-group')?.querySelector('label');
+
+    document.addEventListener('focusin', (event) => {
+        const field = event.target;
+        if ((field instanceof HTMLInputElement && field.type === 'text') || field instanceof HTMLTextAreaElement) {
+            labelOf(field)?.classList.add('focused');
         }
     });
 
-    // when input is blurred change to normal color
-    $("body").on("blur", "input", function () {
-        $(this).parents(".form-group").first().find("label").removeClass("focused");
+    document.addEventListener('focusout', (event) => {
+        const field = event.target;
+        if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) {
+            labelOf(field)?.classList.remove('focused');
+        }
     });
-
-    // when input of type textarea is focused, change the color of the label
-    $("body").on("focus", "textarea", function () {
-        var $labelParent = $(this).parents(".form-group").first();
-        var $label = $labelParent.find("label").first();
-        $label.addClass("focused")
-    });
-
-    // when input is blurred change to normal color
-    $("body").on("blur", "textarea", function () {
-        $(this).parents(".form-group").first().find("label").removeClass("focused");
-    });
-});
+})();

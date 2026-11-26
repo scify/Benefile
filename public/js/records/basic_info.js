@@ -1,228 +1,98 @@
-//structuring javascript
+/**
+ * Basic information of a beneficiary: incidents (saved in the background),
+ * work, months since detention, deletion of referrals, and the history tables.
+ */
+(() => {
+    'use strict';
 
-// 1. Create methods instead of writing code on the click events.
-    // $("#button1").click(CreateNewEventForm);
+    const { baseUrl, post, show, hide, slideToggle, dataTable } = window.Benefile;
+    const { openModal } = window.BenefileUi;
 
-// 2. Create a method init that assigns the events to the functions
-// 3. call the init method on bottom()
-
-// example of structure:
-//function test1(){}
-//function test1(){}
-//function test1(){}
-//function test1(){}
-//function test1(){}
-//function test1(){}
-//
-//function init(){
-//
-//    $("basdas").click(test1);
-//    $("basdas").click(test1);
-//    $("basdas").click(test1);
-//    $("basdas").click(test1);
-//    $("basdas").click(test1);
-//
-//
-//}
-//
-//$(function(){
-//    init();
-//})
-
-function displayMonthsPassed($selected_date){
-    if($selected_date != null) {
-        // used only for document ready, if no date is selected
-        if ($selected_date == "") {
-            $("#months-passed").text("");
+    /** Shows the months since the detention date (dd-mm-yyyy). */
+    function displayMonthsPassed(value) {
+        const output = document.getElementById('months-passed');
+        if (!output) {
             return;
         }
-        var $det_date = new Date($selected_date.substring(6, 10), $selected_date.substring(3, 5) - 1, $selected_date.substring(0, 2));
-        var $now = $.now();
-        var $diff = new Date($now - $det_date);
-        if ($diff >= 0) {
-            var $array = ($diff / 1000 / 60 / 60 / 24 / 30).toString().split(".");
-            var $result = $array[0];
-            if ($result == 1) {
-                $result = $result + " " + $("#months-passed").data("month");
-            } else {
-                $result = $result + " " + $("#months-passed").data("months");
-            }
-            $("#months-passed").text("(" + $result + ")");
-        } else {
-            $("#months-passed").text("");
+        const match = /^(\d{2})-(\d{2})-(\d{4})/.exec(value ?? '');
+        if (!match) {
+            output.textContent = '';
+            return;
         }
+        const detention = new Date(Number(match[3]), Number(match[2]) - 1, Number(match[1]));
+        const difference = Date.now() - detention.getTime();
+        if (difference < 0) {
+            output.textContent = '';
+            return;
+        }
+        const months = Math.floor(difference / 1000 / 60 / 60 / 24 / 30);
+        const unit = months === 1 ? output.dataset.month : output.dataset.months;
+        output.textContent = `(${months} ${unit})`;
     }
-}
 
-function init(){
+    const reload = () => window.location.reload();
 
-    var $langs_count = $(".added-div").length;
-
-    // hide new occurrence form
-    $(".new-occurrence").hide();
-    $("#add-new-occurrence").on("click", function(){
-        $(".new-occurrence").slideToggle("slow");
-    });
-    // slide toggle to edit a session
-    $(".edit-occurrence-div").hide();
-    $(".edit-occurrence").on("click", function(){
-        $(this).parents(".div-table-row:first").next().slideToggle("slow");
+    // Incidents
+    document.querySelectorAll('.new-occurrence, .edit-occurrence-div').forEach(hide);
+    document.getElementById('add-new-occurrence')?.addEventListener('click', () => {
+        document.querySelectorAll('.new-occurrence').forEach(slideToggle);
     });
 
-    // display modal asking for occurrence deletion confirmation
-    $(".delete-occurrence").on("click", function(){
-        $(".delete-occurrence-modal").modal('show');
-        var data_benefiter_id = $(this).attr('data-benefiter-id');
-        var occurrence_id = $(this).attr('data-occurrence-id');
-        $(".delete-occurrence-confirm-button").attr("data-benefiter-id", data_benefiter_id).attr("data-occurrence-id", occurrence_id);
-    });
-    // after the modal opens by clicking ok the occurrence is deleted with ajax
-    $('.delete-occurrence-confirm-button').on('click', function(){
-        $.ajax({
-            type: 'POST',
-            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            url: $('body').attr('data-url') + "/benefiter/"+ $(this).attr('data-benefiter-id') +"/delete-occurrence/" + $(this).attr('data-occurrence-id')
-        }).done(function() {
-            location.reload();
-        });
-    });
-
-    // AJAX OCCURRENCES SAVE & UPDATE
-    // POST NEW
-    $('.new-occurrence-submit').on('click',function(){
-        $.ajax({
-            type: 'POST',
-            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            url: $('body').attr('data-url') + "/benefiter/"+ $(this).attr('data-benefiter-id') +"/new-occurrence-save",
-            data: {
-                occurrence_date: $('#occurrence_date').val(),
-                occurrences_comments: $('#occurrences_comments').val(),
-                benefiter_id: $('#benefiter_id').val()
-            },
-            success: function () {
+    document.addEventListener('click', (event) => {
+        const button = event.target.closest('button');
+        if (!button) {
+            return;
+        }
+        if (button.classList.contains('edit-occurrence')) {
+            slideToggle(button.closest('.div-table-row')?.nextElementSibling);
+        } else if (button.classList.contains('delete-occurrence')) {
+            const modal = document.querySelector('.delete-occurrence-modal');
+            const confirm = modal?.querySelector('.delete-occurrence-confirm-button');
+            if (confirm) {
+                confirm.dataset.benefiterId = button.dataset.benefiterId;
+                confirm.dataset.occurrenceId = button.dataset.occurrenceId;
             }
-        }).done(function() {
-            location.reload();
-        });
+            openModal(modal, button);
+        } else if (button.classList.contains('delete-occurrence-confirm-button')) {
+            post(`${baseUrl}/benefiter/${button.dataset.benefiterId}/delete-occurrence/${button.dataset.occurrenceId}`).then(reload);
+        } else if (button.classList.contains('new-occurrence-submit')) {
+            post(`${baseUrl}/benefiter/${button.dataset.benefiterId}/new-occurrence-save`, {
+                occurrence_date: document.getElementById('occurrence_date')?.value,
+                occurrences_comments: document.getElementById('occurrences_comments')?.value,
+                benefiter_id: document.getElementById('benefiter_id')?.value,
+            }).then(reload);
+        } else if (button.classList.contains('edit-occurrence-submit')) {
+            const id = button.dataset.occurrenceId;
+            post(`${baseUrl}/benefiter/${button.dataset.benefiterId}/edit-occurrence/${id}`, {
+                edited_occurrence_date: document.getElementById(`edited_occurrence_date_${id}`)?.value,
+                edited_occurrences_comments: document.getElementById(`edited_occurrences_comments_${id}`)?.value,
+            }).then(reload);
+        } else if (button.classList.contains('delete-referral')) {
+            const modal = document.getElementById('delete-session-modal');
+            modal?.querySelector('.delete-session-form')?.setAttribute('action', button.dataset.url);
+            openModal(modal, button);
+        }
     });
-    // EDIT
-    $('.edit-occurrence-submit').on('click',function(){
-        $.ajax({
-            type: 'POST',
-            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            url: $('body').attr('data-url') + "/benefiter/"+ $(this).attr('data-benefiter-id') + "/edit-occurrence/" + $(this).attr('data-occurrence-id'),
-            data: {
-                edited_occurrence_date: $('#edited_occurrence_date_' + $(this).attr('data-occurrence-id')).val(),
-                edited_occurrences_comments: $('#edited_occurrences_comments_' + $(this).attr('data-occurrence-id')).val()
-                //current_benefiter_id: $('#benefiter_id').val()
-            },
-            success: function () {
-            }
-        }).done(function() {
-            location.reload();
-        });
+
+    // Work: the details show only when the beneficiary works.
+    const workDetails = () => [document.getElementById('working_legally_div'), document.getElementById('working_title_div')];
+    workDetails().forEach(document.getElementById('show_work_legally')?.checked ? show : hide);
+    document.getElementById('show_work_legally')?.addEventListener('change', () => workDetails().forEach(show));
+    document.getElementById('hide_work_legally')?.addEventListener('change', () => {
+        workDetails().forEach(hide);
+        const title = document.getElementById('working_title');
+        if (title) {
+            title.value = '';
+        }
     });
 
-
-
-    // at startup check if "yes" is checked and then display the working legally div
-    if ($("#show_work_legally:checked").val()){
-        $("#working_legally_div").show();
-        $("#working_title_div").show();
+    // Months since detention
+    const detention = document.getElementById('detention-date');
+    if (detention) {
+        displayMonthsPassed(detention.value);
+        ['change', 'changeDate', 'focusout'].forEach((type) => detention.addEventListener(type, () => displayMonthsPassed(detention.value)));
     }
-    else{
-        $("#working_legally_div").hide();
-        $("#working_title_div").hide();
-    }
 
-    // listeners that decide if working legally div and working title div should be displayed
-    $("body").on("change", "#show_work_legally", function(){
-        $("#working_legally_div").show();
-        $("#working_title_div").show();
-    });
-    $("body").on("change", "#hide_work_legally", function(){
-        $("#working_legally_div").hide();
-        $("#working_title_div").hide();
-        $("#working_title").val("");
-    });
-
-    // add more languages
-    $("body").on("click", ".add-lang", function(){
-        var $copy = $(".language-div").clone();
-        // change the class so they won't be cloned every time all of them
-        $copy.removeClass("language-div").addClass("added-div");
-        // make the add button invisible and the remove button visible
-        $copy.find(".color-green").hide();
-        $copy.find(".color-red").show();
-        // set new name to dropdowns so that the controller can view them all
-        $langs_count++;
-        $copy.find(".language-selection").attr("name", $copy.find(".language-selection").attr("name") + $langs_count);
-        $copy.find(".level-selection").attr("name", $copy.find(".level-selection").attr("name") + $langs_count);
-        // append cloned element to parent
-        var $parent = $("#language-wrapper");
-        $copy.appendTo($parent);
-    });
-
-    // remove lang element after remove button is clicked
-    $("body").on("click", ".remove-lang", function(){
-        $(this).parents(".added-div").remove();
-    });
-
-    // display modal asking for session deletion confirmation
-    $(".delete-session").on("click", function(e){
-        $("#delete-session-modal").modal('show');
-        var delSessionPath = $(".delete-session-path").attr("value") + "/";
-        $(".delete-session-form").attr("action", delSessionPath);
-    });
-
-    // make added-div languages display remove and not add button
-    $(".added-div").each(function(){
-        $(this).find(".color-green").hide();
-        $(this).find(".color-red").show();
-    });
-
-    // add more referrals in basic info
-    $("body").on("click", ".add-ref", function(){
-        var $copy = $(".basic_info_referral").clone();
-        // change the class so they won't be cloned every time all of them
-        $copy.removeClass("basic_info_referral").addClass("ref-added-div");
-        // make the add button invisible and the remove button visible
-        $copy.find(".color-green").hide();
-        $copy.find(".color-red").show();
-        $copy.find("input").val('');
-        // set new name to dropdowns so that the controller can view them all
-        //$refs_count++;
-        //$copy.find("#refList").attr("name", $copy.find("#refList").attr("name") + $refs_count);
-
-        // append cloned element to parent
-        var $parent = $("#basic_info_referrals");
-        $copy.appendTo($parent);
-    });
-
-    // remove referral element after remove button is clicked
-    $("body").on("click", ".remove-ref", function(){
-        $(this).parents(".ref-added-div").remove();
-    });
-
-    // on document ready display the months passed from duration date
-    displayMonthsPassed($("#detention-date").val());
-
-    // on detention date change get the correct amount of months passed
-    $("#detention-date").on("changeDate focusout", function(){
-        displayMonthsPassed($(this).val());
-    });
-
-    // Apply dataTable to benefiter referrals history
-    $('#benefiter_referrals_history').DataTable( {
-        //"lengthMenu": [ [-1], ["All"] ]
-    });
-
-    // Apply dataTable to updates history
-    $('#folders-update-history').DataTable( {
-        //"lengthMenu": [ [-1], ["All"] ]
-    });
-}
-
-
-$(document).ready(init);
-
+    dataTable('#benefiter_referrals_history');
+    dataTable('#folders-update-history');
+})();

@@ -1,49 +1,53 @@
 /**
- * Created by cdimitzas on 10/3/2016.
+ * CSV import: Dropzone sends the file. The server answers with a list of errors,
+ * empty when the import worked.
+ *
+ * Dropzone reads Dropzone.options.dropzone when the page has loaded, so this script sets it at once.
  */
-$(document).ready(function() {
-    $('div.success-message').hide();
-    $('div.unsuccess-message').hide();
+(() => {
+    'use strict';
 
-    Dropzone.options.dropzone = {
-        acceptedFiles: ".csv",
-        maxFiles: 1,
-        maxFilesize: 50, // in MB
-        sending: function(){
-            // spinner start
-            $loader = $('#main-window').faLoadingAdd('fa-circle-o-notch');
-        },
-        success: function(file, data) {
-            html = "";
-            for($i = 0; $i < data.length; $i++) {
-                html = html + "<li>" + data[$i] + "</li>";
-            }
-            if(html != "") {
-                $("#error-list").html(html);
-                $("#error-list").parents("div:first").addClass("alert alert-danger");
-            } else {
-                $('div.success-message').show();
-                $('div.success-message').delay(7000).fadeOut(400);
-            }
-	    },
-        canceled: function (response) {
-            $('div.unsuccess-message').show();
-            $('div.unsuccess-message').delay(7000).fadeOut(400);
-        },
-        complete: function(){
-            $loader.remove(); //stop the loading screen
-        }
+    const { show, hide, fadeOutLater, showLoading } = window.Benefile;
+    const success = document.querySelector('div.success-message');
+    const failure = document.querySelector('div.unsuccess-message');
+    const errors = document.getElementById('error-list');
+    let stopLoading = () => {};
+
+    hide(success);
+    hide(failure);
+
+    const showFor = (element, milliseconds) => {
+        show(element);
+        fadeOutLater(element, milliseconds);
     };
 
+    window.Dropzone.options.dropzone = {
+        acceptedFiles: '.csv',
+        maxFiles: 1,
+        maxFilesize: 50,
+        sending() {
+            stopLoading = showLoading(document.getElementById('main-window'));
+        },
+        success(file, messages) {
+            const list = Array.isArray(messages) ? messages : [];
+            if (list.length > 0 && errors) {
+                errors.replaceChildren(...list.map((message) => {
+                    const item = document.createElement('li');
+                    item.textContent = String(message);
+                    return item;
+                }));
+                errors.parentElement?.classList.add('alert', 'alert-danger');
+            } else {
+                showFor(success, 7000);
+            }
+        },
+        canceled() {
+            showFor(failure, 7000);
+        },
+        complete() {
+            stopLoading();
+        },
+    };
 
-    $("#elem").progressbar("option", {
-        value: 100,
-        disabled: true
-    });
-});
-
-var $loader;
-
-function refreshPage() {
-    location.reload();
-}
+    document.getElementById('import-another')?.addEventListener('click', () => window.location.reload());
+})();

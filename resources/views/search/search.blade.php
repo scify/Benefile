@@ -7,10 +7,11 @@
     @lang('layouts/mainPanel.search')
 @stop
 
+@section('menu-item', 'search')
+
 @section('panel-headLinks')
     <link href="{{ asset('/plugins/fontawesome/css/font-awesome.css') }}" rel="stylesheet" type="text/css"/>
-    <link href="{{ asset('plugins/faloading/jquery.faloading.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('/plugins/datepicker/css/datepicker.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ asset('vendor/vanillajs-datepicker/datepicker.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('css/records/validation_errors.css') }}" rel="stylesheet" type="text/css">
     <link href="{{asset('css/records/record_form.css')}}" rel="stylesheet" type="text/css">
     <link href="{{asset('css/search/search.css')}}" rel="stylesheet" type="text/css">
@@ -271,7 +272,7 @@
                             <a id="download-link" class="simple-button" href="javascript:void(0)">@lang($p."download_csv")</a>
                         </div>
                         <div class="display padding-20">
-                            <table id="results" class="display" cellspacing="0" width="100%">
+                            <table id="results" class="display datatable-table" cellspacing="0" width="100%">
                                 <thead>
                                 <tr>
                                     <th class="printable">@lang($p."folder_number")</th>
@@ -331,10 +332,7 @@
 @stop
 
 @section('panel-scripts')
-    <script src="{{ asset('plugins/faloading/jquery.faloading-0.1.min.js') }}"></script>
-    <script src="{{asset('js/main-panel/selectSearchInMainPanel.js')}}"></script>
-    <script src="{{ asset('/plugins/datepicker/js/bootstrap-datepicker.js') }}"></script>
-    <script src="{{ asset('js/records/custom_datepicker.js') }}"></script>
+    @include('partials.datepicker-scripts')
     <script src="{{asset('js/forms.js')}}"></script>
     <script src="{{ asset('js/search/search.js') }}"></script>
 @stop

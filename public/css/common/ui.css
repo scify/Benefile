@@ -1,0 +1,107 @@
+/*
+ * Styles for the scripts of the main panel: the loading icon, the tables
+ * (simple-datatables, close to the look of the old tables), the lists with search
+ * (Tom Select) and the calendar.
+ */
+
+/* Loading icon over a container */
+.loading-container {
+    position: relative;
+    min-height: 60px;
+}
+
+.loading-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgb(255 255 255 / 60%);
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #ccc;
+    border-top-color: #333;
+    border-radius: 50%;
+    animation: loading-turn 0.8s linear infinite;
+}
+
+@keyframes loading-turn {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .loading-spinner {
+        animation-duration: 3s;
+    }
+}
+
+/* Tables */
+.datatable-wrapper .datatable-top,
+.datatable-wrapper .datatable-bottom {
+    padding: 8px 0;
+}
+
+.datatable-wrapper .datatable-input {
+    margin-left: 0.5em;
+    padding: 3px 6px;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+}
+
+table.datatable-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table.datatable-table > thead > tr > th,
+table.datatable-table > tfoot > tr > th {
+    padding: 10px 18px;
+    font-weight: bold;
+    vertical-align: bottom;
+}
+
+table.datatable-table > thead > tr > th {
+    border-bottom: 1px solid #111;
+}
+
+table.datatable-table > tfoot > tr > th {
+    border-top: 1px solid #111;
+}
+
+table.datatable-table > tbody > tr > td {
+    padding: 8px 10px;
+    border-top: 1px solid #ddd;
+}
+
+table.datatable-table > tbody > tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+table.datatable-table > tbody > tr:hover {
+    background-color: #f5f5f5;
+}
+
+.datatable-wrapper .datatable-sorter {
+    font-weight: bold;
+    color: inherit;
+}
+
+/* Lists with search */
+.ts-wrapper {
+    width: 100%;
+}
+
+.ts-wrapper .ts-control {
+    min-height: 34px;
+}
+
+/* Calendar: above the dialogs and the fixed header */
+.datepicker.datepicker-dropdown {
+    z-index: 1060;
+}

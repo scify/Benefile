@@ -1,12 +1,16 @@
 {
     "private": true,
     "name": "benefile",
-    "description": "Browser tests of BeneFile (Playwright). The application itself has no front-end build.",
+    "description": "Browser tests of BeneFile (Playwright), and the source of the front-end libraries in public/vendor. The application itself has no front-end build.",
     "license": "Apache-2.0",
     "scripts": {
         "test:e2e": "playwright test"
     },
     "devDependencies": {
-        "@playwright/test": "1.65.0"
+        "@playwright/test": "1.65.0",
+        "dropzone": "4.2.0",
+        "simple-datatables": "10.3.0",
+        "tom-select": "2.7.0",
+        "vanillajs-datepicker": "1.3.4"
     }
 }
