@@ -285,4 +285,24 @@ class FolderWorkflowsTest extends FeatureTestCase
 
         $this->actingAs($doctor)->get('/benefiter/2/editMedicalVisit?medical_visit_id='.$visit)->assertNotFound();
     }
+
+    public function test_editing_a_visit_removes_the_rows_the_user_empties(): void
+    {
+        $doctor = User::factory()->create();
+        $this->actingAs($doctor)->post('/benefiter/1/medical-folder', $this->medicalVisit());
+        $visit = $this->latestVisitId();
+
+        $this->actingAs($doctor)->post('/benefiter/1/editMedicalVisit', $this->medicalVisit([
+            'selected_medical_visit_id' => (string) $visit, 'medication_name_from_lookup' => [''],
+            'lab_results' => [''], 'referrals' => [''], 'chronic_conditions' => [''],
+            'medication_new_name' => ['Ibuprofen'], 'medication_dosage' => ['400mg'], 'medication_duration' => ['3'],
+        ]))->assertRedirect();
+
+        $this->assertSame(0, DB::table('medical_laboratory_results')->where('medical_visit_id', $visit)->count());
+        $this->assertSame(0, DB::table('medical_referrals')->where('medical_visit_id', $visit)->count());
+        $this->assertSame(0, DB::table('medical_chronic_conditions')->where('medical_visit_id', $visit)->count());
+        $this->assertSame(['400mg'], DB::table('medical_medication')->where('medical_visit_id', $visit)->pluck('dosage')->all());
+        $this->assertSame(1, DB::table('medical_examinations')->where('medical_visit_id', $visit)->count());
+        $this->assertSame(1, DB::table('medical_examination_results')->where('medical_visit_id', $visit)->count());
+    }
 }
