@@ -16,7 +16,7 @@ class NewLocationController extends Controller
     }
 
     public function postSaveNewLocation(Request $request){
-        $addNewLocationService = new AddNewLocationService();
+        $addNewLocationService = app(AddNewLocationService::class);
         $validator = $addNewLocationService->newLocationValidation($request->all());
         if($validator->fails()){
             return redirect('new-location')

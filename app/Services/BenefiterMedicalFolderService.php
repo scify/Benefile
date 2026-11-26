@@ -27,10 +27,9 @@ class BenefiterMedicalFolderService
 
     private $datesHelper;
 
-    public function __construct()
+    public function __construct(DatesHelper $datesHelper, private readonly \Illuminate\Contracts\Auth\Guard $auth)
     {
-        // initialize dates helper
-        $this->datesHelper = new DatesHelper();
+        $this->datesHelper = $datesHelper;
     }
 
     public function medicalValidation($request){
@@ -623,7 +622,7 @@ class BenefiterMedicalFolderService
 
     // get logged in user id
     public function get_logged_in_user_id(){
-        $user_id = auth()->id();
+        $user_id = $this->auth->id();
         return $user_id;
     }
     // medical visits for each benefiter
@@ -666,7 +665,7 @@ class BenefiterMedicalFolderService
     }
     // doctor id
     public function findDoctorId(){
-        $doctor_id = auth()->id();
+        $doctor_id = $this->auth->id();
         return $doctor_id;
     }
     // physical examinations

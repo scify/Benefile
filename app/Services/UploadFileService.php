@@ -20,8 +20,8 @@ class UploadFileService{
     private $conversionForFile;
     private GreekStringConversionHelper $greekStringConversion;
 
-    public function __construct(){
-        $this->greekStringConversion = new GreekStringConversionHelper();
+    public function __construct(GreekStringConversionHelper $greekStringConversion, private readonly DatesHelper $datesHelper, private readonly \Illuminate\Contracts\Auth\Guard $auth){
+        $this->greekStringConversion = $greekStringConversion;
     }
 
     // inserts all values to DB
@@ -103,7 +103,8 @@ class UploadFileService{
             }
         }
         \DB::insert('insert into work_title_list_lookup (work_title) select distinct f.work_title  from  File_Import_Schema f left outer join work_title_list_lookup work_title on f.work_title = work_title.work_title where work_title.id is null;');
-        $this->conversionForFile = new ConversionsForFileUpload();
+        // Reads the lookup lists now: after the import has added new work titles.
+        $this->conversionForFile = app(ConversionsForFileUpload::class);
         $this->selectAppropriateDBTableForEachFileRowColumns($maxIdInFileImportSchema);
         return $this->__errors;
     }
@@ -143,7 +144,7 @@ class UploadFileService{
 
     // selects and returns all the columns - values inserted from file that correspond to the benefiters DB table
     private function selectBenefitersColumnsAndValuesFromFileRow($singleRow){
-        $datesHelper = new DatesHelper();
+        $datesHelper = $this->datesHelper;
         $singleRow->gender = $this->conversionForFile->getGenderId($singleRow->gender);
         $singleRow->marital_status = $this->conversionForFile->getMaritalStatusId($singleRow->marital_status);
         $education = $this->conversionForFile->getEducationId($singleRow->education);
@@ -185,7 +186,7 @@ class UploadFileService{
             'travel_duration' => $singleRow->travel_duration,
             'detention_date' => $datesHelper->makeDBFriendlyDate($singleRow->detention_duration),
             'social_history' => '', //$singleRow->social_history,
-            'document_manager_id' => auth()->id(),
+            'document_manager_id' => $this->auth->id(),
             'created_at' => $tmpdate,
         );
     }
@@ -223,10 +224,10 @@ class UploadFileService{
 
     // select the appropriate table columns for referrals and return them as an array
     public function selectOnlyReferrals($description, $referral_date, $benefiter_id, $referral_type_id){
-        $datesHelper = new DatesHelper();
+        $datesHelper = $this->datesHelper;
         $referralDb = array('description' => $description,
                             'referral_date' => $datesHelper->makeDBFriendlyDate($referral_date),
-                            'user_id' => auth()->id(),
+                            'user_id' => $this->auth->id(),
                             'benefiter_id' => $benefiter_id,
                             'referral_lookup_id' => $referral_type_id);
         return $referralDb;
@@ -406,7 +407,7 @@ class UploadFileService{
         // if legal id is found return an array suitable for DB insertion
         if($legal_id != null) {
             // get date for DB insert
-            $datesHelper = new DatesHelper();
+            $datesHelper = $this->datesHelper;
             $legal_exp_date = $datesHelper->makeDBFriendlyDate($legal_exp_date);
             return array(
                 'legal_lookup_id' => $legal_id,

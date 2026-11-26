@@ -25,9 +25,8 @@ class BasicInfoService{
 
     private $datesHelper;
 
-    public function __construct(){
-        // initialize dates helper
-        $this->datesHelper = new DatesHelper();
+    public function __construct(DatesHelper $datesHelper, private readonly GreekStringConversionHelper $greekStringConversion, private readonly \Illuminate\Contracts\Auth\Guard $auth){
+        $this->datesHelper = $datesHelper;
     }
 
     // validate the basic info
@@ -124,7 +123,7 @@ class BasicInfoService{
     private function saveBasicFolderUpdateHistory($id, $medical_location_id, $updated_by_date, $comments){
         BasicFolderHistory::create(array(
             'benefiter_id' => $id,
-            'user_id' => auth()->id(),
+            'user_id' => $this->auth->id(),
             'medical_location_id' => $medical_location_id,
             'update_date' => $this->datesHelper->makeDBFriendlyDate($updated_by_date),
             'comments' => $comments,
@@ -297,7 +296,7 @@ class BasicInfoService{
             "travel_duration" => $request['travel_duration'],
             "detention_date" => $this->datesHelper->makeDBFriendlyDate($request['detention_date']),
             "social_history" => $request['social_history'],
-            "document_manager_id" => auth()->id(),
+            "document_manager_id" => $this->auth->id(),
         );
     }
 
@@ -430,7 +429,7 @@ class BasicInfoService{
     // returns the work title id of a work title name
     private function getWorkTitleIdFromDBAndInsertNewWorkTitleIfNeeded($workTitleFromForm){
         // initialize the GreekStringConversionHelper service
-        $greekStringConversion = new GreekStringConversionHelper();
+        $greekStringConversion = $this->greekStringConversion;
         $workTitleId = null;
         $allWorkTitlesAvailable = \App\Models\Folders\WorkTitle::query()->get();
         $workTitleFromForm = $greekStringConversion->grstrtoupper($workTitleFromForm);
@@ -470,7 +469,7 @@ class BasicInfoService{
             $basic_info_referral->referral_date = $this->datesHelper->makeDBFriendlyDate($request_basic_info_referrals_date[$i]);
             $basic_info_referral->benefiter_id = $benefiter_id;
             $basic_info_referral->referral_lookup_id = $request_basic_info_referrals_id[$i];
-            $basic_info_referral->user_id = auth()->id();
+            $basic_info_referral->user_id = $this->auth->id();
             $basic_info_referral->save();
         }
     }
@@ -496,7 +495,7 @@ class BasicInfoService{
     public function saveNewOccurrence($request){
         $occurrence_date = $request['occurrence_date'];
         $occurrences_comments = $request['occurrences_comments'];
-        $user_who_added_occurrence = auth()->id();
+        $user_who_added_occurrence = $this->auth->id();
         $benefiter_id = $request['benefiter_id'];
 
         // save to occurrences table

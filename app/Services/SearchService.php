@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Log;
 
 class SearchService{
+    public function __construct(private readonly DatesHelper $datesHelper)
+    {
+    }
+
 
     /**
      * Searches the beneficiaries with the criteria of the search form.
@@ -25,7 +29,7 @@ class SearchService{
             return \DB::select($select . " where 1=1" . $groupBy);
         }
 
-        $datesHelper = new DatesHelper();
+        $datesHelper = $this->datesHelper;
         $dbDate = fn (string $date): string => $datesHelper->makeDBSearchFriendlyDate($datesHelper->makeDBFriendlyDate($date));
         $where = [];
         $bindings = [];

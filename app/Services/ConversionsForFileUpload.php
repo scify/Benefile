@@ -13,8 +13,8 @@ class ConversionsForFileUpload{
     private $binaryYesNo = null;
     private $workTitles = null;
 
-    public function __construct(){
-        $this->greekStringConversion = new GreekStringConversionHelper();
+    public function __construct(GreekStringConversionHelper $greekStringConversion){
+        $this->greekStringConversion = $greekStringConversion;
         $this->genders = \DB::table('genders_lookup')->get();
         $this->allCountryAbandonReasons = \DB::table('country_abandon_reasons_lookup')->get();
         $this->countryList = \DB::table('countries_lookup')->get();
@@ -112,7 +112,7 @@ class ConversionsForFileUpload{
 
     // get id for yes or no answer
     public function getYesOrNoId($answer){
-        $greekStringConversion = new GreekStringConversionHelper();
+        $greekStringConversion = $this->greekStringConversion;
         $answer = $greekStringConversion->grstrtoupper($answer);
         foreach($this->binaryYesNo as $binary){
             $binary->description = $greekStringConversion->grstrtoupper($binary->description);

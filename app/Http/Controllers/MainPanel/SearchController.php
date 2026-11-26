@@ -14,8 +14,8 @@ class SearchController extends Controller
 
     // returns the search view
     public function getSearch(){
-        $medicalService = new BenefiterMedicalFolderService();
-        $searchService = new SearchService();
+        $medicalService = app(BenefiterMedicalFolderService::class);
+        $searchService = app(SearchService::class);
         // all the marital statuses
         $allMaritalStatuses = $searchService->getAllMaritalStatuses();
         // all the legal statuses
@@ -42,7 +42,7 @@ class SearchController extends Controller
 
     // gets the search parameters and returns the results to view
     public function getResults(Request $request){
-        $searchService = new SearchService();
+        $searchService = app(SearchService::class);
         $results = $searchService->searchBenefiters($request->all());
         return $results;
     }

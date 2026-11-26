@@ -12,9 +12,8 @@ class ReportsController extends Controller
 {
     private $reportsService;
 
-    public function __construct(){
-        // initialize reports service
-        $this->reportsService = new ReportsService();
+    public function __construct(ReportsService $reportsService){
+        $this->reportsService = $reportsService;
     }
 
     public function getReports(){

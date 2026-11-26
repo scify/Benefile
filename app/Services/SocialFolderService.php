@@ -4,6 +4,10 @@ use Validator;
 use App\Models\PsychosocialSession;
 
 class SocialFolderService{
+    public function __construct(private readonly DatesHelper $datesHelper, private readonly \Illuminate\Contracts\Auth\Guard $auth)
+    {
+    }
+
 
     // validates the social folder view form input
     public function socialFolderValidation($request){
@@ -98,13 +102,13 @@ class SocialFolderService{
     private function getPsychosocialSessionArrayForDBInsert($request, $socialFolderId){
         $temp = $this->getPsychosocialSessionArrayForDBEdit($request);
         $temp['social_folder_id'] = $socialFolderId;
-        $temp['psychologist_id'] = auth()->id();
+        $temp['psychologist_id'] = $this->auth->id();
         return $temp;
     }
 
     // get psychosocial session array for DB row edit
     private function getPsychosocialSessionArrayForDBEdit($request){
-        $datesHelper = new DatesHelper();
+        $datesHelper = $this->datesHelper;
         return array(
             'session_date' => $datesHelper->makeDBFriendlyDate($request['session_date']),
             'psychosocial_theme_id' => $request['psychosocial_theme'],

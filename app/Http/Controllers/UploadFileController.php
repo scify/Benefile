@@ -11,9 +11,8 @@ class UploadFileController extends Controller
     // services
     public  $uploadFileService =null;
 
-    public function __construct(){
-        // initialize benefiters list service
-        $this->uploadFileService = new UploadFileService();
+    public function __construct(UploadFileService $uploadFileService){
+        $this->uploadFileService = $uploadFileService;
     }
 
     // returns upload csv view
@@ -25,7 +24,7 @@ class UploadFileController extends Controller
     // uploads the file to server
     public function excelUpload(\Illuminate\Http\Request $request){
         $request->validate(['file' => ['required', 'file', 'max:10240', 'mimes:csv,txt']]);
-        $uploadFileService = new UploadFileService();
+        $uploadFileService = $this->uploadFileService;
         $file = $request->file('file');
         // The file goes to the private storage, with a random name, never to public/.
         $storedPath = $file->store('csv-imports', 'local');

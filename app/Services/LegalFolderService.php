@@ -12,9 +12,8 @@ class LegalFolderService{
 
     private $datesHelper;
 
-    public function __construct(){
-        // initialize DatesHelper
-        $this->datesHelper = new DatesHelper();
+    public function __construct(DatesHelper $datesHelper, private readonly \Illuminate\Contracts\Auth\Guard $auth){
+        $this->datesHelper = $datesHelper;
     }
 
     // validation for legal folder form
@@ -162,7 +161,7 @@ class LegalFolderService{
             'legal_folder_id' => $legalFolderId,
             'legal_date' => $this->datesHelper->makeDBFriendlyDate($request['legal_date']),
             'legal_comments' => $request['legal_comments'],
-            'user_id' => auth()->id(),
+            'user_id' => $this->auth->id(),
             'medical_location_id' => $request['medical_location_id'],
         );
     }
