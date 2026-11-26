@@ -66,7 +66,7 @@
                             <td>{{ $user['lastname'] }}</td>
                             <td>{{ $user['name'] }}</td>
                             <td>{{ $user['email'] }}</td>
-                            @if($user['user_role_id'] == 2)
+                            @if($user['user_role_id'] == \App\Models\User::ROLE_DOCTOR)
                                 <td>{{$user['role']['role']}} ({{$user['subrole']['subrole']}})</td>
                             @else
                                 <td>{{$user['role']['role']}}</td>
@@ -119,7 +119,7 @@
                             <td>{{ $user['lastname'] }}</td>
                             <td>{{ $user['name'] }}</td>
                             <td>{{ $user['email'] }}</td>
-                            @if($user['user_role_id'] == 2)
+                            @if($user['user_role_id'] == \App\Models\User::ROLE_DOCTOR)
                                 <td>{{$user['role']['role']}} ({{$user['subrole']['subrole']}})</td>
                             @else
                                 <td>{{$user['role']['role']}}</td>
@@ -171,7 +171,7 @@
                             <td>{{ $user['lastname'] }}</td>
                             <td>{{ $user['name'] }}</td>
                             <td>{{ $user['email'] }}</td>
-                            @if($user['user_role_id'] == 2)
+                            @if($user['user_role_id'] == \App\Models\User::ROLE_DOCTOR)
                                 <td>{{$user['role']['role']}} ({{$user['subrole']['subrole']}})</td>
                             @else
                                 <td>{{$user['role']['role']}}</td>

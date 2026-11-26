@@ -79,7 +79,7 @@ class FolderWorkflowsTest extends FeatureTestCase
 
     public function test_the_basic_information_is_updated(): void
     {
-        $user = User::factory()->role(User::ROLE_LAWYER)->create();
+        $user = User::factory()->role(User::ROLE_SOCIAL_WORKER)->create();
 
         $this->actingAs($user)->post('/benefiter/1/basic-info', $this->basicInfo(['folder_number' => 'KK1', 'lastname' => 'Αλλαγμένο']))->assertRedirect();
 

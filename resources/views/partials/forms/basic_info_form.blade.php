@@ -20,7 +20,7 @@
     ?>
     {!! Form::model($benefiter, array('url' => 'benefiter/'.$benefiter->id.'/basic-info')) !!}
     {{-- if the user is neither admin, nor social advisor disable fields --}}
-    @if(\Auth::user()->user_role_id != 1 and \Auth::user()->user_role_id != 4)
+    @if(Auth::user()->cannot('edit-basic-info'))
 
         {{-- Προσωπικά Στοιχεία --}}
         <div class="personal-info form-section no-bottom-border">

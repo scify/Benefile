@@ -13,7 +13,7 @@
     }
 ?>
 {!! Form::open(array('url' => 'benefiter/'.$benefiter->id.'/legal-folder')) !!}
-@if (Auth::user()->user_role_id == 1 || Auth::user()->user_role_id == 3)
+@if (Auth::user()->can('edit-legal-folder'))
 
 {{--<hr>--}}
     <div class="personal-family-info form-section no-bottom-border">
@@ -364,7 +364,7 @@
     <div class="lawyer-action-div form-section">
         <div class="row">
             <!-- ACCESS LEVEL -->
-            @if (Auth::user()->user_role_id == 5 || Auth::user()->user_role_id == 1)
+            @if (Auth::user()->can('edit-legal-folder'))
             <div class="col-xs-12">
                 <button id="add-new-session" class="float-right margin-30 float-right session-button lighter-green-background">@lang($p."add_new_session")</button>
             </div>

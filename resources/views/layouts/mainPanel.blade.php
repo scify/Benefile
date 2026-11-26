@@ -77,14 +77,14 @@
                                 <li id="benefiters-list">
                                     <a href="{{ url('benefiters-list') }}" class="buttonMenu no-padding">@lang($p.'benefiters')</a>
                                 </li>
-                                @if (\Auth::user()->user_role_id == 1 or \Auth::user()->user_role_id == 4)
+                                @if (Auth::user()->can('edit-basic-info'))
                                     <li id="register-benefiter">
                                         <div class="buttonMenu no-padding">@lang($p.'registration') <i class="glyphicon glyphicon-chevron-right"></i></div>
                                     </li>
                                     <li id="new-benefiter" class="child hide">
                                         <a href="{{ url('benefiter/-1/basic-info') }}">@lang($p.'new_registration')</a>
                                     </li>
-                                    @if (\Auth::user()->user_role_id == 1)
+                                    @if (Auth::user()->can('administer'))
                                     <li id="import-file" class="child hide">
                                         <a href="{{url('new-benefiter/uploadCSV')}}">@lang($p.'file_import')</a>
                                     </li>
@@ -96,12 +96,12 @@
                                 <li id="reports">
                                     <a href="{{ url('reports') }}">@lang($p.'reports')</a>
                                 </li>
-                                @if(Auth::user()->user_role_id == 1)
+                                @if(Auth::user()->can('administer'))
                                 <li id="new-location">
                                     <a href="{{url('new-location')}}">@lang($p.'add_location')</a>
                                 </li>
                                 @endif
-                                @if(Auth::user()->user_role_id == 1)
+                                @if(Auth::user()->can('administer'))
                                 <li id="users-list">
                                     <a  href="{{url('main-panel/users-list')}}">@lang($p.'users')</a>
                                 </li>

@@ -144,7 +144,7 @@
                     <div class="col-md-12">
                         <div class="form-group make-inline padding-left-right-15 float-left width-100-percent">
                             <!-- ACCESS LEVEL -->
-                            @if (Auth::user()->user_role_id == 4 || Auth::user()->user_role_id == 1)
+                            @if (Auth::user()->can('edit-social-history'))
                                 {!! Form::textarea('comments', $social_folder->comments, array('class' => 'custom-input-textarea width-100-percent')) !!}
                             @else
                             {!! Form::textarea('comments', $social_folder->comments, array('class' => 'custom-input-textarea width-100-percent', 'disabled' => 'disabled', 'style' => 'color: #b8bcbb;')) !!}
@@ -156,7 +156,7 @@
         </div>
     </div>
     <!-- ACCESS LEVEL -->
-    @if (Auth::user()->user_role_id == 4 || Auth::user()->user_role_id == 1)
+    @if (Auth::user()->can('edit-social-history'))
     <div class="form-section align-text-center no-bottom-border">
         @if($social_folder_is_null)
         {!! Form::submit(Lang::get('social_folder_form.save_social_folder'), array('class' => 'submit-button margin-30')) !!}
@@ -171,7 +171,7 @@
     <div class="psychosocial-support form-section">
         <div class="row">
             <!-- ACCESS LEVEL -->
-            @if (Auth::user()->user_role_id == 5 || Auth::user()->user_role_id == 1)
+            @if (Auth::user()->can('edit-psychosocial-sessions'))
             <div class="col-xs-12">
                 <button id="add-new-session" class="float-right margin-30 float-right session-button lighter-green-background">@lang($p."add_new_session")</button>
             </div>
@@ -274,14 +274,14 @@
                         <div class="col-xs-2 text-align-center">{{ $psychosocialSubjects[$benefiter_session->psychosocial_theme_id - 1]->description }}</div>
                         <div class="col-xs-2 text-align-center">{{ $medical_locations_array[$benefiter_session->medical_location_id] }}</div>
                         <!-- ACCESS LEVEL -->
-                        @if(Auth::user()->user_role_id == 5 || Auth::user()->user_role_id == 1)
+                        @if(Auth::user()->can('edit-psychosocial-sessions'))
                             <div class="col-xs-4 text-align-center">{!! nl2br(e($benefiter_session->session_comments)) !!}</div>
                         @else
                             <div class="col-xs-4 text-align-center">----------------</div>
                         @endif
                         <!-- ACCESS LEVEL END -->
-                        <div class="col-xs-2">@if(\Auth::user()->user_role_id == 5 || \Auth::user()->user_role_id == 1)<div class="row"><button type="button" class="session-button edit-session medical_visit_from_history btn btn-info btn-lg">@lang($p."edit")</button></div><div class="row"><button type="button" class="session-button delete-session btn btn-warning btn-lg" data-url="{{ url('benefiter/'.$benefiter->id.'/session-delete/'.$benefiter_session->id) }}">@lang($p."delete")</button></div>@endif</div>
-{{--                        <div class="col-xs-2">@if(\Auth::user()->user_role_id == 5 || \Auth::user()->user_role_id == 1)<button class="session-button delete-session btn btn-warning btn-lg" name="{{ $benefiter_session->id }}">@lang($p."delete")</button>@endif</div>--}}
+                        <div class="col-xs-2">@if(Auth::user()->can('edit-psychosocial-sessions'))<div class="row"><button type="button" class="session-button edit-session medical_visit_from_history btn btn-info btn-lg">@lang($p."edit")</button></div><div class="row"><button type="button" class="session-button delete-session btn btn-warning btn-lg" data-url="{{ url('benefiter/'.$benefiter->id.'/session-delete/'.$benefiter_session->id) }}">@lang($p."delete")</button></div>@endif</div>
+{{--                        <div class="col-xs-2">@if(Auth::user()->can('edit-psychosocial-sessions'))<button class="session-button delete-session btn btn-warning btn-lg" name="{{ $benefiter_session->id }}">@lang($p."delete")</button>@endif</div>--}}
                     </div>
                 </div>
                 {{-- EDIT EACH SESSION --}}

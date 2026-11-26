@@ -229,12 +229,12 @@
                                     <td>
                                     <div>
                                     {{-- Only admin and doctor rolesshould be able to view and edit medical visits. --}}
-                                    @if (Auth::user()->user_role_id == 1 || Auth::user()->user_role_id == 2)
+                                    @if (Auth::user()->can('edit-medical-folder'))
                                         <button value="{{$benefiter_medical_visits_list[$i]['id']}}" data-url="{{ url('benefiter/'.$benefiter_medical_visits_list[$i]['benefiter_id'].'/getEachMedicalVisit') }}" type="button" class="medical_visit_from_history btn btn-info btn-lg medical-visit-btn" data-toggle="modal" data-target="#medicalHistory">@lang($p.('show_medical_visit'))</button>
                                     @endif
                                     </div>
                                     <div class="margin-top-5">
-                                    @if (Auth::user()->user_role_id == 1 || Auth::user()->user_role_id == 2)
+                                    @if (Auth::user()->can('edit-medical-folder'))
                                         <a value="{{$benefiter_medical_visits_list[$i]['id']}}" href="{{ url('benefiter/'.$benefiter_medical_visits_list[$i]['benefiter_id'].'/editMedicalVisit?medical_visit_id='.$benefiter_medical_visits_list[$i]['id']) }}" class="btn btn-warning btn-lg medical-visit-btn" type="button" >
                                             @lang($p.('edit_visit'))
                                         </a>
@@ -261,7 +261,7 @@
 {{-- Button (dropsdown the form) --}}
 <div class="row padding-top-20 margin-0">
     <div class="col-md-12">
-        @if (Auth::user()->user_role_id == 1 || Auth::user()->user_role_id == 2)
+        @if (Auth::user()->can('edit-medical-folder'))
             <button id="new-med-visit-button" class="lighter-green-background new-visit-button float-right padding-left-right-15 margin-30">@lang($p.'new_medical_visit')</button>
         @endif
     </div>

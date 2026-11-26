@@ -68,7 +68,7 @@ Route::middleware(['auth', 'activated'])->group(function () {
 
     // Basic information: every profession can change it.
     Route::get('benefiter/{id}/basic-info', [BasicInfoController::class, 'getBasicInfo']);
-    Route::post('benefiter/{id}/basic-info', [BasicInfoController::class, 'postBasicInfo']);
+    Route::post('benefiter/{id}/basic-info', [BasicInfoController::class, 'postBasicInfo'])->can('edit-basic-info');
     Route::post('benefiter/{id}/basic-info/referrals', [BasicInfoController::class, 'postBasicInfoReferrals']);
     Route::post('benefiter/{id}/basic-info/referral-delete/{referral_id}', [BasicInfoController::class, 'deleteBasicInfoReferral']);
     Route::post('benefiter/{id}/new-occurrence-save', [BasicInfoController::class, 'saveOccurrencesBasicInfo']);

@@ -48,7 +48,7 @@
                                 {!! Form::open(array('url' => 'benefiter/'. $benefiter['id'] .'/basic-info', 'method' => 'get')) !!}
                                     {!! Form::hidden('benefiter_id', $benefiter['id']) !!}
                                     {!! Form::submit(\Lang::get('benefiters_list.edit'), array('class' => 'edit-button lighter-green-background')) !!}
-                                    @if(\Auth::user()->user_role_id == 1)
+                                    @if(Auth::user()->can('administer'))
                                     <a href="javascript:void(0)" data-url="{{ url('/benefiter/'.$benefiter['id'].'/delete') }}" class="delete-benefiter display-inline margin-left-10px gray" title="@lang($p."delete_benefiter")"><span class="glyphicon glyphicon-trash"></span></a>
                                     @endif
                                 {!! Form::close() !!}

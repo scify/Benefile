@@ -16,6 +16,7 @@ class AppServiceProvider extends ServiceProvider
      * every active user may read every folder and change the basic information.
      */
     public const ABILITIES = [
+        'edit-basic-info' => [User::ROLE_SOCIAL_WORKER],
         'edit-medical-folder' => [User::ROLE_DOCTOR],
         'edit-legal-folder' => [User::ROLE_LAWYER],
         'edit-social-history' => [User::ROLE_SOCIAL_WORKER],
