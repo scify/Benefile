@@ -1,0 +1,370 @@
+/* BeneFile, in the colors of the application: the plum top bar, the dark
+   teal side menu, the teal folder tabs with the purple line under the open
+   one, and the mist page under white cards. The stage is transparent: the
+   landing page's dark teal hero is the ground. */
+.bf {
+  & .ss-stage {
+    --gutter: 40px;
+    --bf-plum: #4c2a47;
+    --bf-menu: #18454b;
+    --bf-menu-on: #4c2a47;
+    --bf-tab: #00a59a;
+    --bf-tab-line: #b269a7;
+    --bf-mist: #e6f4f4;
+    --bf-fresh: #d3f1e6;
+    --ss-font: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, sans-serif;
+    --ss-text-strong: #1f2a2e;
+    --ss-text: #3c4a4f;
+    --ss-text-faint: #6b7a7f;
+    --ss-line: #d3e4e4;
+    --ss-line-faint: #e4eeee;
+    overflow: hidden;
+    background: none;
+  }
+
+  /* Wide hero: one gutter from the top and the right, off the bottom; the
+     band on the left holds the file history */
+  .bf-window {
+    position: absolute;
+    top: var(--gutter);
+    left: 160px;
+    width: 920px;
+    height: 560px;
+    box-shadow: 0 24px 64px rgb(0 0 0 / 35%), 0 0 0 1px rgb(0 0 0 / 8%);
+  }
+
+  .bf-app {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--bf-mist);
+  }
+
+  .bf-top {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    height: 44px;
+    padding: 0 16px;
+    background: var(--bf-plum);
+    color: #fff;
+  }
+
+  .bf-top-title {
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .bf-top-user {
+    position: absolute;
+    right: 16px;
+    font-size: 13px;
+    color: rgb(255 255 255 / 85%);
+  }
+
+  .bf-body {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .bf-side {
+    display: flex;
+    flex-direction: column;
+    flex: none;
+    gap: 2px;
+    width: 170px;
+    padding: 6px 0 16px;
+    background: var(--bf-menu);
+  }
+
+  .bf-side-mark {
+    display: block;
+    margin: 0 auto 12px;
+  }
+
+  .bf-side-search {
+    display: flex;
+    align-items: center;
+    height: 36px;
+    margin: 0 12px 14px;
+    padding: 0 10px;
+    border: 3px solid #926194;
+  }
+
+  .bf-side-placeholder {
+    font-size: 12px;
+    font-style: italic;
+    color: rgb(255 255 255 / 45%);
+  }
+
+  .bf-side-item {
+    display: flex;
+    align-items: center;
+    height: 38px;
+    padding: 0 16px;
+    font-size: 15px;
+    color: rgb(255 255 255 / 88%);
+  }
+
+  .bf-side-item[data-on] {
+    background: var(--bf-menu-on);
+    color: #fff;
+  }
+
+  .bf-main {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .bf-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    flex: none;
+    height: 48px;
+    background: var(--bf-tab);
+  }
+
+  .bf-tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: #fff;
+    box-shadow: inset 0 -4px 0 transparent;
+  }
+
+  .bf-tab[data-on] {
+    box-shadow: inset 0 -4px 0 var(--bf-tab-line);
+  }
+
+  /* The card runs past the window's foot, which the stage crops */
+  .bf-page {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    padding: 16px 16px 0;
+  }
+
+  /* The last row's own 10px and 5px more: the card pads its foot as its sides */
+  .bf-card {
+    padding-bottom: 5px;
+    background: var(--ss-surface);
+    border-radius: 4px;
+  }
+
+  .bf-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--ss-line);
+  }
+
+  .bf-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ss-text-strong);
+  }
+
+  .bf-form {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr) minmax(0, 1fr);
+    gap: 14px 16px;
+    padding: 16px;
+    border-bottom: 1px solid var(--ss-line);
+  }
+
+  .bf-field {
+    font-size: 13px;
+  }
+
+  .bf-form-actions {
+    display: flex;
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+  }
+
+  .bf-row {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1.3fr);
+    align-items: center;
+    gap: 12px;
+    /* A 39px row: the stage's foot falls in a row's top padding, not its words */
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--ss-line-faint);
+    transition: background-color 0.4s ease;
+  }
+
+  .bf-row--head {
+    padding-block: 10px;
+    border-bottom-color: var(--ss-line);
+  }
+
+  .bf-row--head .bf-cell {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ss-text-faint);
+  }
+
+  /* The new visit and the new line in the file history: a teal rule on the
+     left and a tint, the way the app marks the row it just saved */
+  .bf-row[data-fresh] {
+    background: var(--bf-fresh);
+    box-shadow: inset 3px 0 0 var(--bf-tab);
+  }
+
+  .bf-cell {
+    overflow: hidden;
+    font-size: 13px;
+    line-height: 18px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--ss-text-strong);
+  }
+
+  .bf-cell--date {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bf-cell--faint {
+    color: var(--ss-text);
+  }
+
+  /* The satellite: straddles the window's left edge over the side menu,
+     one gutter from the stage's left and bottom; it grows upward */
+  .bf-history {
+    position: absolute;
+    left: var(--gutter);
+    bottom: var(--gutter);
+    z-index: 5;
+    width: 272px;
+    padding: 6px 0;
+    overflow: hidden;
+    border-radius: 10px;
+    background: var(--ss-surface);
+    box-shadow: 0 18px 40px rgb(0 0 0 / 30%), 0 0 0 1px rgb(0 0 0 / 6%);
+  }
+
+  .bf-history-title {
+    padding: 8px 14px 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ss-text-faint);
+  }
+
+  .bf-history-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    will-change: transform;
+    transition: background-color 0.4s ease;
+  }
+
+  .bf-history-row[data-fresh] {
+    background: var(--bf-fresh);
+    box-shadow: inset 3px 0 0 var(--bf-tab);
+  }
+
+  .bf-history-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .bf-history-name,
+  .bf-history-folder {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .bf-history-name {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 17px;
+    color: var(--ss-text-strong);
+  }
+
+  .bf-history-folder {
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--ss-text);
+  }
+
+  .bf-history-when {
+    flex: none;
+    align-self: flex-start;
+    padding-top: 1px;
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--ss-text-faint);
+  }
+
+  /* The phone design: no side menu and no satellite; the window takes the
+     stage's width less a gutter on each side and runs off the bottom */
+  & .ss-stage[data-layout='compact'] {
+    --gutter: 16px;
+  }
+
+  & .ss-stage[data-layout='compact'] .bf-window {
+    left: var(--gutter);
+    width: calc(420px - 2 * var(--gutter));
+    height: 440px;
+  }
+
+  & .ss-stage[data-layout='compact'] .bf-top {
+    height: 40px;
+  }
+
+  & .ss-stage[data-layout='compact'] .bf-tabs {
+    height: 40px;
+  }
+
+  & .ss-stage[data-layout='compact'] .bf-tab {
+    font-size: 11px;
+    letter-spacing: 0;
+  }
+
+  & .ss-stage[data-layout='compact'] .bf-page {
+    padding: 12px;
+  }
+
+  & .ss-stage[data-layout='compact'] .bf-card-head {
+    padding: 12px;
+  }
+
+  & .ss-stage[data-layout='compact'] .bf-form {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+    padding: 12px;
+  }
+
+  & .ss-stage[data-layout='compact'] .bf-row {
+    grid-template-columns: 82px minmax(0, 1fr);
+    padding: 10px 12px;
+  }
+
+  /* The phone keeps the date and the diagnosis, the words the story types */
+  & .ss-stage[data-layout='compact'] .bf-row > :nth-child(2),
+  & .ss-stage[data-layout='compact'] .bf-row > :nth-child(3) {
+    display: none;
+  }
+}

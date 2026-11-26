@@ -1,0 +1,135 @@
+/* SciFY cookie consent — styled after pagepost.app. All selectors prefixed .scc- */
+:root {
+  --scc-bg: #ffffff;
+  --scc-surface-2: #f3f4f6;
+  --scc-border: #d9dce1;
+  --scc-text: #16181d;
+  --scc-dim: #5b6270;
+  --scc-accent: #2f6fed;
+  --scc-on-accent: #ffffff;
+  --scc-radius: 8px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --scc-bg: #14171c;
+    --scc-surface-2: #1d2128;
+    --scc-border: #2c313a;
+    --scc-text: #e8eaee;
+    --scc-dim: #9aa1ad;
+    --scc-accent: #6ea0ff;
+    --scc-on-accent: #0b0d10;
+  }
+}
+
+.scc-banner, .scc-dialog, .scc-settings-link {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--scc-text);
+  letter-spacing: normal;
+  text-transform: none;
+  text-align: left;
+}
+.scc-banner *, .scc-dialog * { box-sizing: border-box; font-family: inherit; letter-spacing: inherit; text-transform: none; }
+
+/* ----- bottom banner ----- */
+.scc-banner {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 2147483000;
+  background: var(--scc-bg);
+  border-top: 1px solid var(--scc-border);
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, .15);
+}
+.scc-banner-inner {
+  max-width: 1100px; margin: 0 auto; padding: 16px 24px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+@media (min-width: 768px) { .scc-banner-inner { flex-direction: row; align-items: center; } }
+.scc-banner-text { flex: 1; min-width: 0; }
+.scc-banner-title { font-weight: 600; margin-bottom: 4px; }
+.scc-dim { color: var(--scc-dim); }
+.scc-small { font-size: 12.5px; }
+.scc-actions { display: flex; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
+
+.scc-link, .scc-show, .scc-close, .scc-settings-link {
+  background: none; border: 0; padding: 0; margin: 0; cursor: pointer; font: inherit;
+  min-height: 0; height: auto; width: auto; box-shadow: none; border-radius: 0;
+}
+.scc-link { color: var(--scc-text); text-decoration: underline; }
+.scc-link:hover { color: var(--scc-accent); }
+.scc-banner a.scc-link-dim, .scc-dialog .scc-privacy a { color: inherit; text-decoration: underline; }
+.scc-banner a.scc-link-dim:hover, .scc-dialog .scc-privacy a:hover { color: var(--scc-text); }
+
+/* ----- buttons ----- */
+.scc-btn {
+  appearance: none; cursor: pointer; font: inherit; font-size: 14px; line-height: 1.4;
+  padding: 6px 14px; margin: 0; height: auto; width: auto; min-height: 0;
+  border-radius: 6px; border: 1px solid var(--scc-border);
+  background: var(--scc-surface-2); color: var(--scc-text);
+  text-decoration: none; box-shadow: none;
+}
+.scc-btn:hover { border-color: var(--scc-accent); }
+.scc-btn-primary { background: var(--scc-accent); border-color: var(--scc-accent); color: var(--scc-on-accent); font-weight: 600; padding: 6px 16px; }
+.scc-btn-primary:hover { opacity: .9; }
+.scc-btn:focus-visible, .scc-switch:focus-visible, .scc-link:focus-visible, .scc-show:focus-visible, .scc-close:focus-visible, .scc-settings-link:focus-visible {
+  outline: 2px solid var(--scc-accent); outline-offset: 2px;
+}
+
+/* ----- preferences dialog ----- */
+.scc-dialog {
+  width: min(672px, calc(100vw - 32px)); max-height: calc(100vh - 32px); overflow: auto;
+  padding: 24px; margin: auto;
+  background: var(--scc-bg); color: var(--scc-text);
+  border: 1px solid var(--scc-border); border-radius: 12px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, .3);
+}
+.scc-dialog::backdrop { background: rgba(0, 0, 0, .55); }
+.scc-dialog[open]:not(:modal) { position: fixed; inset: 0; z-index: 2147483001; }
+.scc-dialog-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 8px; }
+.scc-dialog h2 { font-size: 18px; font-weight: 600; margin: 0; padding: 0; line-height: 1.3; color: var(--scc-text); }
+.scc-close { font-size: 22px; line-height: 1; padding: 4px; color: var(--scc-dim); }
+.scc-close:hover { color: var(--scc-text); }
+.scc-intro { font-size: 14px; margin: 0 0 20px; }
+.scc-cat { border-top: 1px solid var(--scc-border); padding: 16px 0; }
+.scc-cat:first-of-type { border-top: 0; padding-top: 0; }
+.scc-cat-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.scc-cat-text { min-width: 0; flex: 1; }
+.scc-cat-title { font-weight: 500; font-size: 14px; }
+.scc-cat p { margin: 4px 0 0; padding: 0; }
+.scc-show { margin-top: 8px; font-size: 12px; color: var(--scc-dim); }
+.scc-show:hover { color: var(--scc-text); }
+.scc-table-wrap { margin-top: 8px; overflow-x: auto; }
+.scc-table-wrap[hidden] { display: none; }
+.scc-table { width: 100%; border-collapse: collapse; font-size: 12px; margin: 0; border: 0; }
+.scc-table th, .scc-table td { text-align: left; padding: 6px 12px 6px 0; border: 0; border-top: 1px solid var(--scc-border); vertical-align: top; background: none; color: var(--scc-text); }
+.scc-table th { color: var(--scc-dim); font-weight: 500; border-top: 0; }
+.scc-table code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11.5px; background: none; padding: 0; color: inherit; }
+.scc-privacy { padding-top: 16px; border-top: 1px solid var(--scc-border); }
+.scc-dialog-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+
+/* ----- switch ----- */
+.scc-switch {
+  position: relative; display: inline-flex; align-items: center; flex-shrink: 0;
+  width: 44px; height: 24px; padding: 0; margin: 0; min-height: 0;
+  border-radius: 999px; border: 1px solid var(--scc-border);
+  background: var(--scc-surface-2); cursor: pointer; transition: background-color .15s;
+}
+.scc-switch span {
+  display: inline-block; width: 16px; height: 16px; border-radius: 50%;
+  background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.3);
+  transform: translateX(3px); transition: transform .15s;
+}
+.scc-switch[aria-checked="true"] { background: var(--scc-accent); border-color: var(--scc-accent); }
+.scc-switch[aria-checked="true"] span { transform: translateX(23px); }
+.scc-switch[disabled] { opacity: .6; cursor: not-allowed; }
+
+/* ----- "Cookie settings" link ----- */
+.scc-settings-wrap { text-align: center; padding: 8px 0 12px; clear: both; }
+.scc-settings-link { font-size: 13px; color: inherit; opacity: .8; text-decoration: underline; }
+.scc-settings-link:hover { opacity: 1; }
+.scc-settings-float {
+  position: fixed; left: 12px; bottom: 12px; z-index: 2147482999;
+  padding: 6px 12px; border-radius: 999px; background: var(--scc-bg); color: var(--scc-dim);
+  border: 1px solid var(--scc-border); box-shadow: 0 4px 12px rgba(0,0,0,.15); text-decoration: none; opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) { .scc-switch, .scc-switch span { transition: none; } }
