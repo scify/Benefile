@@ -11,6 +11,7 @@ use App\Http\Controllers\MainPanel\SearchController;
 use App\Http\Controllers\MainPanel\UsersController;
 use App\Http\Controllers\MedicalUploadController;
 use App\Http\Controllers\UploadFileController;
+use App\Http\Middleware\SetLocale;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +32,14 @@ $psychologist = 'role:'.User::ROLE_PSYCHOLOGIST;
 $psychosocial = 'role:'.User::ROLE_SOCIAL_WORKER.','.User::ROLE_PSYCHOLOGIST;
 
 Route::redirect('/', '/auth/login');
+
+// The language of the interface: Greek or English, for guests and users.
+Route::get('language/{locale}', function (string $locale) {
+    abort_unless(array_key_exists($locale, SetLocale::LANGUAGES), 404);
+    session(['locale' => $locale]);
+
+    return redirect()->back(fallback: '/');
+})->name('language');
 
 // Login, registration and password reset.
 Route::middleware('guest')->group(function () {

@@ -29,3 +29,6 @@ Thumbs.db
 # Local development
 /.ddev/
 /_skel/
+
+# Browser tests
+/storage/playwright-*

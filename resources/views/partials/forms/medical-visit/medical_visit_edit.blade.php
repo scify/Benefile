@@ -562,7 +562,7 @@
                                             <div class="select-lists make-inline col-md-6">
                                                 {{--{!! Form::select('medication_name_from_lookup[]', [], '', array('id'=>'medicinal_name_1', 'class'=>'js-example-basic-multiple', 'style'=>'width:30%;')) !!}--}}
                                                 <select id="medicinal_name_1" class="js-example-basic-multiple " name="medication_name_from_lookup[]">
-                                                    <option value="-1" selected="selected">Επιλέξτε αγωγή</option>
+                                                    <option value="-1" selected="selected">@lang('ui.choose_medication')</option>
                                                 </select>
                                             </div>
                                             {{-- Description --}}

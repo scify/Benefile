@@ -3,7 +3,7 @@
  ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ \App\Http\Middleware\SetLocale::LANGUAGES[app()->getLocale()] ?? 'el' }}">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -26,7 +26,7 @@
 
     @yield('panel-headLinks')
 </head>
-<body id="main-layout" data-url="{{ URL::to('/') }}">
+<body id="main-layout" data-url="{{ URL::to('/') }}" data-medication-placeholder="@lang('ui.medication_placeholder')">
     <div class="panel-container">
         {{-- User name row --}}
         <div class="no-margin purple-background pos-relative height-6per" id="header">
@@ -38,6 +38,7 @@
             @yield('benefiter-info')
 
             <div class="userName">
+                @include('partials.language-switch')
                 <a class="white" aria-expanded="false">
                     {{ Auth::user()->name }} {{ Auth::user()->lastname }}
                 </a>

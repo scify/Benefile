@@ -20,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // The forms and their validation rules were written for Laravel 5.1, where an
         // empty field arrives as '' and optional rules (date, max …) skip it.
         $middleware->remove(\Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class);
+        $middleware->web(append: [\App\Http\Middleware\SetLocale::class]);
         $middleware->redirectGuestsTo('/auth/login');
         $middleware->redirectUsersTo('/benefiters-list');
     })

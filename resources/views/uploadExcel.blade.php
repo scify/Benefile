@@ -84,7 +84,7 @@
                      <table id="imported-info" style="width:100%">
                       <thead>
                           <tr>
-                              <th>Α/Α</th>
+                              <th>@lang('ui.row_number')</th>
                               <th>@lang($p.'filename')</th>
                               <th>@lang($p.'import-date')</th>
                           </tr>

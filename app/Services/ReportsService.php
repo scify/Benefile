@@ -233,7 +233,7 @@ class ReportsService{
                 $doctor_name = $doctor['name'] . " " . $doctor['lastname'];
 
                 if($doctor['user_role_id'] == 1){
-                    $doctor_specialty = 'Διαχειριστής ';
+                    $doctor_specialty = __('ui.administrator').' ';
                 }else{
                     $doctor_specialty = $doctor['subrole']['subrole'];
                 }

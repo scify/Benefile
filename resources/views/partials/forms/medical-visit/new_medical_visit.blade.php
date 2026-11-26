@@ -172,7 +172,7 @@
                     <table id="benefiter_referrals_history" class="display" cellspacing="0" width="100%">
                         <thead>
                             <tr>
-                                <th>Α/Α</th>
+                                <th>@lang('ui.row_number')</th>
                                 <th>@lang($p.'registered_by')</th>
                                 <th>@lang($p.'exam_location')</th>
                                 <th>@lang($p.'incident_type')</th>
@@ -183,7 +183,7 @@
                         </thead>
                         <tfoot>
                             <tr>
-                                <th>Α/Α</th>
+                                <th>@lang('ui.row_number')</th>
                                 <th>@lang($p.'registered_by')</th>
                                 <th>@lang($p.'exam_location')</th>
                                 <th>@lang($p.'incident_type')</th>

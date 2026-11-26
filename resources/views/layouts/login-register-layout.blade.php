@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ \App\Http\Middleware\SetLocale::LANGUAGES[app()->getLocale()] ?? 'el' }}">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -24,6 +24,7 @@
                 <img alt="Benefile logo" class="img-responsive logo-padding" src={{asset('images/BeneFile-Logo.png')}}>
     	    </div>
     		<div class="col-xs-6 benfile-back-color table-cell height-100per" id="rightCell">
+    		    @include('partials.language-switch')
     		    @yield('log-content')
     		</div>
     	</div>

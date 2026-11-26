@@ -19,8 +19,8 @@ class UsersTableSeeder extends Seeder
     {
         // ADMIN USER (DIMIZAS)
        User::create(array(
-           'name' => 'Christos',
-           'lastname' => 'Dimizas',
+           'name' => 'Admin_Name_1',
+           'lastname' => 'Admin_Lastname_1',
            'email' => 'user1@example.test',
            'password' => Hash::make('1234qwer'),
            'user_role_id' => 1,
@@ -31,8 +31,8 @@ class UsersTableSeeder extends Seeder
 
         // ADMIN USER (IASONIDIS)
         User::create(array(
-            'name' => 'Theodoros',
-            'lastname' => 'Iasonidis',
+            'name' => 'Admin_Name_2',
+            'lastname' => 'Admin_Lastname_2',
             'email' => 'user2@example.test',
             'password' => Hash::make('!1234qwer!'),
             'user_role_id' => 1,

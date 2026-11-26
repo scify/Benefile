@@ -1,0 +1,12 @@
+{
+    "private": true,
+    "name": "benefile",
+    "description": "Browser tests of BeneFile (Playwright). The application itself has no front-end build.",
+    "license": "Apache-2.0",
+    "scripts": {
+        "test:e2e": "playwright test"
+    },
+    "devDependencies": {
+        "@playwright/test": "1.65.0"
+    }
+}

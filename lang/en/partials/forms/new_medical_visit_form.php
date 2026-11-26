@@ -1,0 +1,102 @@
+<?php
+
+return [
+    'medical_folder' => 'Medical folder',
+
+    'personal_info' => 'Personal information',
+    'lastname' => 'LAST NAME',
+    'name' => 'FIRST NAME',
+    'gender' => 'GENDER',
+    'man' => 'Male',
+    'woman' => 'Female',
+    'birth_date' => 'DATE OF BIRTH',
+    'fathers_name' => 'FATHER\'S NAME',
+    'mothers_name' => 'MOTHER\'S NAME',
+    'nationality' => 'COUNTRY OF NATIONALITY',
+    'arrival_date' => 'DATE OF ARRIVAL',
+    'travel_route' => 'ROUTE',
+    'travel_duration' => 'DURATION',
+    'folder_number' => 'FILE NO.',
+    'total_visits_number' => 'NUMBER OF VISITS',
+    'referrals_history' => 'REFERRALS',
+    'options' => 'OPTIONS',
+    'medical_visit' => 'Medical visit',
+    'show_medical_visit' => 'View',
+    'edit_visit' => 'Edit',
+
+    'success_visit' => 'The visit was created successfully',
+    'edit-visit' => 'Edit medical visit',
+    'unsuccess_visit' => 'The new visit could not be created. Please check the fields and try again.',
+    'medical_history' => 'Medical history of the beneficiary',
+    'yes' => 'YES',
+    'no' => 'NO',
+    'doctor' => 'DOCTOR',
+    'registered_by' => 'RECORDED BY',
+    'exam_location' => 'PLACE OF EXAMINATION',
+    'new_exam_loc' => 'NEW PLACE OF EXAMINATION',
+    'new_exam_location' => 'Add new',
+    'exam_date' => 'DATE OF EXAMINATION',
+    'new_medical_visit' => 'NEW VISIT',
+    'no_medical_history' => 'No medical history found',
+
+    'new_visit_number' => 'VISIT NUMBER',
+
+    'medical_info' => 'Basic medical information',
+    'doctor_name' => 'DOCTOR NAME',
+    'incident_type' => 'TREATMENT / REFERRAL',
+    'chronic_conditions' => 'CHRONIC CONDITIONS: ',
+    'height' => 'HEIGHT (cm)',
+    'weight' => 'WEIGHT (kg)',
+    'temperature' => 'TEMPERATURE (Celsius)',
+    'blood_pressure' => 'BLOOD PRESSURE (mm Hg)',
+    'systolic' => 'SYST.',
+    'diastolic' => 'DIAST.',
+    'skull_perimeter' => 'HEAD CIRCUMFERENCE for newborns (cm)',
+
+    'clinical_results' => 'Clinical results',
+    'condition' => 'Condition',
+
+    'medicinal_instructions' => 'To be saved, a medication must include the drug name, the dosage and the duration of treatment.',
+    'medicinal_name' => 'Type the name of the drug if it is not in the list',
+    'medicinal_dosage' => 'Dosage',
+    'medicinal_duration' => 'Duration of treatment in days',
+    'days' => 'DAYS',
+    'supply_from_praksis' => 'Supplied by PRAKSIS',
+
+    'lab_results' => 'Laboratory results',
+    'lab_results_info' => 'LABORATORY RESULTS: ',
+
+    'diagnosis_results' => 'Diagnostic results',
+    'diagnosis_results_info' => 'DIAGNOSTIC RESULTS: ',
+
+    'medication' => 'Medication',
+    'medication_info' => 'MEDICATION: ',
+
+    'hospitalization' => 'Hospitalisation',
+    'hospitalization_info' => 'HOSPITALISATION: ',
+
+    'referrals' => 'Referral comments',
+    'referrals_info' => 'REFERRAL: ',
+    'done' => 'Done',
+    'not_done' => 'Not done',
+
+    'upload' => 'Saved files: ',
+    'upload_description' => 'File description: ',
+    'upload_title' => 'File name: ',
+
+    'upload_file' => 'Upload file',
+    'file_details' => 'FILE DESCRIPTION:',
+    'form_submit_error' => 'The total size of the files is more than 50 MB. Correct this before you save the visit.',
+
+    'save_medical_visit' => 'Save medical visit',
+    'update_medical_visit' => 'Update medical visit',
+    'doctor_speciality' => 'SPECIALITY',
+    'condition-name' => 'CONDITION',
+    'icd10' => 'ICD10 OPTIONS',
+    'description' => 'DESCRIPTION',
+    'admin' => 'Administrator',
+
+    'print_visit' => 'Print visit',
+    'close' => 'Close',
+    'choose_file_again' => 'Select the file again: ',
+];

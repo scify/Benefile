@@ -110,3 +110,24 @@ a[disabled] {
     font: inherit;
     cursor: pointer;
 }
+
+/* The link to the other language, in the header and on the login pages. */
+.language-switch {
+    display: inline-block;
+    margin-right: 15px;
+    padding: 2px 10px;
+    border: 1px solid currentColor;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 13px;
+}
+.language-switch:hover,
+.language-switch:focus {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.15);
+    text-decoration: none;
+}
+#rightCell .language-switch {
+    float: right;
+    margin: 15px 15px 0 0;
+}

@@ -237,9 +237,9 @@
                                     <div class="request-status col-md-6 make-inline hide">
                                         {!! Form::label('request_status', Lang::get('legal_folder_form.request_status')) !!}
                                         <select name="request_status" class="request-status-selection">
-                                            <option value="1" {{ $request_status[0] }}>α'</option>
-                                            <option value="2" {{ $request_status[1] }}>β'</option>
-                                            <option value="3" {{ $request_status[2] }}>μεταγενέστερο</option>
+                                            <option value="1" {{ $request_status[0] }}>@lang('ui.asylum_request_first')</option>
+                                            <option value="2" {{ $request_status[1] }}>@lang('ui.asylum_request_second')</option>
+                                            <option value="3" {{ $request_status[2] }}>@lang('ui.asylum_request_later')</option>
                                         </select>
                                     </div>
                                 </div>
@@ -674,9 +674,9 @@
                                     <div class="request-status col-md-6 make-inline hide">
                                         {!! Form::label('request_status', Lang::get('legal_folder_form.request_status')) !!}
                                         <select name="request_status" class="request-status-selection" disabled>
-                                            <option value="1" {{ $request_status[0] }} disabled>α'</option>
-                                            <option value="2" {{ $request_status[1] }} disabled>β'</option>
-                                            <option value="3" {{ $request_status[2] }} disabled>μεταγενέστερο</option>
+                                            <option value="1" {{ $request_status[0] }} disabled>@lang('ui.asylum_request_first')</option>
+                                            <option value="2" {{ $request_status[1] }} disabled>@lang('ui.asylum_request_second')</option>
+                                            <option value="3" {{ $request_status[2] }} disabled>@lang('ui.asylum_request_later')</option>
                                         </select>
                                     </div>
                                 </div>

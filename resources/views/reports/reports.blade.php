@@ -262,10 +262,9 @@
     <script src="{{ asset('/plugins/datepicker/js/bootstrap-datepicker.js') }}"></script>
     <script src="{{ asset('js/records/custom_datepicker.js') }}"></script>
     <script src="{{ asset('js/forms.js') }}"></script>
-    <script src="{{ asset('js/reports/reports-messages.js') }}"></script>
-
     <script>
-        Lang.setLocale('gr');
+        // The texts of the charts, in the language of the page.
+        window.Lang = { messages: @json(['reports' => __('reports')]), get: function (key) { return key.split('.').reduce(function (o, k) { return o && o[k]; }, this.messages) || key; } };
     </script>
     {{-- Benefiter counter status graph --}}
 	<script>

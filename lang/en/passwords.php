@@ -4,19 +4,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Password Reminder Language Lines
+    | Password Reset Language Lines
     |--------------------------------------------------------------------------
     |
     | The following language lines are the default lines which match reasons
     | that are given by the password broker for a password update attempt
-    | has failed, such as for an invalid token or invalid new password.
+    | outcome such as failure due to an invalid password / reset token.
     |
     */
 
-    'password' => 'Τα password πρέπει να είναι τουλάχιστον έξι χαρακτήρες και να ταιριάζουν με την επιβεβαίωσή τους.',
-    'reset' => 'Η επαναφορά του password σας ήταν επιτυχής!',
-    'sent' => 'Σας έχει σταλεί email με link για την επαναφορά του κωδικού σας',
-    'token' => 'Το κουπόνι επαναφοράς του password δεν είναι έγκυρο.',
-    'user' => "Δεν μπορούμε να βρούμε κάποιον χρήστη με αυτή τη διεύθυνση e-mail.",
+    'reset' => 'Your password has been reset.',
+    'sent' => 'We have emailed your password reset link.',
+    'throttled' => 'Please wait before retrying.',
+    'token' => 'This password reset token is invalid.',
+    'user' => "We can't find a user with that email address.",
 
 ];

@@ -8,7 +8,7 @@ $(document).ready(function(){
     // Function that starts an ajax in order to add select2 functionality to the selected variable
     function createSelect2($selectBox){
         $selectBox.select2({
-            placeholder: 'Εμπορική ονομασία φαρμάκου',
+            placeholder: $('body').attr('data-medication-placeholder') || '',
             maximumSelectionSize: 1,
             allowClear: true,
             ajax: {
