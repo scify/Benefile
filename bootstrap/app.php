@@ -13,9 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'admin' => \App\Http\Middleware\IsAdministrator::class,
             'activated' => \App\Http\Middleware\IsEnabled::class,
-            'role' => \App\Http\Middleware\RequireRole::class,
         ]);
         // The forms and their validation rules were written for Laravel 5.1, where an
         // empty field arrives as '' and optional rules (date, max …) skip it.

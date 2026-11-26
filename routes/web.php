@@ -17,24 +17,19 @@ use App\Http\Controllers\MainPanel\UsersController;
 use App\Http\Controllers\MedicalUploadController;
 use App\Http\Controllers\UploadFileController;
 use App\Http\Middleware\SetLocale;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
  * Access:
  * - "auth" and "activated": every page of the main panel needs a logged-in user
  *   with an active account (activated, and not deactivated).
- * - "role:…": the folder of each profession can be changed only by that
- *   profession and by administrators. Everyone with access can read every folder.
+ * - "can:…": the folder of each profession can be changed only by that
+ *   profession and by administrators (the abilities of AppServiceProvider).
+ *   Everyone with access can read every folder.
  * - "admin": users, places of examination, CSV import and export, deletion of files.
  * Every request that changes data is a POST with a CSRF token.
  */
 
-$doctor = 'role:'.User::ROLE_DOCTOR;
-$lawyer = 'role:'.User::ROLE_LAWYER;
-$psychologist = 'role:'.User::ROLE_PSYCHOLOGIST;
-// The psychosocial folder: social workers keep the social history, psychologists the sessions.
-$psychosocial = 'role:'.User::ROLE_SOCIAL_WORKER.','.User::ROLE_PSYCHOLOGIST;
 
 Route::redirect('/', '/auth/login');
 
@@ -64,7 +59,7 @@ Route::middleware('auth')->group(function () {
     Route::view('disabledUser', 'auth.disabledUser');
 });
 
-Route::middleware(['auth', 'activated'])->group(function () use ($doctor, $lawyer, $psychologist, $psychosocial) {
+Route::middleware(['auth', 'activated'])->group(function () {
     Route::get('home', [BeneficiaryController::class, 'getBenefitersList']);
     Route::get('main-panel', [HomeController::class, 'index']);
 
@@ -83,25 +78,25 @@ Route::middleware(['auth', 'activated'])->group(function () use ($doctor, $lawye
 
     // Medical folder: doctors change it.
     Route::get('benefiter/{id}/medical-folder', [MedicalFolderController::class, 'getMedicalFolder']);
-    Route::post('benefiter/{id}/medical-folder', [MedicalFolderController::class, 'postMedicalFolder'])->middleware($doctor);
+    Route::post('benefiter/{id}/medical-folder', [MedicalFolderController::class, 'postMedicalFolder'])->can('edit-medical-folder');
     Route::get('benefiter/getIC10List', [MedicalFolderController::class, 'getICD10List']);
     Route::get('benefiter/getMedicationList', [MedicalFolderController::class, 'getMedicationList']);
     Route::get('benefiter/{id}/getEachMedicalVisit', [MedicalFolderController::class, 'getMedicalVisitModal']);
-    Route::get('benefiter/{id}/editMedicalVisit', [MedicalFolderController::class, 'getMedicalVisitForEditing'])->middleware($doctor);
-    Route::post('benefiter/{id}/editMedicalVisit', [MedicalFolderController::class, 'postMedicalVisitFromEditing'])->middleware($doctor);
+    Route::get('benefiter/{id}/editMedicalVisit', [MedicalFolderController::class, 'getMedicalVisitForEditing'])->can('edit-medical-folder');
+    Route::post('benefiter/{id}/editMedicalVisit', [MedicalFolderController::class, 'postMedicalVisitFromEditing'])->can('edit-medical-folder');
     Route::get('medical-uploads/{upload}', [MedicalUploadController::class, 'show']);
 
     // Legal folder: lawyers change it.
     Route::get('benefiter/{id}/legal-folder', [LegalFolderController::class, 'getLegalFolder']);
-    Route::post('benefiter/{id}/legal-folder', [LegalFolderController::class, 'postLegalFolder'])->middleware($lawyer);
-    Route::post('benefiter/{id}/legal-session', [LegalFolderController::class, 'postLegalSession'])->middleware($lawyer);
+    Route::post('benefiter/{id}/legal-folder', [LegalFolderController::class, 'postLegalFolder'])->can('edit-legal-folder');
+    Route::post('benefiter/{id}/legal-session', [LegalFolderController::class, 'postLegalSession'])->can('edit-legal-folder');
 
     // Psychosocial folder.
     Route::get('benefiter/{id}/social-folder', [SocialFolderController::class, 'getSocialFolder']);
-    Route::post('benefiter/{id}/social-folder', [SocialFolderController::class, 'postSocialFolder'])->middleware($psychosocial);
-    Route::post('benefiter/{id}/session-save', [SocialFolderController::class, 'postSessionSave'])->middleware($psychologist);
-    Route::post('benefiter/{id}/session-edit/{session_id}', [SocialFolderController::class, 'postSessionEdit'])->middleware($psychologist);
-    Route::post('benefiter/{id}/session-delete/{session_id}', [SocialFolderController::class, 'getSessionDelete'])->middleware($psychologist);
+    Route::post('benefiter/{id}/social-folder', [SocialFolderController::class, 'postSocialFolder'])->can('edit-social-history');
+    Route::post('benefiter/{id}/session-save', [SocialFolderController::class, 'postSessionSave'])->can('edit-psychosocial-sessions');
+    Route::post('benefiter/{id}/session-edit/{session_id}', [SocialFolderController::class, 'postSessionEdit'])->can('edit-psychosocial-sessions');
+    Route::post('benefiter/{id}/session-delete/{session_id}', [SocialFolderController::class, 'getSessionDelete'])->can('edit-psychosocial-sessions');
 
     // Search and reports.
     Route::get('search', [SearchController::class, 'getSearch']);
@@ -116,7 +111,7 @@ Route::middleware(['auth', 'activated'])->group(function () use ($doctor, $lawye
     Route::get('registrations-PER-month-Report-get-data', [ReportsController::class, 'getRegistrationsVSMonthDate']);
 
     // Administration.
-    Route::middleware('admin')->group(function () {
+    Route::middleware('can:administer')->group(function () {
         Route::post('benefiter/{id}/delete', [BeneficiaryController::class, 'getDeleteBenefiter']);
         Route::get('new-benefiter/uploadCSV', [UploadFileController::class, 'getUploadCSV']);
         Route::post('new-benefiter/uploadCSV', [UploadFileController::class, 'excelUpload']);

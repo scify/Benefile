@@ -54,6 +54,7 @@ class AccessControlTest extends FeatureTestCase
             'doctor, psychosocial session' => [User::ROLE_DOCTOR, '/benefiter/1/session-save', false],
             'lawyer, social folder' => [User::ROLE_LAWYER, '/benefiter/1/social-folder', false],
             'social worker, psychological session' => [User::ROLE_SOCIAL_WORKER, '/benefiter/1/session-save', false],
+            'psychologist, social history' => [User::ROLE_PSYCHOLOGIST, '/benefiter/1/social-folder', false],
         ];
     }
 

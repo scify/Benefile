@@ -62,7 +62,7 @@ class FolderHistoryService
     private function build(Collection $benefiters, ?User $viewer): array
     {
         $ids = $benefiters->pluck('id')->all();
-        $seeNotes = $viewer !== null && $viewer->hasRole(User::ROLE_PSYCHOLOGIST);
+        $seeNotes = $viewer !== null && $viewer->can('see-session-notes');
         $history = array_fill_keys($ids, []);
         $byId = $benefiters->keyBy('id');
 
