@@ -91,9 +91,10 @@ class UploadFileService{
         for($i=1; $i<legacy_count($csvFile); $i++) {
             $colValues = str_getcsv( $csvFile[$i]);
             $file_import = new File_import_schema();
+            // The columns after the known fields are not imported.
             for($j=1; $j<legacy_count($colValues); $j++){
-                if($j != legacy_count($colValues) - 1) {
-                    $file_import->$file_import_Fields[$j] = $colValues[$j];
+                if($j != legacy_count($colValues) - 1 && isset($file_import_Fields[$j])) {
+                    $file_import->{$file_import_Fields[$j]} = $colValues[$j];
                 }
             }
             try {
@@ -153,8 +154,9 @@ class UploadFileService{
         $singleRow->gender = $this->conversionForFile->getGenderId($singleRow->gender);
         $singleRow->marital_status = $this->conversionForFile->getMaritalStatusId($singleRow->marital_status);
         $education = $this->conversionForFile->getEducationId($singleRow->education);
-        $singleRow->education = $education['education_id'];
-        $specialization = $education['specialization'];
+        // An education that the lists do not have: no education and no specialization.
+        $singleRow->education = $education['education_id'] ?? null;
+        $specialization = $education['specialization'] ?? null;
         $singleRow->language_interpreter_needed = $this->conversionForFile->getYesOrNoId($singleRow->language_interpreter_needed);
         $singleRow->is_benefiter_working = $this->conversionForFile->getYesOrNoId($singleRow->is_benefiter_working);
         $singleRow->working_legally = $this->conversionForFile->getLegalWorkId($singleRow->working_legally);

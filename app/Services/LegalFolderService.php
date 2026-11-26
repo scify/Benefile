@@ -150,7 +150,8 @@ class LegalFolderService{
         if($legal_folder != null){
             $legalSessionId = \DB::table('legal_sessions')->insertGetId($this->getLegalSessionArrayForDBInsert($request, $legal_folder->id));
             if($legalSessionId != null) {
-                $this->saveLawyerActionsToDB($request['lawyer_action'], $legalSessionId);
+                // A session can have no action: the form then sends no lawyer_action.
+                $this->saveLawyerActionsToDB($request['lawyer_action'] ?? [], $legalSessionId);
             }
         }
     }

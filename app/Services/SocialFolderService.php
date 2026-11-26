@@ -39,13 +39,23 @@ class SocialFolderService{
     }
 
     // update an existing session in DB
-    public function saveEditedSessionToDB($request, $session_id){
-        PsychosocialSession::where('id', $session_id)->update($this->getPsychosocialSessionArrayForDBEdit($request));
+    /**
+     * Saves a changed session. Only a session of the psychosocial folder of this beneficiary changes.
+     */
+    public function saveEditedSessionToDB($request, $session_id, $benefiterId){
+        PsychosocialSession::where('id', $session_id)
+            ->where('social_folder_id', $this->getSocialFolderFromBenefiterId($benefiterId)?->id)
+            ->update($this->getPsychosocialSessionArrayForDBEdit($request));
     }
 
     // delete a session
-    public function deleteSessionById($session_id){
-        PsychosocialSession::where('id', '=', $session_id)->delete();
+    /**
+     * Deletes a session. Only a session of the psychosocial folder of this beneficiary is deleted.
+     */
+    public function deleteSessionById($session_id, $benefiterId){
+        PsychosocialSession::where('id', '=', $session_id)
+            ->where('social_folder_id', $this->getSocialFolderFromBenefiterId($benefiterId)?->id)
+            ->delete();
     }
 
     // gets all the rows from psychosocial_support_lookup DB table to display them in social folder view

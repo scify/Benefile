@@ -74,7 +74,7 @@ class ConversionsForFileUpload{
         $newCountry = new Origin_country_lookup();
         $newCountry->name = $countryFromFileUpper;
         $newCountry->save();
-        array_push($this->countryList, $newCountry);
+        $this->countryList->push($newCountry);
         return $countryFromFileUpper;
     }
 

@@ -325,14 +325,14 @@ class RecordsController extends Controller
                 ->with('psychosocialTheme', $request->psychosocial_theme)
                 ->withErrors($validator->errors()->all());
         } else {
-            $this->socialFolderService->saveEditedSessionToDB($request->all(), $session_id);
+            $this->socialFolderService->saveEditedSessionToDB($request->all(), $session_id, $id);
             return redirect('benefiter/'.$id.'/social-folder')->with('success', \Lang::get('records_controller_messages.session_edit_success'));
         }
     }
 
     // delete a session
     public function getSessionDelete($id, $session_id){
-        $this->socialFolderService->deleteSessionById($session_id);
+        $this->socialFolderService->deleteSessionById($session_id, $id);
         return redirect("benefiter/" . $id . "/social-folder")->with('success', \Lang::get('records_controller_messages.session_delete_success'));
     }
 
@@ -458,6 +458,7 @@ class RecordsController extends Controller
         // The files of a visit: common document and image types, 10 MB at most each.
         $request->validate(['upload_file_title.*' => ['nullable', 'file', 'max:10240', 'mimes:pdf,jpg,jpeg,png,gif,webp,doc,docx,odt,xls,xlsx,ods,txt,rtf']]);
         $benefiter = $this->basicInfoService->findExistentBenefiter($id);
+        abort_if($benefiter === null, 404);
         $benefiter_folder_number = $this->medicalVisit->find_benefiter_folder_number($id);
         $benefiter_medical_history_list = $this->medicalVisit->get_all_medical_visits_for_benefiter($id);
         $doctor_id = $this->medicalVisit->get_logged_in_user_id();
@@ -542,8 +543,13 @@ class RecordsController extends Controller
                 ->with('upload_file_title_session', $upload_file_title_session)
                 ->withErrors($validator->errors()->all());
         } else {
-            $this->medicalVisit->save_new_medical_visit_tables($request->all());
-            $visit_submited_succesfully = 1; // 0:initial value, 1:Success, 2:Unsuccess
+            // The visit belongs to the beneficiary of the address and to the logged-in doctor,
+            // whatever the form sends.
+            $saved = $this->medicalVisit->save_new_medical_visit_tables(array_merge($request->all(), [
+                'benefiter_id' => $benefiter->id,
+                'doctor_id' => auth()->id(),
+            ]));
+            $visit_submited_succesfully = $saved ? 1 : 2; // 0:initial value, 1:Success, 2:Unsuccess
             return redirect('benefiter/'.$benefiter_id.'/medical-folder')
                 ->with('benefiter', $benefiter)
                 ->with('benefiter_folder_number', $benefiter_folder_number)
@@ -771,11 +777,15 @@ class RecordsController extends Controller
     }
 
     //------------ POST: EDIT MEDICAL VISIT ---------------------------------------//
-    public function postMedicalVisitFromEditing(Request $request){
+    public function postMedicalVisitFromEditing(Request $request, $id){
         // The files of a visit: common document and image types, 10 MB at most each.
         $request->validate(['upload_file_title.*' => ['nullable', 'file', 'max:10240', 'mimes:pdf,jpg,jpeg,png,gif,webp,doc,docx,odt,xls,xlsx,ods,txt,rtf']]);
-        $selected_medical_visit_id = $request['selected_medical_visit_id'];
-        $benefiter_id = $request['benefiter_id'];
+        // Only a visit of the beneficiary of the address.
+        $visit = \App\Models\Benefiters_Tables_Models\medical_visits::where('id', (int) $request['selected_medical_visit_id'])
+            ->where('benefiter_id', (int) $id)
+            ->firstOrFail();
+        $selected_medical_visit_id = $visit->id;
+        $benefiter_id = $visit->benefiter_id;
 //        dd($request->all());
 
         // Post Validation
@@ -786,8 +796,8 @@ class RecordsController extends Controller
                 ->with('visit_submited_succesfully', $visit_submited_succesfully)
                 ->withErrors($validator->errors()->all());
         } else {
-            $this->medicalVisit->update_medical_visit_tables($request->all(), $selected_medical_visit_id);
-            $visit_submited_succesfully = 3; // 0:initial value, 1:Success, 2:Unsuccess, 3: Success update
+            $saved = $this->medicalVisit->update_medical_visit_tables($request->all(), $selected_medical_visit_id);
+            $visit_submited_succesfully = $saved ? 3 : 2; // 0:initial value, 1:Success, 2:Unsuccess, 3: Success update
             return redirect('benefiter/'.$benefiter_id.'/medical-folder')
                 ->with('selected_medical_visit_id', $selected_medical_visit_id)
                 ->with('visit_submited_succesfully', $visit_submited_succesfully);

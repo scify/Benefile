@@ -18,9 +18,8 @@ use App\Models\Benefiters_Tables_Models\medical_incident_type_lookup;
 use App\Models\Benefiters_Tables_Models\ICD10;
 use App\Models\Benefiters_Tables_Models\medical_location_lookup;
 use App\Services\DatesHelper;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;
-use Mockery\CountValidator\Exception;
+use Illuminate\Support\Facades\Log;
 use Validator;
 
 class BenefiterMedicalFolderService
@@ -148,9 +147,23 @@ class BenefiterMedicalFolderService
     //--------------------------------------------------------------------//
     // PART 2 : insert into DB benefiter medical tables
     //--------------------------------------------------------------------//
-    // TODO add transaction to public function (not now)
 
+    /**
+     * Saves a new visit with all its sections, in one transaction: all or nothing.
+     *
+     * @return bool False when the visit could not be saved; nothing is saved then.
+     */
     public function save_new_medical_visit_tables($request){
+        try {
+            \DB::transaction(fn () => $this->save_new_medical_visit_rows($request));
+            return true;
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error('The medical visit was not saved.', ['exception' => $e]);
+            return false;
+        }
+    }
+
+    private function save_new_medical_visit_rows($request){
         // medical visit table
         $medicalVisit_id = $this->create_medical_visit($request);
         // chronic conditions table
@@ -245,7 +258,7 @@ class BenefiterMedicalFolderService
                             $medical_examination_results->icd10_id = $request_med_exams_results[$i][$j];
                             $medical_examination_results->medical_visit_id = $id;
                             // get medical examinations list from the lookup table
-                            $med_exams_lookup_item = medical_examination_results_lookup::where('id', '=', $i + 1)->first()['attributes']['id'];
+                            $med_exams_lookup_item = medical_examination_results_lookup::where('id', '=', $i + 1)->value('id');
                             $medical_examination_results->results_lookup_id = $med_exams_lookup_item;
 
                             $medical_examination_results->save();
@@ -500,7 +513,22 @@ class BenefiterMedicalFolderService
     //--------------------------------------------------------------------//
 
 
+    /**
+     * Saves the changes of a visit with all its sections, in one transaction: all or nothing.
+     *
+     * @return bool False when the changes could not be saved; nothing changes then.
+     */
     public function update_medical_visit_tables($request, $selected_medical_visit_id){
+        try {
+            \DB::transaction(fn () => $this->update_medical_visit_rows($request, $selected_medical_visit_id));
+            return true;
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error('The medical visit was not updated.', ['exception' => $e]);
+            return false;
+        }
+    }
+
+    private function update_medical_visit_rows($request, $selected_medical_visit_id){
         // medical visit table
         $updatedMedicalVisit_id = $this->update_medical_visit($request, $selected_medical_visit_id);
         // chronic conditions table
@@ -526,10 +554,9 @@ class BenefiterMedicalFolderService
 
     //----------- medical_visit table ------------------------------------DONE//
     private function update_medical_visit($request, $selected_medical_visit_id){
-        $updateddMedicalVisit = medical_visits::find($selected_medical_visit_id);
+        $updateddMedicalVisit = medical_visits::findOrFail($selected_medical_visit_id);
 
-        $updateddMedicalVisit->benefiter_id = $request['benefiter_id'];
-        $updateddMedicalVisit->doctor_id = $request['doctor_id'];
+        // The beneficiary and the doctor of a visit do not change.
         $updateddMedicalVisit->medical_location_id = $this->add_dynamically_medical_locations_to_lookup($request);
         $updateddMedicalVisit->medical_incident_id = $request['medical_incident_id'];
         $updateddMedicalVisit->medical_visit_date = $this->datesHelper->makeDBFriendlyDate($request['examination_date']);
@@ -1314,7 +1341,7 @@ class BenefiterMedicalFolderService
     }
     // find medical examination results by id
     public function find_medical_examination_results_lookup_id($id){
-        $medical_examination_results_lookup_id = medical_examination_results_lookup::where('id', '=', $id)->first()['attributes']['id'];
+        $medical_examination_results_lookup_id = medical_examination_results_lookup::where('id', '=', $id)->value('id');
         return $medical_examination_results_lookup_id;
     }
     // Lab results
