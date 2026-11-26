@@ -185,7 +185,7 @@
                 <header>
                     <p class="eyebrow">Screens</p>
                     <h2 id="screens-title">See BeneFile at work</h2>
-                    <p>The interface is in Greek. Select a screen to see it full size.</p>
+                    <p>The interface is in Greek and English. Select a screen to see it full size.</p>
                 </header>
                 <ul class="gallery">
                     <li><figure><a href="assets/img/screen-list.webp"><img src="assets/img/screen-list.webp" width="1440" height="900" alt="The list of beneficiaries, with file number, name and phone, and a button to open each file." loading="lazy"></a><figcaption><strong>Beneficiaries</strong>The list of all files, with search and sorting.</figcaption></figure></li>
@@ -209,16 +209,17 @@
                 <ol class="steps">
                     <li>
                         <h3>Get the code</h3>
-                        <p>BeneFile is a Laravel application with a MySQL database.</p>
+                        <p>BeneFile is a Laravel 13 application. It needs PHP 8.3 or later and MySQL 8.</p>
                         <pre><code>git clone https://github.com/scify/Benefile.git
 cd Benefile
-composer install</code></pre>
+composer install --no-dev --optimize-autoloader</code></pre>
                     </li>
                     <li>
                         <h3>Set it up</h3>
-                        <p>Make a <code>.env</code> file with your database, then create the tables and the lists of values.</p>
+                        <p>Make a <code>.env</code> file from <code>.env.example</code>, with your database, your mail server, and the name and logo of your organisation. Then create the tables, the lists of values and the first administrator.</p>
                         <pre><code>php artisan key:generate
-php artisan migrate --seed</code></pre>
+php artisan migrate --seed --force
+php artisan benefile:create-admin</code></pre>
                     </li>
                     <li>
                         <h3>Invite your team</h3>
@@ -226,7 +227,7 @@ php artisan migrate --seed</code></pre>
                     </li>
                 </ol>
                 <div class="callout">
-                    <p><strong>Before you use it with real data.</strong> BeneFile was written in 2016, on Laravel 5.1 and PHP 7.1, which no longer get security updates. Health and legal records are sensitive data: update the framework, review the security of the code, and use HTTPS and backups. The <a href="https://github.com/scify/Benefile">source code</a> is open, so your developers can do this.</p>
+                    <p><strong>Before you use it with real data.</strong> BeneFile now runs on Laravel 13, and the update fixed the security problems that a review of the code found. Health and legal records are sensitive data: use HTTPS, keep backups, and install the security updates of Laravel and PHP. The <a href="https://github.com/scify/Benefile#readme">README</a> lists the fixes and tells how to upgrade an installation from 2016.</p>
                 </div>
                 <div class="buttons">
                     <a class="btn btn-plum" href="https://github.com/scify/Benefile">Get the code on GitHub</a>

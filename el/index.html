@@ -185,7 +185,7 @@
                 <header>
                     <p class="eyebrow">Οθόνες</p>
                     <h2 id="screens-title">Το BeneFile στην πράξη</h2>
-                    <p>Επιλέξτε μια οθόνη για να τη δείτε σε πλήρες μέγεθος.</p>
+                    <p>Η εφαρμογή είναι στα ελληνικά και στα αγγλικά. Επιλέξτε μια οθόνη για να τη δείτε σε πλήρες μέγεθος.</p>
                 </header>
                 <ul class="gallery">
                     <li><figure><a href="../assets/img/screen-list.webp"><img src="../assets/img/screen-list.webp" width="1440" height="900" alt="Η λίστα ωφελουμένων, με αριθμό φακέλου, όνομα και τηλέφωνο, και κουμπί για το άνοιγμα κάθε φακέλου." loading="lazy"></a><figcaption><strong>Ωφελούμενοι</strong>Η λίστα όλων των φακέλων, με αναζήτηση και ταξινόμηση.</figcaption></figure></li>
@@ -209,16 +209,17 @@
                 <ol class="steps">
                     <li>
                         <h3>Κατεβάστε τον κώδικα</h3>
-                        <p>Το BeneFile είναι εφαρμογή Laravel με βάση δεδομένων MySQL.</p>
+                        <p>Το BeneFile είναι εφαρμογή Laravel 13. Χρειάζεται PHP 8.3 ή νεότερη και MySQL 8.</p>
                         <pre><code>git clone https://github.com/scify/Benefile.git
 cd Benefile
-composer install</code></pre>
+composer install --no-dev --optimize-autoloader</code></pre>
                     </li>
                     <li>
                         <h3>Ρυθμίστε το</h3>
-                        <p>Φτιάξτε ένα αρχείο <code>.env</code> με τη βάση δεδομένων σας, και δημιουργήστε τους πίνακες και τις λίστες τιμών.</p>
+                        <p>Φτιάξτε ένα αρχείο <code>.env</code> από το <code>.env.example</code>, με τη βάση δεδομένων σας, τον server email, και το όνομα και το λογότυπο του οργανισμού σας. Μετά δημιουργήστε τους πίνακες, τις λίστες τιμών και τον πρώτο διαχειριστή.</p>
                         <pre><code>php artisan key:generate
-php artisan migrate --seed</code></pre>
+php artisan migrate --seed --force
+php artisan benefile:create-admin</code></pre>
                     </li>
                     <li>
                         <h3>Καλέστε την ομάδα σας</h3>
@@ -226,7 +227,7 @@ php artisan migrate --seed</code></pre>
                     </li>
                 </ol>
                 <div class="callout">
-                    <p><strong>Πριν το χρησιμοποιήσετε με πραγματικά δεδομένα.</strong> Το BeneFile γράφτηκε το 2016, σε Laravel 5.1 και PHP 7.1, που δεν παίρνουν πια ενημερώσεις ασφαλείας. Οι ιατρικοί και νομικοί φάκελοι είναι ευαίσθητα δεδομένα: ενημερώστε το framework, ελέγξτε την ασφάλεια του κώδικα, και χρησιμοποιήστε HTTPS και αντίγραφα ασφαλείας. Ο <a href="https://github.com/scify/Benefile">κώδικας</a> είναι ανοιχτός, ώστε να το κάνουν οι προγραμματιστές σας.</p>
+                    <p><strong>Πριν το χρησιμοποιήσετε με πραγματικά δεδομένα.</strong> Το BeneFile τρέχει πλέον σε Laravel 13, και η αναβάθμιση διόρθωσε τα προβλήματα ασφαλείας που βρήκε ένας έλεγχος του κώδικα. Οι ιατρικοί και νομικοί φάκελοι είναι ευαίσθητα δεδομένα: χρησιμοποιήστε HTTPS, κρατήστε αντίγραφα ασφαλείας, και εγκαθιστάτε τις ενημερώσεις ασφαλείας του Laravel και της PHP. Το <a href="https://github.com/scify/Benefile#readme">README</a> (στα αγγλικά) περιγράφει τις διορθώσεις και την αναβάθμιση μιας εγκατάστασης του 2016.</p>
                 </div>
                 <div class="buttons">
                     <a class="btn btn-plum" href="https://github.com/scify/Benefile">Ο κώδικας στο GitHub</a>
