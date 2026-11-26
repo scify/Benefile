@@ -21,7 +21,7 @@ class ConversionsForFileUpload{
         $this->marital_statuses = \DB::table('marital_status_lookup')->get();
         $this->educations = \DB::table('education_lookup')->get();
         $this->binaryYesNo = \DB::table('binary_lookup')->get();
-        $this->workTitles = \DB::table('work_title_list_lookup')->get();
+        $this->workTitles = \App\Models\Folders\WorkTitle::query()->get();
     }
 
     // get id from gender name

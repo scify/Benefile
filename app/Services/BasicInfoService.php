@@ -156,12 +156,12 @@ class BasicInfoService{
 
     // gets all benefiter's legal statuses
     public function getLegalStatusesByBenefiterId($id){
-        return \DB::table('benefiters_legal_status')->where('benefiter_id', '=', $id)->get();
+        return \App\Models\Folders\BeneficiaryLegalStatus::query()->where('benefiter_id', '=', $id)->get();
     }
 
     // gets all benefiter's languages and languages levels
     public function getLanguagesAndLanguagesLevelsByBenefiterId($id){
-        return \DB::table('benefiters_languages')->where('benefiter_id', '=', $id)->get();
+        return \App\Models\Folders\BeneficiaryLanguage::query()->where('benefiter_id', '=', $id)->get();
     }
 
     // gets an array with legal statuses from request in case of validation failure
@@ -196,7 +196,7 @@ class BasicInfoService{
     public function getWorkTitleNameFromBenefiterId($id){
         $benefiter = \DB::table('benefiters')->where('id' , '=', $id)->first();
         if ($benefiter != null) {
-            $workTitle = \DB::table('work_title_list_lookup')->where('id', '=', $benefiter->work_title_id)->first();
+            $workTitle = \App\Models\Folders\WorkTitle::query()->where('id', '=', $benefiter->work_title_id)->first();
             if ($workTitle != null){
                 return $workTitle->work_title;
             }
@@ -313,21 +313,21 @@ class BasicInfoService{
     private function saveLanguagesToDB($benefiterId, $languagesAndLevels){
         $languagesAndLevelsDBFriendly = $this->getLanguagesArrayForDBInsert($benefiterId, $languagesAndLevels);
         foreach($languagesAndLevelsDBFriendly as $languageAndLevel){
-            \DB::table('benefiters_languages')->insert($languageAndLevel);
+            \App\Models\Folders\BeneficiaryLanguage::query()->insert($languageAndLevel);
         }
     }
 
     // edit languages and languages level for benefiter with $benefiterId to DB
     private function editLanguagesInDB($benefiterId, $languagesAndLevels){
         $languagesAndLevelsDBFriendly = $this->getLanguagesArrayForDBInsert($benefiterId, $languagesAndLevels);
-        $temp = \DB::table('benefiters_languages')->where('benefiter_id', '=', $benefiterId)->get();
+        $temp = \App\Models\Folders\BeneficiaryLanguage::query()->where('benefiter_id', '=', $benefiterId)->get();
         $ids_inserted = array();
         foreach($languagesAndLevelsDBFriendly as $languageAndLevel){
             $languageInserted = false;
             foreach($temp as $lang_in_db) {
                 // if language and level already exist in DB update the row
                 if($languageAndLevel['language_id'] == $lang_in_db->language_id){
-                    \DB::table('benefiters_languages')->where('id', '=', $lang_in_db->id)->update($languageAndLevel);
+                    \App\Models\Folders\BeneficiaryLanguage::query()->where('id', '=', $lang_in_db->id)->update($languageAndLevel);
                     array_push($ids_inserted, $languageAndLevel['language_id']);
                     $languageInserted = true;
                     break;
@@ -335,7 +335,7 @@ class BasicInfoService{
             }
             // insert a new row
             if(!$languageInserted){
-                \DB::table('benefiters_languages')->insert($languageAndLevel);
+                \App\Models\Folders\BeneficiaryLanguage::query()->insert($languageAndLevel);
                 array_push($ids_inserted, $languageAndLevel['language_id']);
             }
         }
@@ -349,7 +349,7 @@ class BasicInfoService{
             }
             // if not found delete DB row
             if(!$found){
-                \DB::table('benefiters_languages')->where('benefiter_id', '=', $benefiterId)->where('language_id', '=', $lang_in_db->language_id)->delete();
+                \App\Models\Folders\BeneficiaryLanguage::query()->where('benefiter_id', '=', $benefiterId)->where('language_id', '=', $lang_in_db->language_id)->delete();
             }
         }
     }
@@ -357,21 +357,21 @@ class BasicInfoService{
     // edit legal statuses in DB
     private function editLegalStatusesInDB($benefiterId, $request){
         $legal_statuses_checked = $request['legal_status'];
-        $temp = \DB::table('benefiters_legal_status')->where('benefiter_id', '=', $benefiterId)->get();
+        $temp = \App\Models\Folders\BeneficiaryLegalStatus::query()->where('benefiter_id', '=', $benefiterId)->get();
         $ids_inserted = array();
         if($legal_statuses_checked != null) {
             foreach ($legal_statuses_checked as $legal_status_checked) {
                 $legalStatusInserted = false;
                 foreach ($temp as $legal_status_db){
                     if($legal_status_db->legal_lookup_id == $legal_status_checked){
-                        \DB::table('benefiters_legal_status')->where('id', '=', $legal_status_db->id)->update($this->getLegalStatusArrayForDBInsert($benefiterId, intval($legal_status_checked), $request));
+                        \App\Models\Folders\BeneficiaryLegalStatus::query()->where('id', '=', $legal_status_db->id)->update($this->getLegalStatusArrayForDBInsert($benefiterId, intval($legal_status_checked), $request));
                         array_push($ids_inserted, $legal_status_checked);
                         $legalStatusInserted = true;
                         break;
                     }
                 }
                 if(!$legalStatusInserted) {
-                    \DB::table('benefiters_legal_status')->insert($this->getLegalStatusArrayForDBInsert($benefiterId, intval($legal_status_checked), $request));
+                    \App\Models\Folders\BeneficiaryLegalStatus::query()->insert($this->getLegalStatusArrayForDBInsert($benefiterId, intval($legal_status_checked), $request));
                 }
             }
         }
@@ -385,7 +385,7 @@ class BasicInfoService{
             }
             // if not found delete DB row
             if(!$found){
-                \DB::table('benefiters_legal_status')->where('benefiter_id', '=', $benefiterId)->where('legal_lookup_id', '=', $legal_status_db->legal_lookup_id)->delete();
+                \App\Models\Folders\BeneficiaryLegalStatus::query()->where('benefiter_id', '=', $benefiterId)->where('legal_lookup_id', '=', $legal_status_db->legal_lookup_id)->delete();
             }
         }
     }
@@ -412,7 +412,7 @@ class BasicInfoService{
         if($legal_statuses_checked != null) {
 //            $this->makeLegalStatusDatesAndTextsArrays($request);
             foreach ($legal_statuses_checked as $legal_status_checked) {
-                \DB::table('benefiters_legal_status')->insert($this->getLegalStatusArrayForDBInsert($benefiterId, intval($legal_status_checked), $request));
+                \App\Models\Folders\BeneficiaryLegalStatus::query()->insert($this->getLegalStatusArrayForDBInsert($benefiterId, intval($legal_status_checked), $request));
             }
         }
     }
@@ -441,7 +441,7 @@ class BasicInfoService{
         // initialize the GreekStringConversionHelper service
         $greekStringConversion = new GreekStringConversionHelper();
         $workTitleId = null;
-        $allWorkTitlesAvailable = \DB::table('work_title_list_lookup')->get();
+        $allWorkTitlesAvailable = \App\Models\Folders\WorkTitle::query()->get();
         $workTitleFromForm = $greekStringConversion->grstrtoupper($workTitleFromForm);
         // if there are some work titles in DB
         if ($allWorkTitlesAvailable->isNotEmpty()){
@@ -457,7 +457,7 @@ class BasicInfoService{
         }
         // if work title was not found in DB
         if ($workTitleId == null) {
-            $workTitleId = \DB::table('work_title_list_lookup')->insertGetId(array('work_title' => $workTitleFromForm));
+            $workTitleId = \App\Models\Folders\WorkTitle::query()->insertGetId(array('work_title' => $workTitleFromForm));
         }
         return $workTitleId;
     }

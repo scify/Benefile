@@ -42,36 +42,36 @@ class LegalFolderService{
     public function saveLegalFolderToDB($request, $id){
         $legalFolder = $this->findLegalFolderFromBenefiterId($id);
         if($legalFolder == null) {
-            $legalFolderId = \DB::table('legal_folder')->insertGetId($this->getLegalFolderArrayForDBInsert($request['legal_folder_status'], $request['penalty'], $request['penalty_text'], $id));
+            $legalFolderId = \App\Models\Folders\LegalFolder::query()->insertGetId($this->getLegalFolderArrayForDBInsert($request['legal_folder_status'], $request['penalty'], $request['penalty_text'], $id));
             // check if a new asylum_request row should be inserted or...
             if ($request['legal_folder_status'] == '1') {
-                \DB::table('asylum_request')->insert($this->getAsylumRequestArrayForDBInsert($request['asylum_request_date'], $request['procedure'], $request['request_status'], $request['request_progress'], $legalFolderId));
+                \App\Models\Folders\AsylumRequest::query()->insert($this->getAsylumRequestArrayForDBInsert($request['asylum_request_date'], $request['procedure'], $request['request_status'], $request['request_progress'], $legalFolderId));
             } else { // ...a new no_legal_status row
-                \DB::table('legal_section_status')->insert($this->getLegalSectionStatusArrayForDBInsert($request['legal_folder_status'], $request['action'], $request['result'], $legalFolderId));
+                \App\Models\Folders\LegalSectionStatus::query()->insert($this->getLegalSectionStatusArrayForDBInsert($request['legal_folder_status'], $request['action'], $request['result'], $legalFolderId));
             }
         } else {
-            \DB::table('legal_folder')->where('id', '=', $legalFolder->id)->update($this->getLegalFolderArrayForDBInsert($request['legal_folder_status'], $request['penalty'], $request['penalty_text'], $id));
+            \App\Models\Folders\LegalFolder::query()->where('id', '=', $legalFolder->id)->update($this->getLegalFolderArrayForDBInsert($request['legal_folder_status'], $request['penalty'], $request['penalty_text'], $id));
             // ON EDIT: delete the row from the non checked table if it is existent
             // check if a new asylum_request row should be inserted/edited or...
             $asylum_request = $this->findAsylumRequestFromLegalFolderId($legalFolder->id);
             $legal_status = $this->findLegalSectionStatusFromLegalFolderId($legalFolder->id);
             if ($request['legal_folder_status'] == '1') {
                 if($asylum_request != null){
-                    \DB::table('asylum_request')->where('id', '=', $asylum_request->id)->update($this->getAsylumRequestArrayForDBInsert($request['asylum_request_date'], $request['procedure'], $request['request_status'], $request['request_progress'], $legalFolder->id));
+                    \App\Models\Folders\AsylumRequest::query()->where('id', '=', $asylum_request->id)->update($this->getAsylumRequestArrayForDBInsert($request['asylum_request_date'], $request['procedure'], $request['request_status'], $request['request_progress'], $legalFolder->id));
                 } else {
-                    \DB::table('asylum_request')->insert($this->getAsylumRequestArrayForDBInsert($request['asylum_request_date'], $request['procedure'], $request['request_status'], $request['request_progress'], $legalFolder->id));
+                    \App\Models\Folders\AsylumRequest::query()->insert($this->getAsylumRequestArrayForDBInsert($request['asylum_request_date'], $request['procedure'], $request['request_status'], $request['request_progress'], $legalFolder->id));
                 }
                 if($legal_status != null){
-                    \DB::table('legal_section_status')->where('id', '=', $legal_status->id)->delete();
+                    \App\Models\Folders\LegalSectionStatus::query()->where('id', '=', $legal_status->id)->delete();
                 }
             } else { // ...if a new no_legal_status row should be inserted/edited
                 if($legal_status != null){
-                    \DB::table('legal_section_status')->where('id', '=', $legal_status->id)->update($this->getLegalSectionStatusArrayForDBInsert($request['legal_folder_status'], $request['action'], $request['result'], $legalFolder->id));
+                    \App\Models\Folders\LegalSectionStatus::query()->where('id', '=', $legal_status->id)->update($this->getLegalSectionStatusArrayForDBInsert($request['legal_folder_status'], $request['action'], $request['result'], $legalFolder->id));
                 } else {
-                    \DB::table('legal_section_status')->insert($this->getLegalSectionStatusArrayForDBInsert($request['legal_folder_status'], $request['action'], $request['result'], $legalFolder->id));
+                    \App\Models\Folders\LegalSectionStatus::query()->insert($this->getLegalSectionStatusArrayForDBInsert($request['legal_folder_status'], $request['action'], $request['result'], $legalFolder->id));
                 }
                 if($asylum_request != null){
-                    \DB::table('asylum_request')->where('id', '=', $asylum_request->id)->delete();
+                    \App\Models\Folders\AsylumRequest::query()->where('id', '=', $asylum_request->id)->delete();
                 }
             }
         }
@@ -79,17 +79,17 @@ class LegalFolderService{
 
     // gets legal folder using the benefiter's id
     public function findLegalFolderFromBenefiterId($benefiterId){
-        return \DB::table('legal_folder')->where('benefiter_id', '=', $benefiterId)->first();
+        return \App\Models\Folders\LegalFolder::query()->where('benefiter_id', '=', $benefiterId)->first();
     }
 
     // gets asylum request using the legal folder's id
     public function findAsylumRequestFromLegalFolderId($legalFolderId){
-        return \DB::table('asylum_request')->where('legal_folder_id', '=', $legalFolderId)->first();
+        return \App\Models\Folders\AsylumRequest::query()->where('legal_folder_id', '=', $legalFolderId)->first();
     }
 
     // gets no legal status using the legal folder's id
     public function findLegalSectionStatusFromLegalFolderId($legalFolderId){
-        return \DB::table('legal_section_status')->where('legal_folder_id', '=', $legalFolderId)->first();
+        return \App\Models\Folders\LegalSectionStatus::query()->where('legal_folder_id', '=', $legalFolderId)->first();
     }
 
     // returns an array suitable for legal_folder DB table insert
@@ -134,7 +134,7 @@ class LegalFolderService{
     private function saveLawyerActionsToDB($lawyer_actions, $legalSessionId){
         if($lawyer_actions != null) {
             foreach ($lawyer_actions as $lawyer_action) {
-                \DB::table('legal_lawyer_action')->insert(
+                \App\Models\Folders\LegalLawyerAction::query()->insert(
                     array(
                         'lawyer_action_id' => $lawyer_action,
                         'legal_session_id' => $legalSessionId,
@@ -231,6 +231,6 @@ class LegalFolderService{
 
     // gets lawyer actions using the legal session's id
     private function findLawyerActionsFromLegalSessionId($legalSessionId){
-        return \DB::table('legal_lawyer_action')->where('legal_session_id', '=', $legalSessionId)->get();
+        return \App\Models\Folders\LegalLawyerAction::query()->where('legal_session_id', '=', $legalSessionId)->get();
     }
 }

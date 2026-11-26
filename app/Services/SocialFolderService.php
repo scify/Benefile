@@ -25,11 +25,11 @@ class SocialFolderService{
         if(!array_key_exists('psychosocial_statuses', $request)){
             $request['psychosocial_statuses'] = null;
         }
-        $social_folder = \DB::table('social_folder')->where('benefiter_id', '=', $benefiterId)->first();
+        $social_folder = \App\Models\Folders\SocialFolder::query()->where('benefiter_id', '=', $benefiterId)->first();
         if($social_folder == null) {
-            \DB::table('social_folder')->insert($this->getSocialFolderArrayForDBInsert($request, $benefiterId));
+            \App\Models\Folders\SocialFolder::query()->insert($this->getSocialFolderArrayForDBInsert($request, $benefiterId));
         } else {
-            \DB::table('social_folder')->where('benefiter_id', '=', $benefiterId)->update($this->getSocialFolderArrayForDBInsert($request, $benefiterId));
+            \App\Models\Folders\SocialFolder::query()->where('benefiter_id', '=', $benefiterId)->update($this->getSocialFolderArrayForDBInsert($request, $benefiterId));
         }
     }
 
@@ -65,7 +65,7 @@ class SocialFolderService{
 
     // gets the social folder from benefiter's id
     public function getSocialFolderFromBenefiterId($id){
-        return \DB::table('social_folder')->where('benefiter_id', '=', $id)->first();
+        return \App\Models\Folders\SocialFolder::query()->where('benefiter_id', '=', $id)->first();
     }
 
     // gets all benefiter's psychosocial support by benefiter id

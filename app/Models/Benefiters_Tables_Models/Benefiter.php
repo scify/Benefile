@@ -68,4 +68,24 @@ class Benefiter extends Model
     public function gender(): \Illuminate\Database\Eloquent\Relations\HasOne{
         return $this->hasOne(\App\Models\Benefiters_Tables_Models\Genders_lookup::class, 'id', 'gender_id');
     }
+
+    public function socialFolder(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(\App\Models\Folders\SocialFolder::class, 'benefiter_id');
+    }
+
+    public function legalFolder(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(\App\Models\Folders\LegalFolder::class, 'benefiter_id');
+    }
+
+    public function legalStatuses(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\Folders\BeneficiaryLegalStatus::class, 'benefiter_id');
+    }
+
+    public function languages(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\Folders\BeneficiaryLanguage::class, 'benefiter_id');
+    }
 }

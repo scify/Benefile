@@ -136,7 +136,7 @@ class SearchService{
 
     // returns all the work titles stored in DB
     public function getAllWorkTitles(){
-        return \DB::table('work_title_list_lookup')->get();
+        return \App\Models\Folders\WorkTitle::query()->get();
     }
 
     // returns all the medical incident types stored in DB

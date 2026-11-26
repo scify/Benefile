@@ -73,13 +73,13 @@ class FolderHistoryService
             $history[$row->benefiter_id][] = $this->entry($byId[$row->benefiter_id], (int) $row->doctor_id, (int) $row->medical_location_id, $row->medical_visit_date, '', 'medical', true);
         }
 
-        $legalFolders = DB::table('legal_folder')->whereIn('benefiter_id', $ids)->pluck('benefiter_id', 'id');
+        $legalFolders = \App\Models\Folders\LegalFolder::query()->whereIn('benefiter_id', $ids)->pluck('benefiter_id', 'id');
         foreach (LegalSession::whereIn('legal_folder_id', $legalFolders->keys())->get() as $row) {
             $benefiterId = $legalFolders[$row->legal_folder_id];
             $history[$benefiterId][] = $this->entry($byId[$benefiterId], (int) $row->user_id, (int) $row->medical_location_id, $row->legal_date, (string) $row->legal_comments, 'legal', false);
         }
 
-        $socialFolders = DB::table('social_folder')->whereIn('benefiter_id', $ids)->pluck('benefiter_id', 'id');
+        $socialFolders = \App\Models\Folders\SocialFolder::query()->whereIn('benefiter_id', $ids)->pluck('benefiter_id', 'id');
         foreach (PsychosocialSession::whereIn('social_folder_id', $socialFolders->keys())->get() as $row) {
             $benefiterId = $socialFolders[$row->social_folder_id];
             $history[$benefiterId][] = $this->entry($byId[$benefiterId], (int) $row->psychologist_id, (int) $row->medical_location_id, $row->session_date, $seeNotes ? (string) $row->session_comments : '', 'psychosocial', false);

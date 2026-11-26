@@ -247,7 +247,7 @@ class UploadFileService{
         $languagesAndLevels = $this->getLanguagesArrayForDBInsert($languages, $languages_levels, $id);
         if(!empty($languagesAndLevels)) {
             foreach ($languagesAndLevels as $languageAndLevel) {
-                \DB::table('benefiters_languages')->insert($languageAndLevel);
+                \App\Models\Folders\BeneficiaryLanguage::query()->insert($languageAndLevel);
             }
         }
     }
@@ -384,7 +384,7 @@ class UploadFileService{
         // if array has been returned successfully, insert it into DB
         if ($legalStatus != null){
             try {
-                \DB::table('benefiters_legal_status')->insert($legalStatus);
+                \App\Models\Folders\BeneficiaryLegalStatus::query()->insert($legalStatus);
             } catch(\Exception $e){
                 array_push($this->__errors, \Lang::get('upload_file_errors.insert_legal_status_error') . $legal_status . \Lang::get('upload_file_errors.benefiter_with_id') . $id);
             }
