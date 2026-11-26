@@ -4,7 +4,8 @@ The landing page of [BeneFile](https://github.com/scify/Benefile), in English (`
 
 - Plain HTML and CSS, with no build step. Before the visitor's consent, the page makes no requests to other sites.
 - The colours are the colours of the application (`assets/css/style.css`).
-- The screenshots in `assets/img/` come from a local installation with example data. The names in them are not real people.
+- The screenshots in `assets/img/` (English) and `assets/img/el/` (Greek) come from a local installation with example data. The names in them are not real people.
+- The animated hero is a small script built from `hero/`. `hero/README.md` tells how to change it.
 
 To change the page, edit the files and push to `gh-pages`. GitHub Pages publishes the change in about a minute.
 

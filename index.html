@@ -15,6 +15,8 @@
     <meta property="og:image" content="assets/img/screen-medical.webp">
     <link rel="stylesheet" href="_consent/consent.css">
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/hero/hero.css">
+    <script type="module" src="assets/hero/hero.js"></script>
     <script src="_consent/config.js"></script>
     <script src="_consent/consent.js" defer></script>
 </head>
@@ -51,9 +53,15 @@
                         <a class="btn btn-outline" href="#screens">See the screens</a>
                     </div>
                 </div>
-                <figure class="browser">
-                    <img src="assets/img/screen-medical.webp" width="1440" height="900" alt="The medical folder of a beneficiary in BeneFile: personal details at the top, and a table of medical visits with the doctor, the place, the treatment and the date." fetchpriority="high">
-                </figure>
+                <div class="hero-demo">
+                    <button type="button" id="hero-demo-toggle" class="hero-demo-toggle" data-pause="Pause animation" data-play="Play animation" hidden>Pause animation</button>
+                    <div id="hero-demo" class="hero-demo-stage" role="img" aria-label="Animation: in the file of Karim Nasser, a doctor adds a medical visit. The visit appears at the top of the medical history, and the file history shows the doctor's work in the medical folder, above the work of the psychologist, the lawyer and the social worker.">
+                        <picture class="hero-demo-poster">
+                            <source media="(max-width: 55.75rem)" srcset="assets/img/hero/poster-en-compact.webp" width="840" height="800">
+                            <img src="assets/img/hero/poster-en.webp" class="hero-demo-poster" width="2240" height="1040" alt="" fetchpriority="high">
+                        </picture>
+                    </div>
+                </div>
             </div>
         </section>
 

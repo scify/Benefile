@@ -12,9 +12,11 @@
     <link rel="alternate" hreflang="el" href="./">
     <meta property="og:title" content="BeneFile – ένας ψηφιακός φάκελος για κάθε άνθρωπο που υποστηρίζετε">
     <meta property="og:description" content="Δωρεάν λογισμικό ανοιχτού κώδικα για τον ιατρικό, νομικό και ψυχοκοινωνικό φάκελο των ωφελουμένων ενός οργανισμού.">
-    <meta property="og:image" content="../assets/img/screen-medical.webp">
+    <meta property="og:image" content="../assets/img/el/screen-medical.webp">
     <link rel="stylesheet" href="../_consent/consent.css">
     <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/hero/hero.css">
+    <script type="module" src="../assets/hero/hero.js"></script>
     <script src="../_consent/config.js"></script>
     <script src="../_consent/consent.js" defer></script>
 </head>
@@ -51,9 +53,15 @@
                         <a class="btn btn-outline" href="#screens">Δείτε τις οθόνες</a>
                     </div>
                 </div>
-                <figure class="browser">
-                    <img src="../assets/img/screen-medical.webp" width="1440" height="900" alt="Ο ιατρικός φάκελος ενός ωφελούμενου στο BeneFile: προσωπικά στοιχεία επάνω, και πίνακας με τις ιατρικές επισκέψεις, τον γιατρό, την τοποθεσία, την αντιμετώπιση και την ημερομηνία." fetchpriority="high">
-                </figure>
+                <div class="hero-demo">
+                    <button type="button" id="hero-demo-toggle" class="hero-demo-toggle" data-pause="Παύση κίνησης" data-play="Συνέχεια κίνησης" hidden>Παύση κίνησης</button>
+                    <div id="hero-demo" class="hero-demo-stage" role="img" aria-label="Κινούμενη εικόνα: στον φάκελο του Karim Nasser, μια γιατρός καταχωρεί μια ιατρική επίσκεψη. Η επίσκεψη εμφανίζεται πρώτη στο ιατρικό ιστορικό, και το ιστορικό του φακέλου δείχνει τη δουλειά της στον ιατρικό φάκελο, πάνω από τη δουλειά της ψυχολόγου, του νομικού και της κοινωνικής λειτουργού.">
+                        <picture class="hero-demo-poster">
+                            <source media="(max-width: 55.75rem)" srcset="../assets/img/hero/poster-el-compact.webp" width="840" height="800">
+                            <img src="../assets/img/hero/poster-el.webp" class="hero-demo-poster" width="2240" height="1040" alt="" fetchpriority="high">
+                        </picture>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -136,7 +144,7 @@
                         <p>Γράψτε τον αριθμό φακέλου στο μενού, ή αναζητήστε με πολλά κριτήρια μαζί: όνομα, ηλικία, χώρα, νομικό καθεστώς, γιατρό, τοποθεσία εξέτασης, πάθηση, φάρμακο, ημερομηνίες.</p>
                     </div>
                     <figure class="browser">
-                        <img src="../assets/img/screen-search.webp" width="1440" height="900" alt="Η σελίδα αναζήτησης του BeneFile, με πεδία για προσωπικά στοιχεία, νομικό καθεστώς, γιατρό, τοποθεσία, πάθηση και διάστημα ημερομηνιών." loading="lazy">
+                        <img src="../assets/img/el/screen-search.webp" width="1440" height="900" alt="Η σελίδα αναζήτησης του BeneFile, με πεδία για προσωπικά στοιχεία, νομικό καθεστώς, γιατρό, τοποθεσία, πάθηση και διάστημα ημερομηνιών." loading="lazy">
                     </figure>
                 </div>
 
@@ -146,7 +154,7 @@
                         <p>Μια ιατρική επίσκεψη κρατά τον γιατρό και την τοποθεσία, τα ζωτικά σημεία, τις διαγνώσεις με κωδικούς ICD-10, τη φαρμακευτική αγωγή, τα εργαστηριακά και τα αρχεία. Ανοίξτε κάθε παλιά επίσκεψη από το ιστορικό, ή εκτυπώστε την.</p>
                     </div>
                     <figure class="browser">
-                        <img src="../assets/img/screen-visit.webp" width="1440" height="900" alt="Μια παλιά ιατρική επίσκεψη σε παράθυρο: προσωπικά στοιχεία, ο γιατρός, η ημερομηνία και η τοποθεσία της εξέτασης, η αντιμετώπιση και τα ζωτικά σημεία." loading="lazy">
+                        <img src="../assets/img/el/screen-visit.webp" width="1440" height="900" alt="Μια παλιά ιατρική επίσκεψη σε παράθυρο: προσωπικά στοιχεία, ο γιατρός, η ημερομηνία και η τοποθεσία της εξέτασης, η αντιμετώπιση και τα ζωτικά σημεία." loading="lazy">
                     </figure>
                 </div>
 
@@ -157,7 +165,7 @@
                         <p>Κατεβάστε όλους τους φακέλους, ή το ιστορικό όλης της δουλειάς, σε CSV, και εισάγετε ωφελούμενους από αρχείο CSV.</p>
                     </div>
                     <figure class="browser">
-                        <img src="../assets/img/screen-reports.webp" width="1440" height="900" alt="Η σελίδα αναφορών: λήψεις CSV, ο αριθμός γιατρών, δικηγόρων, ψυχολόγων και κοινωνικών λειτουργών, και γράφημα ωφελουμένων ανά φύλο." loading="lazy">
+                        <img src="../assets/img/el/screen-reports.webp" width="1440" height="900" alt="Η σελίδα αναφορών: λήψεις CSV, ο αριθμός γιατρών, δικηγόρων, ψυχολόγων και κοινωνικών λειτουργών, και γράφημα ωφελουμένων ανά φύλο." loading="lazy">
                     </figure>
                 </div>
             </div>
@@ -188,12 +196,12 @@
                     <p>Η εφαρμογή είναι στα ελληνικά και στα αγγλικά. Επιλέξτε μια οθόνη για να τη δείτε σε πλήρες μέγεθος.</p>
                 </header>
                 <ul class="gallery">
-                    <li><figure><a href="../assets/img/screen-list.webp"><img src="../assets/img/screen-list.webp" width="1440" height="900" alt="Η λίστα ωφελουμένων, με αριθμό φακέλου, όνομα και τηλέφωνο, και κουμπί για το άνοιγμα κάθε φακέλου." loading="lazy"></a><figcaption><strong>Ωφελούμενοι</strong>Η λίστα όλων των φακέλων, με αναζήτηση και ταξινόμηση.</figcaption></figure></li>
-                    <li><figure><a href="../assets/img/screen-basic.webp"><img src="../assets/img/screen-basic.webp" width="1440" height="900" alt="Τα βασικά στοιχεία ενός ωφελούμενου: προσωπικά στοιχεία, ιστορικό συμβάντων και οικογενειακή κατάσταση." loading="lazy"></a><figcaption><strong>Βασικά στοιχεία</strong>Προσωπικά και οικογενειακά στοιχεία, νομικό καθεστώς, παραπομπές.</figcaption></figure></li>
-                    <li><figure><a href="../assets/img/screen-medical.webp"><img src="../assets/img/screen-medical.webp" width="1440" height="900" alt="Ο ιατρικός φάκελος, με το ιστορικό των ιατρικών επισκέψεων." loading="lazy"></a><figcaption><strong>Ιατρικός φάκελος</strong>Όλες οι ιατρικές επισκέψεις ενός ανθρώπου.</figcaption></figure></li>
-                    <li><figure><a href="../assets/img/screen-legal.webp"><img src="../assets/img/screen-legal.webp" width="1440" height="900" alt="Ο νομικός φάκελος, με το νομικό καθεστώς και το αίτημα ασύλου." loading="lazy"></a><figcaption><strong>Νομικός φάκελος</strong>Νομικό καθεστώς, αίτημα ασύλου και στάδιο.</figcaption></figure></li>
-                    <li><figure><a href="../assets/img/screen-social.webp"><img src="../assets/img/screen-social.webp" width="1440" height="900" alt="Ο ψυχοκοινωνικός φάκελος, με το ιστορικό των συνεδριών υποστήριξης." loading="lazy"></a><figcaption><strong>Ψυχοκοινωνικός φάκελος</strong>Κοινωνικό ιστορικό και συνεδρίες υποστήριξης.</figcaption></figure></li>
-                    <li><figure><a href="../assets/img/screen-users.webp"><img src="../assets/img/screen-users.webp" width="1440" height="900" alt="Η λίστα ενεργών χρηστών, με τον ρόλο τους και κουμπί απενεργοποίησης για τον καθένα." loading="lazy"></a><figcaption><strong>Χρήστες</strong>Χρήστες προς ενεργοποίηση, ενεργοί και απενεργοποιημένοι.</figcaption></figure></li>
+                    <li><figure><a href="../assets/img/el/screen-list.webp"><img src="../assets/img/el/screen-list.webp" width="1440" height="900" alt="Η λίστα ωφελουμένων, με αριθμό φακέλου, όνομα και τηλέφωνο, και κουμπί για το άνοιγμα κάθε φακέλου." loading="lazy"></a><figcaption><strong>Ωφελούμενοι</strong>Η λίστα όλων των φακέλων, με αναζήτηση και ταξινόμηση.</figcaption></figure></li>
+                    <li><figure><a href="../assets/img/el/screen-basic.webp"><img src="../assets/img/el/screen-basic.webp" width="1440" height="900" alt="Τα βασικά στοιχεία ενός ωφελούμενου: προσωπικά στοιχεία, ιστορικό συμβάντων και οικογενειακή κατάσταση." loading="lazy"></a><figcaption><strong>Βασικά στοιχεία</strong>Προσωπικά και οικογενειακά στοιχεία, νομικό καθεστώς, παραπομπές.</figcaption></figure></li>
+                    <li><figure><a href="../assets/img/el/screen-medical.webp"><img src="../assets/img/el/screen-medical.webp" width="1440" height="900" alt="Ο ιατρικός φάκελος, με το ιστορικό των ιατρικών επισκέψεων." loading="lazy"></a><figcaption><strong>Ιατρικός φάκελος</strong>Όλες οι ιατρικές επισκέψεις ενός ανθρώπου.</figcaption></figure></li>
+                    <li><figure><a href="../assets/img/el/screen-legal.webp"><img src="../assets/img/el/screen-legal.webp" width="1440" height="900" alt="Ο νομικός φάκελος, με το νομικό καθεστώς και το αίτημα ασύλου." loading="lazy"></a><figcaption><strong>Νομικός φάκελος</strong>Νομικό καθεστώς, αίτημα ασύλου και στάδιο.</figcaption></figure></li>
+                    <li><figure><a href="../assets/img/el/screen-social.webp"><img src="../assets/img/el/screen-social.webp" width="1440" height="900" alt="Ο ψυχοκοινωνικός φάκελος, με το ιστορικό των συνεδριών υποστήριξης." loading="lazy"></a><figcaption><strong>Ψυχοκοινωνικός φάκελος</strong>Κοινωνικό ιστορικό και συνεδρίες υποστήριξης.</figcaption></figure></li>
+                    <li><figure><a href="../assets/img/el/screen-users.webp"><img src="../assets/img/el/screen-users.webp" width="1440" height="900" alt="Η λίστα ενεργών χρηστών, με τον ρόλο τους και κουμπί απενεργοποίησης για τον καθένα." loading="lazy"></a><figcaption><strong>Χρήστες</strong>Χρήστες προς ενεργοποίηση, ενεργοί και απενεργοποιημένοι.</figcaption></figure></li>
                 </ul>
                 <p class="note">Οι οθόνες δείχνουν δοκιμαστικά δεδομένα. Τα ονόματα δεν είναι πραγματικών ανθρώπων.</p>
             </div>

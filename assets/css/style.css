@@ -301,6 +301,55 @@ a {
     margin-top: clamp(2.5rem, 5vw, 4rem);
 }
 
+/* The animated hero (hero/, built to assets/hero/). Its stage is
+   transparent: the hero's gradient is its ground, and the window runs off
+   the bottom of the section. Until the script runs, a still of the same
+   scene holds its place. */
+.hero-demo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+    margin-top: clamp(1rem, 3vw, 2rem);
+}
+
+.hero-demo-stage {
+    align-self: stretch;
+
+    .hero-demo-poster {
+        width: 100%;
+        max-width: 70rem;
+        margin-inline: auto;
+    }
+
+    @media (max-width: 55.75rem) {
+        .hero-demo-poster {
+            max-width: 26.25rem;
+        }
+    }
+}
+
+.hero-demo-toggle {
+    min-height: 2.75rem;
+    padding: 0.5rem 1rem;
+    border: 0.0625rem solid rgb(255 255 255 / 45%);
+    border-radius: 999px;
+    background-color: transparent;
+    color: var(--white);
+    font: inherit;
+    font-size: 0.9375rem;
+    cursor: pointer;
+
+    &:hover {
+        background-color: rgb(255 255 255 / 12%);
+    }
+
+    &:focus-visible {
+        outline: var(--focus);
+        outline-offset: 0.1875rem;
+    }
+}
+
 /* Facts ------------------------------------------------------------------- */
 
 .facts {
