@@ -11,15 +11,15 @@ class medical_chronic_conditions extends Model
     protected $fillable = [
         'description'];
 
-    public function chronic_conditions_lookup(){
-        return $this->hasMany('App\Models\Benefiters_Tables_Models\medical_visits', 'id', 'chronic_condition_id');
+    public function chronic_conditions_lookup(): \Illuminate\Database\Eloquent\Relations\HasMany{
+        return $this->hasMany(\App\Models\Benefiters_Tables_Models\medical_visits::class, 'id', 'chronic_condition_id');
     }
 
-    public function benefiter(){
-        return $this->hasOne('App\Models\Benefiters_Tables_Models\Benefiter', 'id', 'benefiters_id');
+    public function benefiter(): \Illuminate\Database\Eloquent\Relations\HasOne{
+        return $this->hasOne(\App\Models\Benefiters_Tables_Models\Benefiter::class, 'id', 'benefiters_id');
     }
 
-    public function medical_visits(){
-        return $this->hasOne('App\Models\Benefiters_Tables_Models\medical_visits','id', 'medical_visit_id');
+    public function medical_visits(): \Illuminate\Database\Eloquent\Relations\HasOne{
+        return $this->hasOne(\App\Models\Benefiters_Tables_Models\medical_visits::class,'id', 'medical_visit_id');
     }
 }

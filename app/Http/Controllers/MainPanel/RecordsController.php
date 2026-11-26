@@ -39,8 +39,6 @@ class RecordsController extends Controller
     private $benefiterList = null;
 
     public function __construct(){
-        // only for logged in users
-        $this->middleware('activated');
         // initialize benefiters list service
         $this->benefiterList = new BenefitersService();
         // initialize basic info service
@@ -52,7 +50,7 @@ class RecordsController extends Controller
         // initialize legal folder service
         $this->legalFolderService = new LegalFolderService();
 
-        $this->datesHelper = new \app\Services\DatesHelper();
+        $this->datesHelper = new \App\Services\DatesHelper();
     }
 
     //------------ GET BENEFITERS LIST -------------------------------//
@@ -87,6 +85,10 @@ class RecordsController extends Controller
         session()->forget('legalStatuses');
         $benefiterLanguagesAndLevels = session()->get('benefiter_languages', function() { return null; });
         session()->forget('benefiter_languages');
+        // The session is stored as JSON: the objects of these lists come back as arrays.
+        $toObjects = fn ($list) => is_iterable($list) ? array_map(fn ($item) => (object) $item, is_array($list) ? $list : iterator_to_array($list)) : $list;
+        $legal_statuses = $toObjects($legal_statuses);
+        $benefiterLanguagesAndLevels = $toObjects($benefiterLanguagesAndLevels);
         $successMsg = session()->get('success', function() { return null; });
         session()->forget('success');
         $errors = session()->get('errors' , function() { return null; });
@@ -233,7 +235,7 @@ class RecordsController extends Controller
     // get social folder view
     public function getSocialFolder($id){
         $benefiter = $this->basicInfoService->findExistentBenefiter($id);
-        $psychologist_id = Auth::user()->id;
+        $psychologist_id = auth()->id();
         // brings the medical location array from db
         $medical_locations = $this->medicalVisit->medicalLocationsLookup();
         $medical_locations_array = $this->medicalVisit->reindex_array($medical_locations);
@@ -373,8 +375,8 @@ class RecordsController extends Controller
         session()->forget('examResultLoukup_session');
             // transform the above session ICD10 ids into respective description
         $examResultLoukup_session_description =[[]];
-        for($i=0 ; $i<count($examResultLoukup_session) ; $i++){
-            for ($j=0 ; $j<count($examResultLoukup_session[$i]) ; $j++){
+        for($i=0 ; $i<legacy_count($examResultLoukup_session) ; $i++){
+            for ($j=0 ; $j<legacy_count($examResultLoukup_session[$i]) ; $j++){
                 if(!empty($examResultLoukup_session[$i][$j])){
                     $examResultLoukup_session_description[$i][$j] = $this->medicalVisit->getICD10By_id($examResultLoukup_session[$i][$j]);
                 }
@@ -384,7 +386,7 @@ class RecordsController extends Controller
         $medication_name_from_lookup_session = session()->get('medication_name_from_lookup_session');
         session()->forget('medication_name_from_lookup_session');
         $medication_name_from_lookup_session_description = [];
-        for($i=0; $i<count($medication_name_from_lookup_session) ; $i++){
+        for($i=0; $i<legacy_count($medication_name_from_lookup_session) ; $i++){
             $medication_name_from_lookup_session_description[$i] = $this->medicalVisit->getMedicationLookupBy_id($medication_name_from_lookup_session[$i]);
         }
         $medication_new_name_session = session()->get('medication_new_name_session');
@@ -416,7 +418,7 @@ class RecordsController extends Controller
             $medical_incident_type = $this->medicalVisit->medicalIncidentTypeLookup();  //medical_incident_type_lookup::get();
             $medical_locations_array = $this->medicalVisit->reindex_array($medical_locations);
             $medical_incident_type_array = $this->medicalVisit->reindex_array($medical_incident_type);
-            $doctor_id = $this->medicalVisit->findDoctorId();  //Auth::user()->id;
+            $doctor_id = $this->medicalVisit->findDoctorId();  //auth()->id();
             $benefiter_id = $benefiter->id;
             return view('benefiter.medical-folder')
                         ->with('selected_medical_visit_id', $selected_medical_visit_id)
@@ -453,6 +455,8 @@ class RecordsController extends Controller
 
     //------------ POST MEDICAL VISIT DATA ----------------------------------------//
     public function postMedicalFolder(Request $request, $id){
+        // The files of a visit: common document and image types, 10 MB at most each.
+        $request->validate(['upload_file_title.*' => ['nullable', 'file', 'max:10240', 'mimes:pdf,jpg,jpeg,png,gif,webp,doc,docx,odt,xls,xlsx,ods,txt,rtf']]);
         $benefiter = $this->basicInfoService->findExistentBenefiter($id);
         $benefiter_folder_number = $this->medicalVisit->find_benefiter_folder_number($id);
         $benefiter_medical_history_list = $this->medicalVisit->get_all_medical_visits_for_benefiter($id);
@@ -685,6 +689,8 @@ class RecordsController extends Controller
         $med_visit_medication = '';
         $med_visit_hospitalizations = '';
         $med_visit_referrals = '';
+        $med_visit_uploads = '';
+        $doctor_id = null;
 
         // for every medical visit of the benefiter fetch the corresponding medical data from DB
         foreach($benefiter_medical_visits_list as $med_visit) {
@@ -732,9 +738,10 @@ class RecordsController extends Controller
                 // Uploads
                 $med_visit_uploads = $this->medicalVisit->findMedicalVisitUploads($med_visit['id']);
 
-//                dd($med_visit_uploads[0]['title']);
             }
         }
+        // The visit is not a visit of this beneficiary.
+        abort_if($doctor_id === null, 404);
         return view('partials.forms.medical-visit.medical_visit_edit')
             ->with('selected_medical_visit_id',$selected_medical_visit_id)
             ->with('benefiter',$benefiter)
@@ -765,6 +772,8 @@ class RecordsController extends Controller
 
     //------------ POST: EDIT MEDICAL VISIT ---------------------------------------//
     public function postMedicalVisitFromEditing(Request $request){
+        // The files of a visit: common document and image types, 10 MB at most each.
+        $request->validate(['upload_file_title.*' => ['nullable', 'file', 'max:10240', 'mimes:pdf,jpg,jpeg,png,gif,webp,doc,docx,odt,xls,xlsx,ods,txt,rtf']]);
         $selected_medical_visit_id = $request['selected_medical_visit_id'];
         $benefiter_id = $request['benefiter_id'];
 //        dd($request->all());

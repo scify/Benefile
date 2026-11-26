@@ -96,3 +96,17 @@ a[disabled] {
         font-size: 20px;
     }
 }
+
+/* The logout links are forms (POST): their button looks like the other links. */
+.logout-form {
+    display: inline;
+    margin: 0;
+}
+.logout-form button {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}

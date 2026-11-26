@@ -17,7 +17,10 @@
            </div>
 
            <div class="text-center margin-top-40 margin-bottom-50">
-            <a class="logout-button" href="{{ url('auth/logout') }}">@lang($p.'logout')</a>
+            <form class="logout-form" method="POST" action="{{ url('auth/logout') }}">
+                @csrf
+                <button type="submit" class="logout-button">@lang($p.'logout')</button>
+            </form>
            </div>
 
 

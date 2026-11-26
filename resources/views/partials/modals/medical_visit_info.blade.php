@@ -261,7 +261,7 @@
             </div>
         </div>
         <?php
-            $examResultsLookupLength = count($ExamResultsLookup);
+            $examResultsLookupLength = legacy_count($ExamResultsLookup);
             $i = 0;
         ?>
         @foreach($ExamResultsLookup as $med_exam)

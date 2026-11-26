@@ -172,7 +172,7 @@
             </div>
 
              {{--Ιστορικό Συμβάντων --}}
-            @if(count($occurrences)!=0 && $benefiter->id != -1)
+            @if(legacy_count($occurrences)!=0 && $benefiter->id != -1)
                 <div class="row">
                     <div class="col-md-12">
                         <div class="div-table-titles row">
@@ -1162,7 +1162,7 @@
                 </div>
 
                  {{--Ιστορικό Συμβάντων --}}
-                @if(count($occurrences)!=0)
+                @if(legacy_count($occurrences)!=0)
                     <div class="row">
                         <div class="col-md-12">
                             <div class="div-table-titles row">
@@ -2072,7 +2072,7 @@
     <div class="modal fade" id="delete-session-modal" aria-hidden="true" role="dialog" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <form class="delete-session-form" action="" method="get" accept-charset="UTF-8" enctype="multipart/form-data">
+                <form class="delete-session-form" action="" method="post" accept-charset="UTF-8">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     @if(!empty($referral))
                     <input type="hidden" class="delete-session-path" name="path" value="{{ url("benefiter/".$benefiter->id."/basic-info/referral-delete/".$referral->id) }}">

@@ -15,11 +15,11 @@ class BenefiterReferrals extends Model
         'user_id',
         'referral_lookup_id'];
 
-    public function referralType(){
-        return $this->hasOne('App\Models\Benefiters_Tables_Models\BenefiterReferrals_lookup', 'id', 'referral_lookup_id');
+    public function referralType(): \Illuminate\Database\Eloquent\Relations\HasOne{
+        return $this->hasOne(\App\Models\Benefiters_Tables_Models\BenefiterReferrals_lookup::class, 'id', 'referral_lookup_id');
     }
 
-    public function user(){
-        return $this->hasOne('App\Models\User', 'id', 'user_id');
+    public function user(): \Illuminate\Database\Eloquent\Relations\HasOne{
+        return $this->hasOne(\App\Models\User::class, 'id', 'user_id');
     }
 }

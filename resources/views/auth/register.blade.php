@@ -103,7 +103,7 @@
                         <option value="0" disabled selected>@lang($p.'specialty')</option>
 
                         @foreach ($subroles as $subrole)
-                            <option value="{!! $subrole->id !!}">{!! $subrole->subrole !!}</option>
+                            <option value="{{ $subrole->id }}">{{ $subrole->subrole }}</option>
                         @endforeach
                     </select>
                     @if ($errors->has('user_subrole_id'))

@@ -19,6 +19,7 @@ class UploadFileService{
     private $__errors = array();
     private $socialService;
     private $conversionForFile;
+    private GreekStringConversionHelper $greekStringConversion;
 
     public function __construct(){
         $this->greekStringConversion = new GreekStringConversionHelper();
@@ -87,11 +88,11 @@ class UploadFileService{
         // Import csv
         $csvFile = file($filePath);
         // Iterate between all rows of the csv file and add each value to the benefiters table
-        for($i=1; $i<count($csvFile); $i++) {
+        for($i=1; $i<legacy_count($csvFile); $i++) {
             $colValues = str_getcsv( $csvFile[$i]);
             $file_import = new File_import_schema();
-            for($j=1; $j<count($colValues); $j++){
-                if($j != count($colValues) - 1) {
+            for($j=1; $j<legacy_count($colValues); $j++){
+                if($j != legacy_count($colValues) - 1) {
                     $file_import->$file_import_Fields[$j] = $colValues[$j];
                 }
             }
@@ -102,7 +103,7 @@ class UploadFileService{
                 Log::error($e);
             }
         }
-        \DB::insert(\DB::raw('insert into work_title_list_lookup (work_title) select distinct f.work_title  from  File_Import_Schema f left outer join work_title_list_lookup work_title on f.work_title = work_title.work_title where work_title.id is null;'));
+        \DB::insert('insert into work_title_list_lookup (work_title) select distinct f.work_title  from  File_Import_Schema f left outer join work_title_list_lookup work_title on f.work_title = work_title.work_title where work_title.id is null;');
         $this->conversionForFile = new ConversionsForFileUpload();
         $this->selectAppropriateDBTableForEachFileRowColumns($maxIdInFileImportSchema);
         return $this->__errors;
@@ -125,13 +126,14 @@ class UploadFileService{
     // selects the appropriate DB table for each column of a row
     private function selectAppropriateDBTableForEachFileRowColumns($maxIdInFileImportSchema){
         $allFileRows = File_import_schema::where('id', '>', $maxIdInFileImportSchema)->get();
-        if($allFileRows != null) {
+        if($allFileRows->isNotEmpty()) {
             foreach ($allFileRows as $singleRow) {
                 try {
                     $imported_benefiter_id = \DB::table('benefiters')->insertGetId($this->selectBenefitersColumnsAndValuesFromFileRow($singleRow));
                     $this->socialService->saveSocialFolderToDB(array('comments' => ''), $imported_benefiter_id);
                     $this->insertLanguagesToDBFromFile($singleRow->language, $singleRow->language_level, $imported_benefiter_id);
-                    $this->insertLegalStatusToDBFromFile($singleRow->legal_status, $singleRow->legal_status_details, $singleRow->legal_status_exp_date, $imported_benefiter_id);
+                    // The import file has no details and no expiry date for the legal status.
+                    $this->insertLegalStatusToDBFromFile($singleRow->legal_status, null, null, $imported_benefiter_id);
 //                    $this->importReferrals($singleRow, $imported_benefiter_id);
                 } catch(\Exception $e) {
                     array_push($this->__errors, \Lang::get('upload_file_errors.insert_benefiter_error') . $singleRow->folder_number);
@@ -188,7 +190,7 @@ class UploadFileService{
             'travel_duration' => $singleRow->travel_duration,
             'detention_date' => $datesHelper->makeDBFriendlyDate($singleRow->detention_duration),
             'social_history' => '', //$singleRow->social_history,
-            'document_manager_id' => \Auth::user()->id,
+            'document_manager_id' => auth()->id(),
             'created_at' => $tmpdate,
         );
     }
@@ -232,7 +234,7 @@ class UploadFileService{
         $datesHelper = new DatesHelper();
         $referralDb = array('description' => $description,
                             'referral_date' => $datesHelper->makeDBFriendlyDate($referral_date),
-                            'user_id' => \Auth::user()->id,
+                            'user_id' => auth()->id(),
                             'benefiter_id' => $benefiter_id,
                             'referral_lookup_id' => $referral_type_id);
         return $referralDb;
@@ -350,12 +352,12 @@ class UploadFileService{
         // Extract language levels map from language_levels
         $languagesLevels = array_map('trim', explode(',', $languages_levels));
         // if $languagesAndLevels are not empty update the corresponding language level
-        if($languagesAndLevels != "") {
+        if($languagesAndLevels !== []) {
             // For every language level
             foreach ($languagesLevels as $languageLevel) {
                 // Update corresponding language with the given language level
                 $tmp = array_map('trim', explode('(', $languageLevel)); // '0' => language_description, '1' => language_level_description
-                if($tmp[0] != "" and count($tmp) == 2) {
+                if($tmp[0] != "" and legacy_count($tmp) == 2) {
                     $tmp[1] = str_replace(')', '', $tmp[1]);
                     $sLevelID = $this->getLanguageLevelID($tmp[1]);
                     $this->setLanguageLevel($tmp[0], $sLevelID, $languagesAndLevels);

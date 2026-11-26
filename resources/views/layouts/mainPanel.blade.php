@@ -8,6 +8,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('panel-title')</title>
 
     <!-- Fonts -->
@@ -105,7 +106,10 @@
                                 </li>
                                 @endif
                                 <li id="user-logout">
-                                    <a href="{{ url('auth/logout') }}">@lang($p.'logout')</a>
+                                    <form class="logout-form" method="POST" action="{{ url('auth/logout') }}">
+                                        @csrf
+                                        <button type="submit">@lang($p.'logout')</button>
+                                    </form>
                                 </li>
                             </ul>
                         </div>

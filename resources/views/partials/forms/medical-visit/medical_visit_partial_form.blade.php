@@ -55,7 +55,7 @@
             <div id="chronic-cond" class="row padding-bottom-30">
                 {{-- Fetch the posted input values if the post fails --}}
                 @if(!empty($chronic_conditions_sesssion))
-                    @for($i=0; $i< count($chronic_conditions_sesssion) ; $i++)
+                    @for($i=0; $i< legacy_count($chronic_conditions_sesssion) ; $i++)
                         <div  class="padding-left-right-15 @if($i==0) chronicConditions @else condition-added-div @endif">
                             <div class="form-group float-left width-100-percent">
                                 {{-- ΧΡΟΝΙΕΣ ΠΑΘΗΣΕΙΣ --}}
@@ -143,7 +143,7 @@
     </div>
     {{--<div class="col-md-12 padding-left-right-30">--}}
         @if(!empty($examResultLoukup_session))
-            @for($i=0; $i<count($ExamResultsLookup) ; $i++)
+            @for($i=0; $i<legacy_count($ExamResultsLookup) ; $i++)
                 {{--@if($i%2 == 0)--}}
                     <div class="row padding-left-right-30 padding-top-bottom-15">
                 {{--@endif--}}
@@ -151,7 +151,7 @@
                             {!! Form::label('examResultLoukup[{{$i}}][]', $ExamResultsLookup[$i]['description'].':', array('class' => 'display-block width-270 max-width-none')) !!}
                             <select id="clinical-select-{{$i}}" class="js-example-basic-multiple" multiple="multiple" name="examResultLoukup[{{$i}}][]" style="width:100%;">
                                 <option selected="selected" style="display: none"></option>
-                                    @for($j=0 ; $j<count($examResultLoukup_session[$i]) ; $j++)
+                                    @for($j=0 ; $j<legacy_count($examResultLoukup_session[$i]) ; $j++)
                                         @if(!empty($examResultLoukup_session[$i][$j]))
                                             <option selected="selected" value="{{$examResultLoukup_session[$i][$j]}}" >{{$examResultLoukup_session_description[$i][$j]}}</option>
                                         @endif
@@ -164,7 +164,7 @@
                 {{--@endif--}}
              @endfor
         @else
-            @for($i=0; $i<count($ExamResultsLookup) ; $i++)
+            @for($i=0; $i<legacy_count($ExamResultsLookup) ; $i++)
                 {{--@if($i%2 == 0)--}}
                     <div class="row padding-left-right-30 padding-top-bottom-15">
                 {{--@endif--}}
@@ -192,7 +192,7 @@
         <div class="col-md-12">
             <div id="lab-result" class="row padding-bottom-30">
                 @if(!empty($lab_results_session))
-                    @for($i=0 ; $i<count($lab_results_session) ; $i++)
+                    @for($i=0 ; $i<legacy_count($lab_results_session) ; $i++)
                         <div class="padding-left-right-15 @if($i==0) lab-results @else lab-added-div @endif">
                             <div class="form-group float-left width-100-percent">
                                 {{-- ΕΡΓΑΣΤΗΡΙΑΚΑ ΑΠΟΤΕΛΕΣΜΑΤΑ --}}
@@ -245,7 +245,7 @@
             <div id="diagnosis-result" class="row padding-bottom-30">
                 {{-- check if there are some already put diagnosis results and then display all of them, otherwise display just an empty text area --}}
                 @if(!empty($diagnosis_results_session))
-                    @for($i=0 ; $i<count($diagnosis_results_session) ; $i++)
+                    @for($i=0 ; $i<legacy_count($diagnosis_results_session) ; $i++)
                 <div class="padding-left-right-15 @if($i==0) diagnosis-results @else diagnosis-added-div @endif">
                     <div class="form-group float-left width-100-percent">
                         <div class="make-inline col-md-10">
@@ -305,7 +305,7 @@
                 </div>
                 @if(!empty($medication_dosage_session) && !empty($medication_duration_session))
 
-                    @for($i=0 ; $i<count($supply_from_praksis_hidden_session) ; $i++)
+                    @for($i=0 ; $i<legacy_count($supply_from_praksis_hidden_session) ; $i++)
                         <div  class="padding-left-right-15 @if($i==0) medicationList @endif @if($i!=0) med-added-div @endif">
                             <div class="row">
                                 <div class="col-md-12">
@@ -435,7 +435,7 @@
             <div id="hospitalization" class="row padding-bottom-30">
                 {{-- check if there are some already put diagnosis results and then display all of them, otherwise display just an empty text area --}}
                 @if(!empty($hospitalization_session))
-                    @for($i=0 ; $i<count($hospitalization_session) ; $i++)
+                    @for($i=0 ; $i<legacy_count($hospitalization_session) ; $i++)
                 <div class="padding-left-right-15 @if($i==0) hospitalization-div @else hospitalization-added-div @endif">
                     <div class="form-group float-left width-100-percent">
                         <div class="make-inline col-md-8">
@@ -491,7 +491,7 @@
         <div class="col-md-12">
             <div id="referrals" class="row padding-bottom-30">
                 @if(!empty($referrals_session))
-                    @for($i=0; $i<count($referrals_session) ; $i++)
+                    @for($i=0; $i<legacy_count($referrals_session) ; $i++)
                         <div class="padding-left-right-15 @if($i==0) referral @else ref-added-div @endif">
                             <div class="form-group float-left width-100-percent">
                                 {{-- ΠΑΡΑΠΟΜΠΗ --}}
@@ -568,7 +568,7 @@
             <div id="upload_file" data-form-submit-error="@lang($p."form_submit_error")">
                 @if(!empty($upload_file_description_session) and !empty($upload_file_title_session))
                 <?php $counter = 0; ?>
-                    @for($i=0 ; $i<count($upload_file_description_session) ; $i++)
+                    @for($i=0 ; $i<legacy_count($upload_file_description_session) ; $i++)
                         <div class="@if($i==0)uploadFile @else file-added-div @endif">
                             <div class="row">
                                 <div class="padding-left-right-15">

@@ -72,7 +72,7 @@
                             <td>{{substr($user['created_at'], 0,11)}}</td>
 
                             <td>
-                                <form method="post" action="{{action('MainPanel\UsersController@UserStatusUpdate')}}">
+                                <form method="post" action="{{ url('main-panel/users-list') }}">
                                     <input type="hidden" name="user_id" value={{$user['id']}}>
                                     <button class="lighter-green-background">@lang($p.'activation')</button>
                                     {{ csrf_field() }}
@@ -124,7 +124,7 @@
                             @endif
                             <td>{{substr($user['created_at'], 0,11)}}</td>
                             <td>
-                                <form method="post" action="{{action('MainPanel\UsersController@UserStatusUpdate')}}">
+                                <form method="post" action="{{ url('main-panel/users-list') }}">
                                     <input type="hidden" name="user_id" value={{$user['id']}}>
                                     <button class="light-red-background">@lang($p.'deactivation')</button>
                                     {{ csrf_field() }}
@@ -176,7 +176,7 @@
                             @endif
                             <td>{{substr($user['created_at'], 0,11)}}</td>
                             <td>
-                                <form method="post" action="{{action('MainPanel\UsersController@UserStatusUpdate')}}">
+                                <form method="post" action="{{ url('main-panel/users-list') }}">
                                     <input type="hidden" name="user_id" value={{$user['id']}}>
                                     <button class="lighter-green-background">@lang($p.'activation')</button>
                                     {{ csrf_field() }}

@@ -13,8 +13,8 @@ class medical_hospitalizations extends Model
         'hospitalization_date',
         'medical_visit_id'];
 
-    public function medical_visits()
+    public function medical_visits(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo('App\Models\Benefiters_Tables_Models\medical_visits', 'medical_visit_id');
+        return $this->belongsTo(\App\Models\Benefiters_Tables_Models\medical_visits::class, 'medical_visit_id');
     }
 }

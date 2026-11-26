@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Services\UploadFileService;
-use Illuminate\Support\Facades\Input;
 use Carbon\Carbon;
 
 class UploadFileController extends Controller
@@ -13,8 +12,6 @@ class UploadFileController extends Controller
     public  $uploadFileService =null;
 
     public function __construct(){
-        // only for admin
-        $this->middleware('admin');
         // initialize benefiters list service
         $this->uploadFileService = new UploadFileService();
     }
@@ -27,18 +24,14 @@ class UploadFileController extends Controller
     }
 
     // uploads the file to server
-    public function excelUpload(){
-        // instantiate the upload file service
+    public function excelUpload(\Illuminate\Http\Request $request){
+        $request->validate(['file' => ['required', 'file', 'max:10240', 'mimes:csv,txt']]);
         $uploadFileService = new UploadFileService();
-        // get the file from the post request
-        $file = Input::file('file');
-        // set file name
-        $filename = Carbon::now('Europe/Athens') . '-' . $file->getClientOriginalName();
-        // set file path
-        $filepath = public_path() . '/uploads/uploadedExcels/';
-        // move file to correct location
-        $file->move($filepath, $filename);
-        $fullFilePath = $filepath . $filename;
+        $file = $request->file('file');
+        // The file goes to the private storage, with a random name, never to public/.
+        $storedPath = $file->store('csv-imports', 'local');
+        abort_if($storedPath === false, 500, 'The file could not be stored.');
+        $fullFilePath = \Illuminate\Support\Facades\Storage::disk('local')->path($storedPath);
         // Insert upload main info (file name & date) to DB
         $uploadFileService->importedFilesTable($file->getClientOriginalName());
         // insert values to DB

@@ -15,10 +15,10 @@ class ReportsService{
     // returns data needed to display the users roles report
     public function getReportDataForUsersRoles(){
         try {
-            $doctorsCount = \DB::select(\DB::raw("select count(*) as counter from users where user_role_id = 2"));
-            $legalsCount = \DB::select(\DB::raw("select count(*) as counter from users where user_role_id = 3"));
-            $socialsCount = \DB::select(\DB::raw("select count(*) as counter from users where user_role_id = 4"));
-            $psychologistsCount = \DB::select(\DB::raw("select count(*) as counter from users where user_role_id = 5"));
+            $doctorsCount = \DB::select("select count(*) as counter from users where user_role_id = 2");
+            $legalsCount = \DB::select("select count(*) as counter from users where user_role_id = 3");
+            $socialsCount = \DB::select("select count(*) as counter from users where user_role_id = 4");
+            $psychologistsCount = \DB::select("select count(*) as counter from users where user_role_id = 5");
         } catch(\Exception $e){
             Log::error("A problem occurred while trying to count the users based on users roles.\n" . $e);
             return null;
@@ -35,8 +35,8 @@ class ReportsService{
 
     public function getReportDataForUsersMaritalStatus() {
         try {
-            // $maritalStatuses = \DB::select(\DB::raw("select id, marital_status_title from marital_status_lookup group by id"));
-            $benefitersMaritalStatuses = \DB::select(\DB::raw("select marital_status_lookup.id, marital_status_lookup.marital_status_title, count(benefiters.marital_status_id) as marital_counter from marital_status_lookup left join benefiters on (marital_status_lookup.id = benefiters.marital_status_id) group by marital_status_lookup.id"));
+            // $maritalStatuses = \DB::select("select id, marital_status_title from marital_status_lookup group by id");
+            $benefitersMaritalStatuses = \DB::select("select marital_status_lookup.id, marital_status_lookup.marital_status_title, count(benefiters.marital_status_id) as marital_counter from marital_status_lookup left join benefiters on (marital_status_lookup.id = benefiters.marital_status_id) group by marital_status_lookup.id");
         } catch (\Exception $e) {
             Log::error("A problem occured while trying to count the users based on marital status.");
             return null;
@@ -48,8 +48,8 @@ class ReportsService{
 
     public function getReportDataForBenefitersAge() {
         try {
-            // $benefitersAge = \DB::select(\DB::raw("select datediff(current_date, str_to_date(t.birth_date, '%Y-%m-%d'))/365 as ageInYears from benefiters t"));
-            $benefitersAge = \DB::select(\DB::raw(" select count(*) as counter, floor(datediff(current_date, str_to_date(t.birth_date, '%Y-%m-%d'))/365/10)*10 as ageInYears from benefiters t group by ageInYears"));
+            // $benefitersAge = \DB::select("select datediff(current_date, str_to_date(t.birth_date, '%Y-%m-%d'))/365 as ageInYears from benefiters t");
+            $benefitersAge = \DB::select(" select count(*) as counter, floor(datediff(current_date, str_to_date(t.birth_date, '%Y-%m-%d'))/365/10)*10 as ageInYears from benefiters t group by ageInYears");
             // dd($benefitersAge);
         } catch (\Exception $e) {
             return null;
@@ -60,7 +60,7 @@ class ReportsService{
 
     public function getReportDataForBenefitersLegalStatus() {
         try {
-            $benefitersLegalStatuses = \DB::select(\DB::raw("select legal_status_lookup.id, legal_status_lookup.description, count(benefiters_legal_status.id) as legal_counter from legal_status_lookup left join benefiters_legal_status on (legal_status_lookup.id = benefiters_legal_status.legal_lookup_id) group by legal_status_lookup.id"));
+            $benefitersLegalStatuses = \DB::select("select legal_status_lookup.id, legal_status_lookup.description, count(benefiters_legal_status.id) as legal_counter from legal_status_lookup left join benefiters_legal_status on (legal_status_lookup.id = benefiters_legal_status.legal_lookup_id) group by legal_status_lookup.id");
         } catch (\Exception $e) {
             Log::error("A problem occured while trying to count the benefiters based on their legal status.\n" . $e);
             return null;
@@ -73,7 +73,7 @@ class ReportsService{
     // returns data needed to display the benefiters work titles report
     public function getReportDataForBenefitersWorkTitle(){
         try {
-            $benefitersCountByWork = \DB::select(\DB::raw("select work_title_id, count(work_title_id) as counter from benefiters group by work_title_id order by counter desc limit 20"));
+            $benefitersCountByWork = \DB::select("select work_title_id, count(work_title_id) as counter from benefiters group by work_title_id order by counter desc limit 20");
             $workTitles = \DB::table('work_title_list_lookup')->get();
         } catch(\Exception $e){
             Log::error("A problem occurred while trying to count the users based on their work title.\n" . $e);
@@ -89,7 +89,7 @@ class ReportsService{
     // returns data needed to display the medical visits location report
     public function getReportDataForMedicalVisitsLocation(){
         try{
-            $medicalVisitsByLocation = \DB::select(\DB::raw("select mll.description as location, count(mv.medical_location_id) as counter from medical_location_lookup as mll left join medical_visits as mv on mv.medical_location_id = mll.id group by mll.id"));
+            $medicalVisitsByLocation = \DB::select("select mll.description as location, count(mv.medical_location_id) as counter from medical_location_lookup as mll left join medical_visits as mv on mv.medical_location_id = mll.id group by mll.id");
         } catch(\Exception $e) {
             Log::error("A problem occurred while trying to count the medical visits based on their location.\n" . $e);
             return null;
@@ -102,7 +102,7 @@ class ReportsService{
     // returns data needed to display the number of benefiters per medical visits number report
     public function getReportDataForBenefitersPerMedicalVisitsCount(){
         try{
-            $benefitersPerMedicalVisits = \DB::select(\DB::raw("select visits_counter, count(*) as benefiters_counter from ( select benefiter_id, count(*) as visits_counter from medical_visits group by benefiter_id) as count_visits_table group by visits_counter order by visits_counter asc"));
+            $benefitersPerMedicalVisits = \DB::select("select visits_counter, count(*) as benefiters_counter from ( select benefiter_id, count(*) as visits_counter from medical_visits group by benefiter_id) as count_visits_table group by visits_counter order by visits_counter asc");
         } catch(\Exception $e){
             Log::error("A problem occurred while trying to count the number of benefiters per medical visits number.\n" . $e);
             return null;
@@ -116,8 +116,8 @@ class ReportsService{
     public function getReportDataForRegisteredBenefiters() {
         try {
             // get benefiter registration number for any particular month.
-            $benefitersCount = \DB::select(\DB::raw("select date_format(created_at, '%Y-%m') as created_at, count(id) as idcounter from benefiters group by date_format(created_at, '%Y %m')"));
-            // $benefitersCount = \DB::select(\DB::raw("select created_at, count(id) as idcounter from benefiters group by year(created_at), month(created_at)"));
+            $benefitersCount = \DB::select("select date_format(created_at, '%Y-%m') as created_at, count(id) as idcounter from benefiters group by date_format(created_at, '%Y %m')");
+            // $benefitersCount = \DB::select("select created_at, count(id) as idcounter from benefiters group by year(created_at), month(created_at)");
         } catch (\Exception $e) {
             Log::error("A problem occured while trying to count the users based on registration date.\n" . $e);
             return null;
@@ -298,6 +298,7 @@ class ReportsService{
             array_push($results, $medical_result);
         }
         // Order results by date (ascending)
+        $sort = [];
         foreach ($results as $key => $part) {
             $sort[$key] = strtotime($part['per_month_date']);
         }
@@ -357,6 +358,7 @@ class ReportsService{
             array_push($results, $registration_date);
         }
 
+        $sort = [];
         foreach ($results as $key => $part) {
             $sort[$key] = strtotime($part['per_month_date']);
         }

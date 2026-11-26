@@ -1,0 +1,23 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Support\Facades\DB;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class GendersSeeder extends Seeder
+{
+    public function run()
+    {
+        DB::table('genders_lookup')->insert(
+          array(
+              array('gender' => "Άνδρας"),
+              array('gender' => "Γυναίκα"),
+              array('gender' => "Άλλο")
+          )
+        );
+    }
+}

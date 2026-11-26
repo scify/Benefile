@@ -1,4 +1,4 @@
-<?php namespace app\Services;
+<?php namespace App\Services;
 
 use Validator;
 use App\Models\PsychosocialSession;
@@ -76,23 +76,7 @@ class SocialFolderService{
         );
     }
 
-    // saves the psychosocial support in DB
-    private function savePsychosocialSupportToDB($request, $benefiterId){
-        if($request['psychosocial_statuses'] != null){
-            $psychosocialStatuses = $request['psychosocial_statuses'];
-            foreach($psychosocialStatuses as $psychosocialStatus) {
-                \DB::table('benefiters_psychosocial_support')->insert($this->getPsychosocialSupportArrayForDBInsert($psychosocialStatus, $benefiterId));
-            }
-        }
-    }
 
-    // gets array suitable for benefiters_psychosocial_support DB table insert
-    private function getPsychosocialSupportArrayForDBInsert($psychosocialStatus, $benefiterId){
-        return array(
-            'psychosocial_support_id' => $psychosocialStatus,
-            'benefiter_id' => $benefiterId,
-        );
-    }
 
     // saves a row to the psychosocial_sessions table in DB
     private function savePsychosocialSessionToDB($request, $socialFolderId){
@@ -106,7 +90,7 @@ class SocialFolderService{
     private function getPsychosocialSessionArrayForDBInsert($request, $socialFolderId){
         $temp = $this->getPsychosocialSessionArrayForDBEdit($request);
         $temp['social_folder_id'] = $socialFolderId;
-        $temp['psychologist_id'] = \Auth::user()->id;
+        $temp['psychologist_id'] = auth()->id();
         return $temp;
     }
 

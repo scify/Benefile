@@ -10,7 +10,7 @@ class Users_roles extends Model
     protected $primaryKey = 'id';
     protected $fillable = ['role'];
 
-    public function user() {
-        return $this->belongsToMany('App\Models\User');
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsToMany {
+        return $this->belongsToMany(\App\Models\User::class);
     }
 }

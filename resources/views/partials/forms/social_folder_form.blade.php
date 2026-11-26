@@ -354,7 +354,7 @@
 <div class="modal fade" id="delete-session-modal" aria-hidden="true" role="dialog" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form class="delete-session-form" action="" method="get">
+            <form class="delete-session-form" action="" method="post">
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                 <input type="hidden" class="delete-session-path" name="path" value="{{ url("benefiter/".$benefiter->id."/session-delete/") }}">
                 <div class="modal-header">

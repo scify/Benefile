@@ -9,22 +9,11 @@ use App\Http\Controllers\Controller;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('activated');
-    }
 
     /**
      * Show the application dashboard.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): \Illuminate\View\View
     {
         return view('layouts.mainPanel');
     }

@@ -15,7 +15,7 @@
 @stop
 
 @section('main-window-content')
-@if (count($errors) > 0 || Session::has('flash_message'))
+@if (legacy_count($errors) > 0 || Session::has('flash_message'))
     <div class="alert alert-danger">
         <ul>
             @foreach ($errors->all() as $error)

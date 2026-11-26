@@ -153,7 +153,7 @@
         <div class="alert alert-danger">
             <ul>
                 <li>@lang($p.'unsuccess_visit')</li>
-                @if (count($errors) > 0)
+                @if (legacy_count($errors) > 0)
                     @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>
                     @endforeach
@@ -168,7 +168,7 @@
         <div class="col-md-12">
             <div class="no-margin pos-relative" id="results-to-activate">
                 <div class="display padding-20">
-                    @if(count($benefiter_medical_visits_list)>0)
+                    @if(legacy_count($benefiter_medical_visits_list)>0)
                     <table id="benefiter_referrals_history" class="display" cellspacing="0" width="100%">
                         <thead>
                             <tr>
@@ -193,7 +193,7 @@
                             </tr>
                         </tfoot>
                         <tbody>
-                            @for($i=0 ; $i<count($benefiter_medical_visits_list) ; $i++)
+                            @for($i=0 ; $i<legacy_count($benefiter_medical_visits_list) ; $i++)
                                 <tr>
                                     <td>{{ $i+1 }}</td>
                                     <td>{{ $benefiter_medical_visits_list[$i]['doctor']['name'] }} {{ $benefiter_medical_visits_list[$i]['doctor']['lastname'] }}

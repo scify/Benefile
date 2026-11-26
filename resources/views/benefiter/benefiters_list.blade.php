@@ -61,7 +61,7 @@
     <div class="modal fade" id="delete-benefiter-modal" aria-hidden="true" role="dialog" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <form class="delete-benefiter-form" action="" method="get">
+                <form class="delete-benefiter-form" action="" method="post">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>

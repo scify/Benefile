@@ -1,4 +1,4 @@
-<?php namespace app\Services;
+<?php namespace App\Services;
 
 use Carbon\Carbon;
 
@@ -15,7 +15,7 @@ class DatesHelper
             $year = strtok("-");
             if (is_numeric($day) and is_numeric($month) and is_numeric($year)) {
                 if (strlen($day) <= 2 and strlen($month) <= 2 and strlen($year) <= 4) {
-                    return Carbon::createFromDate($year, $month, $day);
+                    return Carbon::createFromDate((int) $year, (int) $month, (int) $day);
                 }
             }
         }

@@ -79,6 +79,8 @@ function init(){
     // after the modal opens by clicking ok the occurrence is deleted with ajax
     $('.delete-occurrence-confirm-button').on('click', function(){
         $.ajax({
+            type: 'POST',
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             url: $('body').attr('data-url') + "/benefiter/"+ $(this).attr('data-benefiter-id') +"/delete-occurrence/" + $(this).attr('data-occurrence-id')
         }).done(function() {
             location.reload();
@@ -89,6 +91,8 @@ function init(){
     // POST NEW
     $('.new-occurrence-submit').on('click',function(){
         $.ajax({
+            type: 'POST',
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             url: $('body').attr('data-url') + "/benefiter/"+ $(this).attr('data-benefiter-id') +"/new-occurrence-save",
             data: {
                 occurrence_date: $('#occurrence_date').val(),
@@ -104,6 +108,8 @@ function init(){
     // EDIT
     $('.edit-occurrence-submit').on('click',function(){
         $.ajax({
+            type: 'POST',
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             url: $('body').attr('data-url') + "/benefiter/"+ $(this).attr('data-benefiter-id') + "/edit-occurrence/" + $(this).attr('data-occurrence-id'),
             data: {
                 edited_occurrence_date: $('#edited_occurrence_date_' + $(this).attr('data-occurrence-id')).val(),

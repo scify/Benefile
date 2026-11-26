@@ -12,8 +12,8 @@ class medical_laboratory_results extends Model
         'laboratory_results',
         'medical_visit_id'];
 
-    public function medical_visits()
+    public function medical_visits(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo('App\Models\Benefiters_Tables_Models\medical_visits', 'medical_visit_id');
+        return $this->belongsTo(\App\Models\Benefiters_Tables_Models\medical_visits::class, 'medical_visit_id');
     }
 }

@@ -51,21 +51,21 @@ class Benefiter extends Model
     /*
      * public function benefitersSocialTable()
      * {
-     *     return $this->hasOne('App\Models\Benefiters_Tables_Models\BenefitersSocialTable');
+     *     return $this->hasOne(\App\Models\Benefiters_Tables_Models\BenefitersSocialTable::class);
      * }
      */
 
-    public function educationLookup()
+    public function educationLookup(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne('App\Models\Benefiters_Tables_Models\EducationLookup', 'id', 'education_id');
+        return $this->hasOne(\App\Models\Benefiters_Tables_Models\EducationLookup::class, 'id', 'education_id');
     }
 
-    public function medical_visits()
+    public function medical_visits(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany('App\Models\Benefiters_Tables_Models\medical_visits', 'id', 'benefiter_id');
+        return $this->hasMany(\App\Models\Benefiters_Tables_Models\medical_visits::class, 'id', 'benefiter_id');
     }
 
-    public function gender(){
-        return $this->hasOne('App\Models\Benefiters_Tables_Models\Genders_lookup', 'id', 'gender_id');
+    public function gender(): \Illuminate\Database\Eloquent\Relations\HasOne{
+        return $this->hasOne(\App\Models\Benefiters_Tables_Models\Genders_lookup::class, 'id', 'gender_id');
     }
 }

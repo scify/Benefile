@@ -10,7 +10,7 @@ class Genders_lookup extends Model
     protected $primaryKey = 'id';
     protected $fillable = ['gender'];
 
-    public function benefiter() {
-        return $this->belongsToMany('App\Models\Benefiter');
+    public function benefiters(): \Illuminate\Database\Eloquent\Relations\HasMany {
+        return $this->hasMany(\App\Models\Benefiters_Tables_Models\Benefiter::class, 'gender_id');
     }
 }

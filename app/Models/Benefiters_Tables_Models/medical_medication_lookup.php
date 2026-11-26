@@ -11,9 +11,9 @@ class medical_medication_lookup extends Model
     protected $fillable = [
         'description'];
 
-    public function medical_medication()
+    public function medical_medication(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo('App\Models\Benefiters_Tables_Models\medical_visits', 'medical_visit_id');
+        return $this->belongsTo(\App\Models\Benefiters_Tables_Models\medical_visits::class, 'medical_visit_id');
     }
 
 }

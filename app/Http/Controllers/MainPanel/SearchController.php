@@ -11,10 +11,6 @@ use App\Http\Controllers\Controller;
 
 class SearchController extends Controller
 {
-    public function __construct(){
-        // only for logged in users
-        $this->middleware('activated');
-    }
 
     // returns the search view
     public function getSearch(){

@@ -22,7 +22,7 @@
                 </div>
             @endif
 
-            @if (count($errors) > 0)
+            @if (legacy_count($errors) > 0)
                 <div class="alert alert-danger">
                     <strong>@lang($p.'error_message')</strong>
                      <br>

@@ -569,8 +569,8 @@
         "dataProvider": [
         @foreach($benefiters_work_title as $key => $value)
             {
-            "benefiters": @if ($key != "") "{!! $key !!}" @else "-" @endif,
-            "work description": "{!! $value !!}",
+            "benefiters": @if ($key != "") {!! json_encode((string) $key, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!} @else "-" @endif,
+            "work description": {!! json_encode((string) $value, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!},
             },
         @endforeach
         ],

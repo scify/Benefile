@@ -14,8 +14,8 @@ class benefiterOccurrences extends Model{
         'benefiter_id',
         'user_id'];
 
-    public function user(){
-        return $this->hasOne('App\Models\User', 'id', 'user_id');
+    public function user(): \Illuminate\Database\Eloquent\Relations\HasOne{
+        return $this->hasOne(\App\Models\User::class, 'id', 'user_id');
     }
 }
 

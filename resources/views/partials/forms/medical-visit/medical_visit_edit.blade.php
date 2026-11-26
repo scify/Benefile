@@ -30,7 +30,7 @@
 @section('main-window-content')
     {{--@include('partials.select-panel')--}}
 
-    @if (count($errors) > 0)
+    @if (legacy_count($errors) > 0)
         <div class="alert alert-danger">
             <ul>
                 @foreach ($errors->all() as $error)
@@ -230,8 +230,8 @@
                         {{-- main medical info --}}
                         <div id="chronic-cond" class="row padding-bottom-30">
                             {{-- Fetch the posted input values if the post fails --}}
-                            @if(!empty($med_visit_chronic_conditions) && count($med_visit_chronic_conditions) !=0)
-                                @for($i=0; $i< count($med_visit_chronic_conditions) ; $i++)
+                            @if(!empty($med_visit_chronic_conditions) && legacy_count($med_visit_chronic_conditions) !=0)
+                                @for($i=0; $i< legacy_count($med_visit_chronic_conditions) ; $i++)
                                     <div  class="padding-left-right-15 @if($i==0) chronicConditions @endif @if($i!=0) condition-added-div @endif">
                                         <div class="form-group float-left width-100-percent">
                                             {{-- ΧΡΟΝΙΕΣ ΠΑΘΗΣΕΙΣ --}}
@@ -317,14 +317,14 @@
                 <div class="underline-header">
                     <h1 class="record-section-header padding-left-right-15">4. @lang($p.'clinical_results')</h1>
                 </div>
-                @for($i=0; $i<count($ExamResultsLookup) ; $i++)
+                @for($i=0; $i<legacy_count($ExamResultsLookup) ; $i++)
                     {{--@if(!empty($med_visit_exam_results) )--}}
                         <div class="row padding-left-right-30 padding-top-bottom-15">
                             <div class="form-group padding-left-right-15 margin-right-30 float-left col-md-8 clinical-results" id="select-condition-{{$i}}">
                                 {!! Form::label('examResultLoukup[{{$i}}][]', $ExamResultsLookup[$i]['description'].':', array('class' => 'display-block width-270 max-width-none')) !!}
                                 <select id="clinical-select-{{$i}}" class="js-example-basic-multiple" multiple="multiple" name="examResultLoukup[{{$i}}][]" style="width:100%;">
                                     <?php $with_select_options = false;?>
-                                    @for($j=0; $j<count($med_visit_exam_results); $j++)
+                                    @for($j=0; $j<legacy_count($med_visit_exam_results); $j++)
                                         @if(!empty($med_visit_exam_results[$j]['results_lookup_id']) && $med_visit_exam_results[$j]['results_lookup_id'] == $ExamResultsLookup[$i]['id'])
                                             <option selected="selected" value="{{$med_visit_exam_results[$j]['icd10_id']}}" >{{$med_visit_exam_results[$j]['icd10']['code']}}: {{$med_visit_exam_results[$j]['icd10']['description']}}</option>
                                             <?php $with_select_options = true;?>
@@ -336,7 +336,7 @@
                                     @endif
                                 </select>
                                 <?php $duplicity_counter = 0; ?>
-                                @for($j=0; $j<count($med_visit_exam_results); $j++)
+                                @for($j=0; $j<legacy_count($med_visit_exam_results); $j++)
                                     @if($duplicity_counter < 1 && $med_visit_exam_results[$j]['results_lookup_id'] == $ExamResultsLookup[$i]['id'])
                                         @if(!empty($med_visit_exam_results[$j]['description']))
                                         {!! Form::textarea('examResultDescription[]', $med_visit_exam_results[$j]['description'], ['size' => '35x5', 'class'=>'custom-input-textarea margin-top-20 width-100-percent max-width-100per']) !!}
@@ -353,7 +353,7 @@
                             </div>
                         </div>
                     {{--@else--}}
-                    {{--@for($i=0; $i<count($ExamResultsLookup) ; $i++)--}}
+                    {{--@for($i=0; $i<legacy_count($ExamResultsLookup) ; $i++)--}}
                         {{--<div class="row padding-left-right-30 padding-top-bottom-15">--}}
                             {{--<div class=" form-group padding-left-right-15 margin-right-30 float-left col-md-8 clinical-results" id="select-condition">--}}
                                 {{--{!! Form::label('examResultLoukup[]', $ExamResultsLookup[$i]['description'].':', array('class' => 'display-block width-270 max-width-none')) !!}--}}
@@ -376,8 +376,8 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div id="lab-result" class="row padding-bottom-30">
-                            @if(!empty($med_visit_lab_results) && count($med_visit_lab_results) !=0)
-                                @for($i=0 ; $i<count($med_visit_lab_results) ; $i++)
+                            @if(!empty($med_visit_lab_results) && legacy_count($med_visit_lab_results) !=0)
+                                @for($i=0 ; $i<legacy_count($med_visit_lab_results) ; $i++)
                                     <div class="padding-left-right-15 @if($i==0) lab-results @endif @if($i!=0) lab-added-div @endif">
                                         <div class="form-group float-left width-100-percent">
                                             {{-- ΕΡΓΑΣΤΗΡΙΑΚΑ ΑΠΟΤΕΛΕΣΜΑΤΑ --}}
@@ -428,8 +428,8 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div id="diagnosis-result" class="row padding-bottom-30">
-                            @if(!empty($med_visit_diagnosis_results) && count($med_visit_diagnosis_results) !=0)
-                                @for($i=0 ; $i<count($med_visit_diagnosis_results) ; $i++)
+                            @if(!empty($med_visit_diagnosis_results) && legacy_count($med_visit_diagnosis_results) !=0)
+                                @for($i=0 ; $i<legacy_count($med_visit_diagnosis_results) ; $i++)
                             <div class="padding-left-right-15 @if($i==0) diagnosis-results @endif @if($i!=0) diagnosis-added-div @endif">
                                 <div class="form-group float-left width-100-percent">
                                     <div class="make-inline col-md-10">
@@ -487,8 +487,8 @@
                                     </div>
                                 </div>
                             </div>
-                            @if(!empty($med_visit_medication) && count($med_visit_medication) !=0)
-                                @for($i=0 ; $i<count($med_visit_medication) ; $i++)
+                            @if(!empty($med_visit_medication) && legacy_count($med_visit_medication) !=0)
+                                @for($i=0 ; $i<legacy_count($med_visit_medication) ; $i++)
                                     <div class="padding-left-right-15 @if($i==0) medicationList @endif @if($i!=0) med-added-div @endif">
                                         <div class="row">
                                             <div class="col-md-12">
@@ -610,8 +610,8 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div id="hospitalization" class="row padding-bottom-30">
-                            @if(!empty($med_visit_hospitalizations) && count($med_visit_hospitalizations) !=0)
-                                @for($i=0 ; $i<count($med_visit_hospitalizations) ; $i++)
+                            @if(!empty($med_visit_hospitalizations) && legacy_count($med_visit_hospitalizations) !=0)
+                                @for($i=0 ; $i<legacy_count($med_visit_hospitalizations) ; $i++)
                             <div class="padding-left-right-15 @if($i==0) hospitalization-div @else hospitalization-added-div @endif">
                                 <div class="form-group float-left width-100-percent">
                                     <div class="make-inline col-md-8">
@@ -666,8 +666,8 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div id="referrals" class="row padding-bottom-30">
-                            @if(!empty($med_visit_referrals) && count($med_visit_referrals) !=0)
-                                @for($i=0; $i<count($med_visit_referrals) ; $i++)
+                            @if(!empty($med_visit_referrals) && legacy_count($med_visit_referrals) !=0)
+                                @for($i=0; $i<legacy_count($med_visit_referrals) ; $i++)
                                     <div class="padding-left-right-15 @if($i==0) referral @endif @if($i!=0) ref-added-div @endif">
                                         <div class="form-group float-left width-100-percent">
                                             {{-- ΠΑΡΑΠΟΜΠΗ --}}
@@ -742,8 +742,8 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div id="upload_file" data-form-submit-error="@lang($p."form_submit_error")">
-                            @if(!empty($med_visit_uploads) && count($med_visit_uploads)!=0)
-                                @for($i=0 ; $i<count($med_visit_uploads) ; $i++)
+                            @if(!empty($med_visit_uploads) && legacy_count($med_visit_uploads)!=0)
+                                @for($i=0 ; $i<legacy_count($med_visit_uploads) ; $i++)
                                     <div class="@if($i==0) uploadFile @endif @if($i!=0) file-added-div @endif">
                                         <div class="row">
                                             <div class="padding-left-right-15">
@@ -766,7 +766,7 @@
                                             <div class="padding-left-right-15">
                                                 {{--@if(!empty($med_visit_uploads[$i]['title']))--}}
                                                     <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-md-4 saved-file">
-                                                        {{ $med_visit_uploads[$i]['title'] }} &nbsp; &nbsp; <a href="javascript:void(0)"><i class="glyphicon glyphicon-remove color-red remove-uploaded-file"></i></a>
+                                                        <a href="{{ url('medical-uploads/'.$med_visit_uploads[$i]['id']) }}">{{ $med_visit_uploads[$i]['title'] }}</a> &nbsp; &nbsp; <a href="javascript:void(0)"><i class="glyphicon glyphicon-remove color-red remove-uploaded-file"></i></a>
                                                     </div>
                                                 {{--@else--}}
                                                     <div class="form-group make-inline padding-left-right-15 margin-right-30 float-left col-md-4 new-upload-file">

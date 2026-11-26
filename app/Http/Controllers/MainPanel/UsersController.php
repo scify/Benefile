@@ -12,8 +12,6 @@ class UsersController extends Controller{
 
     public function __construct(){
         $this->userService = new UserService();
-        // only for administrator
-        $this->middleware('admin');
     }
 
     public function UsersList(){

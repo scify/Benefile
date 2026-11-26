@@ -1,4 +1,4 @@
-<?php namespace app\Services;
+<?php namespace App\Services;
 
 use App\Models\LegalSession;
 use App\Models\Users_roles;
@@ -132,7 +132,7 @@ class BasicInfoService{
     private function saveBasicFolderUpdateHistory($id, $medical_location_id, $updated_by_date, $comments){
         BasicFolderHistory::create(array(
             'benefiter_id' => $id,
-            'user_id' => \Auth::user()->id,
+            'user_id' => auth()->id(),
             'medical_location_id' => $medical_location_id,
             'update_date' => $this->datesHelper->makeDBFriendlyDate($updated_by_date),
             'comments' => $comments,
@@ -178,7 +178,7 @@ class BasicInfoService{
     // returns languages and levels input from request when validation fails
     public function getLanguagesAndLanguagesLevelsFromRequest($request){
         $languages_levels = $this->mergeUniqueLanguagesLevelWithNoDuplicatedLanguageArrays($request);
-        for($i = 0; $i < count($languages_levels); $i++){
+        for($i = 0; $i < legacy_count($languages_levels); $i++){
             $languages_levels[$i] = (object) $languages_levels[$i];
         }
         return $languages_levels;
@@ -305,7 +305,7 @@ class BasicInfoService{
             "travel_duration" => $request['travel_duration'],
             "detention_date" => $this->datesHelper->makeDBFriendlyDate($request['detention_date']),
             "social_history" => $request['social_history'],
-            "document_manager_id" => \Auth::user()->id,
+            "document_manager_id" => auth()->id(),
         );
     }
 
@@ -444,7 +444,7 @@ class BasicInfoService{
         $allWorkTitlesAvailable = \DB::table('work_title_list_lookup')->get();
         $workTitleFromForm = $greekStringConversion->grstrtoupper($workTitleFromForm);
         // if there are some work titles in DB
-        if ($allWorkTitlesAvailable != null){
+        if ($allWorkTitlesAvailable->isNotEmpty()){
             // check for each one if the names are the same after greek string conversion to uppercase
             foreach($allWorkTitlesAvailable as $work_title){
                 $work_title->work_title = $greekStringConversion->grstrtoupper($work_title->work_title);
@@ -472,14 +472,14 @@ class BasicInfoService{
         $benefiter_id = $request['benefiter_id'];
 
         // referrals added to be posted (same as text array and date array)
-        $ref_number = count($request_basic_info_referrals_id);
+        $ref_number = legacy_count($request_basic_info_referrals_id);
         for($i=0 ; $i<$ref_number; $i++){
             $basic_info_referral = new BenefiterReferrals();
             $basic_info_referral->description = $request_basic_info_referrals_text[$i];
             $basic_info_referral->referral_date = $this->datesHelper->makeDBFriendlyDate($request_basic_info_referrals_date[$i]);
             $basic_info_referral->benefiter_id = $benefiter_id;
             $basic_info_referral->referral_lookup_id = $request_basic_info_referrals_id[$i];
-            $basic_info_referral->user_id = \Auth::user()->id;
+            $basic_info_referral->user_id = auth()->id();
             $basic_info_referral->save();
         }
     }
@@ -512,7 +512,7 @@ class BasicInfoService{
     public function saveNewOccurrence($request){
         $occurrence_date = $request['occurrence_date'];
         $occurrences_comments = $request['occurrences_comments'];
-        $user_who_added_occurrence = Auth::user()->id;
+        $user_who_added_occurrence = auth()->id();
         $benefiter_id = $request['benefiter_id'];
 
         // save to occurrences table
@@ -576,19 +576,19 @@ class BasicInfoService{
         // check if there are some users and locations in the DB, else return an empty array
         if(!empty($users) and !empty($locations) and $benefiter != null) {
             // push all basic folder history to the usageHistory array as AllFoldersUsageHistory objects
-            if (!empty($basicFolderHistory)) {
+            if ($basicFolderHistory->isNotEmpty()) {
                 $this->pushAllBasicInfoFolderHistoryToUsageHistoryArray($basicFolderHistory, $benefiter, $roles, $users, $locations, $usageHistory);
             }
             // push all medical visits history to the usageHistory array as AllFoldersUsageHistory objects
-            if (!empty($medicalVisitsHistory)) {
+            if ($medicalVisitsHistory->isNotEmpty()) {
                 $this->pushAllMedicalVisitsHistoryToUsageHistoryArray($medicalVisitsHistory, $benefiter, $roles, $subroles, $users, $locations, $usageHistory);
             }
             // push all legal folder history to the usageHistory array as AllFoldersUsageHistory objects
-            if (!empty($legalFolderHistory)) {
+            if ($legalFolderHistory !== null && $legalFolderHistory->isNotEmpty()) {
                 $this->pushAllLegalFolderHistoryToUsageHistoryArray($legalFolderHistory, $benefiter, $roles, $users, $locations, $usageHistory);
             }
             // push all psychosocial sessions history to the usageHistory array as AllFoldersUsageHistory objects
-            if (!empty($psychosocialHistory)) {
+            if ($psychosocialHistory->isNotEmpty()) {
                 $this->pushAllPsychosocialFolderHistoryToUsageHistoryArray($psychosocialHistory, $benefiter, $roles, $users, $locations, $usageHistory);
             }
             // order usageHistory array by date
@@ -663,7 +663,7 @@ class BasicInfoService{
         foreach ($psychosocialHistory as $psychosocialHistorySingleRow) {
             // check if the user should be able to see the session comments
             // and put the correct string to the comments variable
-            $comments = (\Auth::user()->user_role_id == 1 || \Auth::user()->user_role_id == 5) ?
+            $comments = (auth()->user()->user_role_id == 1 || auth()->user()->user_role_id == 5) ?
                 $psychosocialHistorySingleRow->session_comments : "";
             $temp = new AllFoldersUsageHistory(
                 $benefiter->folder_number,
@@ -691,65 +691,74 @@ class BasicInfoService{
         return ($aDate->lt($bDate)) ? 1 : -1;
     }
 
-    // checks for possible duplicates between current form and DB rows
+    /**
+     * The beneficiaries with the same name, last name, birth date and father's name as the form.
+     *
+     * Only the fields that the form has are compared. The values are bound parameters.
+     *
+     * @return array<int, object>|null Null when the form has none of these fields.
+     */
     public function checkForDuplicates($request){
-        $selectQuery = "select id, name, lastname, fathers_name, birth_date from benefiters where ";
-        $firstWhereParameter = true;
-        if(isset($request['name']) and !empty($request['name'])){
-            $selectQuery .= "name='" . $request['name'] . "'";
-            $firstWhereParameter = false;
-        }
-        if(isset($request['lastname']) and !empty($request['lastname'])){
-            if(!$firstWhereParameter){
-                $selectQuery .= " and ";
+        $query = \DB::table('benefiters')->select('id', 'name', 'lastname', 'fathers_name', 'birth_date');
+        $hasCriteria = false;
+        foreach (['name', 'lastname', 'fathers_name'] as $field) {
+            if (!empty($request[$field])) {
+                $query->where($field, (string) $request[$field]);
+                $hasCriteria = true;
             }
-            $selectQuery .= "lastname='" . $request['lastname'] . "'";
-            $firstWhereParameter = false;
         }
-        if(isset($request['birth_date']) and !empty($request['birth_date'])){
-            if(!$firstWhereParameter){
-                $selectQuery .= " and ";
-            }
-            $selectQuery .= "birth_date='" . $this->datesHelper->makeDBSearchFriendlyDate(
-                    $this->datesHelper->makeDBFriendlyDate($request['birth_date'])) . "'";
-            $firstWhereParameter = false;
+        if (!empty($request['birth_date'])) {
+            $query->where('birth_date', $this->datesHelper->makeDBSearchFriendlyDate(
+                $this->datesHelper->makeDBFriendlyDate((string) $request['birth_date'])));
+            $hasCriteria = true;
         }
-        if(isset($request['fathers_name']) and !empty($request['fathers_name'])){
-            if(!$firstWhereParameter){
-                $selectQuery .= " and ";
-            }
-            $selectQuery .= "fathers_name='" . $request['fathers_name'] . "'";
-            $firstWhereParameter = false;
-        }
-        // if some where parameters have been passed, return results
-        if(!$firstWhereParameter){
-            Log::info('The search for possible duplicates query is: ' . $selectQuery);
-            return \DB::select(\DB::raw($selectQuery));
-        } else { // if no where parameter is set, return null
+        if (!$hasCriteria) {
             Log::info('No query parameters have been passed!');
             return null;
         }
+        return $query->get()->all();
     }
 
     public function formatFoldersHistoryToCSVFile(){
-        $foldersHistory = $this->getFoldersUsageHistoryForAllBenefiters();
         $p = "all_folders_history_csv_titles.";
-        $export_data= \Lang::get($p.'folder_number') . "," . \Lang::get($p."benefiter_name") . "," .
-            \Lang::get($p."user_name") . "," . \Lang::get($p."speciality") . "," .
-            \Lang::get($p."location") . "," . \Lang::get($p."date") . "," .
-            \Lang::get($p."comments") . "," . \Lang::get($p."folder_name") . "\n";
-        foreach($foldersHistory as $foldersHistorySingleRow){
-            $export_data .= "\"" . $foldersHistorySingleRow->getFolderNumber() . "\",\"" .
-                $foldersHistorySingleRow->getBenefiterName() . "\",\"" .
-                $foldersHistorySingleRow->getUserName() . "\",\"" .
-                $foldersHistorySingleRow->getSpeciality() . "\",\"" .
-                $foldersHistorySingleRow->getLocation() . "\",\"" .
-                $this->datesHelper->getFinelyFormattedStringDateFromDBDate(
-                    $foldersHistorySingleRow->getDate()) . "\",\"" .
-                $foldersHistorySingleRow->getComments() . "\",\"" .
-                \Lang::get('basic_info_form.' . $foldersHistorySingleRow->getFolderName()) . "\"\n";
+        $rows = [[
+            \Lang::get($p.'folder_number'), \Lang::get($p."benefiter_name"), \Lang::get($p."user_name"),
+            \Lang::get($p."speciality"), \Lang::get($p."location"), \Lang::get($p."date"),
+            \Lang::get($p."comments"), \Lang::get($p."folder_name"),
+        ]];
+        foreach($this->getFoldersUsageHistoryForAllBenefiters() as $row){
+            $rows[] = [
+                $row->getFolderNumber(), $row->getBenefiterName(), $row->getUserName(),
+                $row->getSpeciality(), $row->getLocation(),
+                $this->datesHelper->getFinelyFormattedStringDateFromDBDate($row->getDate()),
+                $row->getComments(), \Lang::get('basic_info_form.' . $row->getFolderName()),
+            ];
         }
-        return $export_data;
+        return $this->toCsv($rows);
+    }
+
+    /**
+     * Writes rows as CSV text.
+     *
+     * Quotes inside values are escaped. A value that starts with = + - @ or a
+     * tab gets a leading apostrophe, so that a spreadsheet shows it as text and
+     * does not run it as a formula ("CSV injection").
+     *
+     * @param  list<array<int, mixed>>  $rows
+     */
+    private function toCsv(array $rows): string
+    {
+        $handle = fopen('php://temp', 'r+');
+        foreach ($rows as $row) {
+            fputcsv($handle, array_map(function ($cell): string {
+                $cell = (string) $cell;
+                return preg_match('/^[=+\-@\t\r]/', $cell) ? "'".$cell : $cell;
+            }, $row), ',', '"', '');
+        }
+        rewind($handle);
+        $csv = (string) stream_get_contents($handle);
+        fclose($handle);
+        return $csv;
     }
 
     private function getFoldersUsageHistoryForAllBenefiters(){
@@ -763,47 +772,32 @@ class BasicInfoService{
     }
 
     public function formatAllBenefitersToCSVFile(){
-        $benefiters = $this->getAllBenefitersForCsvFileDownload();
         $p = "basic_info_form.";
-        $export_data= \Lang::get($p.'folder_number') . "," . \Lang::get($p."lastname") . "," .
-            \Lang::get($p."name") . "," . \Lang::get($p."gender") . "," .
-            \Lang::get($p."birth_date") . "," . \Lang::get($p.'fathers_name') . "," .
-            \Lang::get($p.'mothers_name') . "," . \Lang::get($p.'nationality_country') . "," .
-            \Lang::get($p.'origin_country') . "," . \Lang::get($p.'ethnic_group') . "," .
-            \Lang::get($p.'arrival_date') . "," . \Lang::get($p.'telephone') . "," .
-            \Lang::get($p.'address') . "," . \Lang::get($p.'relatives_residence') . "," .
-            \Lang::get($p.'number_of_children') . "," . \Lang::get($p.'children_names') . "," .
-            \Lang::get($p.'translator_needed_caps') . "," .\Lang::get($p.'work_caps') . "," .
-            \Lang::get($p.'abandon_reason_caps') . "," . \Lang::get($p.'travel_route_caps') . "," .
-            \Lang::get($p.'travel_duration_caps') . "," . \Lang::get($p.'detention_duration_caps') . "," .
-            \Lang::get($p.'ethnic_group_caps') . "," . \Lang::get($p.'social_history_caps') . "," .
-            \Lang::get($p.'marital_status_caps') . "," . \Lang::get($p.'education_caps') . "," .
-            \Lang::get($p.'legal_work_caps') . "," . \Lang::get($p.'kind_of_work_caps') . "," .
-            \Lang::get($p.'registration_date_caps') . "," . \Lang::get($p.'last_update_caps') . "\n";
-        foreach($benefiters as $benefiter){
-            $latestUpdate = $this->getLatestFolderUpdateForBenefiter($benefiter->id);
-            $export_data .= "\"" . $benefiter->folder_number . "\",\"" . $benefiter->lastname . "\",\"" .
-                $benefiter->name . "\",\"" . $benefiter->gender . "\",\"" .
-                $this->datesHelper->getFinelyFormattedStringDateFromDBDate($benefiter->birth_date) . "\",\"" .
-                $benefiter->fathers_name . "\",\"" . $benefiter->mothers_name . "\",\"" .
-                $benefiter->nationality_country . "\",\"" . $benefiter->origin_country . "\",\"" .
-                $benefiter->ethnic_group . "\",\"" .
-                $this->datesHelper->getFinelyFormattedStringDateFromDBDate($benefiter->arrival_date) . "\",\"" .
-                $benefiter->telephone . "\",\"" . $benefiter->address . "\",\"" .
-                $benefiter->relatives_residence . "\",\"" . $benefiter->number_of_children . "\",\"" .
-                $benefiter->children_names . "\",\"" .
-                $this->getYesOrNoTextFromId($benefiter->language_interpreter_needed) . "\",\"" .
-                $this->getYesOrNoTextFromId($benefiter->is_benefiter_working) . "\",\"" .
-                $benefiter->country_abandon_reason . "\",\"" .
-                $benefiter->travel_route . "\",\"" . $benefiter->travel_duration . "\",\"" .
-                $this->datesHelper->getFinelyFormattedStringDateFromDBDate($benefiter->detention_date) . "\",\"" .
-                $benefiter->ethnic_group . "\",\"" . $benefiter->social_history . "\",\"" .
-                $benefiter->marital_status_title . "\",\"" . $benefiter->education_title . "\",\"" .
-                $benefiter->legal_working_status . "\",\"" . $benefiter->work_title . "\",\"" .
-                $this->datesHelper->getFinelyFormattedStringDateFromDBDate($benefiter->created_at) . "\",\"" .
-                $this->datesHelper->getFinelyFormattedStringDateFromDBDate($latestUpdate) . "\"\n";
+        $titles = ['folder_number', 'lastname', 'name', 'gender', 'birth_date', 'fathers_name', 'mothers_name',
+            'nationality_country', 'origin_country', 'ethnic_group', 'arrival_date', 'telephone', 'address',
+            'relatives_residence', 'number_of_children', 'children_names', 'translator_needed_caps', 'work_caps',
+            'abandon_reason_caps', 'travel_route_caps', 'travel_duration_caps', 'detention_duration_caps',
+            'ethnic_group_caps', 'social_history_caps', 'marital_status_caps', 'education_caps', 'legal_work_caps',
+            'kind_of_work_caps', 'registration_date_caps', 'last_update_caps'];
+        $rows = [array_map(fn (string $title) => \Lang::get($p . $title), $titles)];
+        $date = fn ($value) => $this->datesHelper->getFinelyFormattedStringDateFromDBDate($value);
+        foreach($this->getAllBenefitersForCsvFileDownload() as $benefiter){
+            $rows[] = [
+                $benefiter->folder_number, $benefiter->lastname, $benefiter->name, $benefiter->gender,
+                $date($benefiter->birth_date), $benefiter->fathers_name, $benefiter->mothers_name,
+                $benefiter->nationality_country, $benefiter->origin_country, $benefiter->ethnic_group,
+                $date($benefiter->arrival_date), $benefiter->telephone, $benefiter->address,
+                $benefiter->relatives_residence, $benefiter->number_of_children, $benefiter->children_names,
+                $this->getYesOrNoTextFromId($benefiter->language_interpreter_needed),
+                $this->getYesOrNoTextFromId($benefiter->is_benefiter_working),
+                $benefiter->country_abandon_reason, $benefiter->travel_route, $benefiter->travel_duration,
+                $date($benefiter->detention_date), $benefiter->ethnic_group, $benefiter->social_history,
+                $benefiter->marital_status_title, $benefiter->education_title, $benefiter->legal_working_status,
+                $benefiter->work_title, $date($benefiter->created_at),
+                $date($this->getLatestFolderUpdateForBenefiter($benefiter->id)),
+            ];
         }
-        return $export_data;
+        return $this->toCsv($rows);
     }
 
     private function getAllBenefitersForCsvFileDownload(){
@@ -815,8 +809,8 @@ class BasicInfoService{
             "left join education_lookup as el on b.education_id = el.id left join working_legally_lookup as wll " .
             "on b.working_legally = wll.id left join work_title_list_lookup as wtll on b.work_title_id = wtll.id " .
             "left join country_abandon_reasons_lookup as carl on b.country_abandon_reason_id = carl.id " .
-            "where deleted_at is null group by b.id";
-        return \DB::select(\DB::raw($queryString));
+            "where b.deleted_at is null group by b.id";
+        return \DB::select($queryString);
     }
 
     // gets binary int and returns yes or no

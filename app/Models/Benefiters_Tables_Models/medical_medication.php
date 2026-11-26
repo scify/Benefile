@@ -15,13 +15,13 @@ class medical_medication extends Model
         'supply_from_praksis',
         'medication_lookup_id'];
 
-    public function medical_visits()
+    public function medical_visits(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne('App\Models\Benefiters_Tables_Models\medical_visits', 'medical_visit_id');
+        return $this->hasOne(\App\Models\Benefiters_Tables_Models\medical_visits::class, 'medical_visit_id');
     }
 
-    public function medical_medication_lookup()
+    public function medical_medication_lookup(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne('App\Models\Benefiters_Tables_Models\medical_medication_lookup', 'id', 'medication_lookup_id');
+        return $this->hasOne(\App\Models\Benefiters_Tables_Models\medical_medication_lookup::class, 'id', 'medication_lookup_id');
     }
 }

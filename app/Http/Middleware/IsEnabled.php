@@ -2,33 +2,34 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Lets only logged-in users with an active account through.
+ *
+ * A new account waits for an administrator to activate it. A deactivated
+ * account has no access, even if it was activated before.
+ */
 class IsEnabled
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return mixed
-     */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
-        if (\Auth::user()->activation_status != 1 and \Auth::user()->is_deactivated != 0) {
-            if ($request->ajax()) {
-                return response('Forbidden.', 403);
-            } else {
-                return redirect()->guest('disabledUser');
-            }
+        $user = $request->user();
+        if (! $user instanceof User) {
+            return $request->expectsJson() ? response('Unauthorized.', 401) : redirect()->guest(url('auth/login'));
         }
-        if (\Auth::user()->activation_status != 1 and \Auth::user()->is_deactivated != 1) {
-            if ($request->ajax()) {
-                return response('Forbidden.', 403);
-            } else {
-                return redirect()->guest('awaitingActivation');
-            }
+
+        if ($user->isActive()) {
+            return $next($request);
         }
-        return $next($request);
+
+        if ($request->expectsJson()) {
+            return response('Forbidden.', 403);
+        }
+
+        return redirect($user->is_deactivated === 1 ? 'disabledUser' : 'awaitingActivation');
     }
 }

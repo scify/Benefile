@@ -28,7 +28,7 @@
 
     @include('partials.select-panel')
 
-    @if (count($errors) > 0)
+    @if (legacy_count($errors) > 0)
         <div class="alert alert-danger">
             <ul>
                 @foreach ($errors->all() as $error)

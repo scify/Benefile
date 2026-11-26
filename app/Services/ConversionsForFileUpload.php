@@ -22,7 +22,6 @@ class ConversionsForFileUpload{
         $this->educations = \DB::table('education_lookup')->get();
         $this->binaryYesNo = \DB::table('binary_lookup')->get();
         $this->workTitles = \DB::table('work_title_list_lookup')->get();
-        return($this->genders);
     }
 
     // get id from gender name
@@ -98,7 +97,7 @@ class ConversionsForFileUpload{
         $tmp = array_map('trim', explode('(', $educationFromFile));
         $educationFromFile = $this->greekStringConversion->grstrtoupper($tmp[0]);
         $specialization = null;
-        if($tmp[0] != "" and count($tmp) == 2) {
+        if($tmp[0] != "" and legacy_count($tmp) == 2) {
             $specialization = $this->greekStringConversion->grstrtoupper(str_replace(')', '', $tmp[1]));
         }
         // change the education name to the education name id

@@ -4,235 +4,119 @@ use Illuminate\Support\Facades\Log;
 
 class SearchService{
 
-    // perform DB search with the request parameters
+    /**
+     * Searches the beneficiaries with the criteria of the search form.
+     *
+     * Every value of the form reaches the database as a bound parameter, never
+     * as part of the SQL text. An empty field is not a criterion.
+     *
+     * @param  array<string, mixed>|\ArrayAccess<string, mixed>  $request
+     * @return array<int, object>|null Null when the form has no criteria.
+     */
     public function searchBenefiters($request){
-        // checks if all_required is set and gives $allRequired a value
-        $allRequired = !empty($request['all_required']) ? (bool) $request['all_required'] : false;
-        $queryString = "select b.*, gl.gender, msl.marital_status_title, el.education_title, wll.description as legal_working_status, wtll.work_title, floor(datediff(current_date, str_to_date(b.birth_date, '%Y-%m-%d'))/365) as age_in_years, count(mv.id) as incidents_counter, date(b.created_at) as created_at_date from benefiters as b left join benefiters_legal_status as bls on b.id = bls.benefiter_id left join medical_visits as mv on b.id = mv.benefiter_id left join medical_examination_results as mer on mv.id = mer.medical_visit_id left join medical_medication as mm on mv.id = mm.medical_visit_id left join genders_lookup as gl on b.gender_id = gl.id left join marital_status_lookup as msl on b.marital_status_id = msl.id left join education_lookup as el on b.education_id = el.id left join working_legally_lookup as wll on b.working_legally = wll.id left join work_title_list_lookup as wtll on b.work_title_id = wtll.id";
-        $queryString2 = " and deleted_at is null group by b.id";
-        // if $allRequired is true, return all the benefiters from DB
-        if($allRequired) {
+        $value = fn (string $key): string => trim((string) ($request[$key] ?? ''));
+        $id = fn (string $key): int => (int) ($request[$key] ?? 0);
+
+        $select = "select b.*, gl.gender, msl.marital_status_title, el.education_title, wll.description as legal_working_status, wtll.work_title, floor(datediff(current_date, str_to_date(b.birth_date, '%Y-%m-%d'))/365) as age_in_years, count(mv.id) as incidents_counter, date(b.created_at) as created_at_date from benefiters as b left join benefiters_legal_status as bls on b.id = bls.benefiter_id left join medical_visits as mv on b.id = mv.benefiter_id left join medical_examination_results as mer on mv.id = mer.medical_visit_id left join medical_medication as mm on mv.id = mm.medical_visit_id left join genders_lookup as gl on b.gender_id = gl.id left join marital_status_lookup as msl on b.marital_status_id = msl.id left join education_lookup as el on b.education_id = el.id left join working_legally_lookup as wll on b.working_legally = wll.id left join work_title_list_lookup as wtll on b.work_title_id = wtll.id";
+        $groupBy = " and b.deleted_at is null group by b.id";
+
+        if (!empty($request['all_required'])) {
             Log::info("Returning all benefiters from DB.");
-            return \DB::select(\DB::raw($queryString . " where 1=1" . $queryString2));
+            return \DB::select($select . " where 1=1" . $groupBy);
         }
+
         $datesHelper = new DatesHelper();
-        $firstWhereParameter = true;
-        $firstWhereParameterExternalSelect = true;
-        if ($request['folder_number'] != ""){
-            $queryString = $queryString . " where " . "b.folder_number like '%" . $request['folder_number'] . "%'";
-            $firstWhereParameter = false;
-        }
-        if ($request['lastname'] != ""){
-            if (!$firstWhereParameter){
-                $queryString = $queryString . " and ";
-            } else {
-                $queryString = $queryString . " where ";
-            }
-            $queryString = $queryString . "b.lastname like '%" . $request['lastname'] . "%'";
-            $firstWhereParameter = false;
-        }
-        if ($request['fname'] != ""){
-            if (!$firstWhereParameter){
-                $queryString = $queryString . " and ";
-            } else {
-                $queryString = $queryString . " where ";
-            }
-            $queryString = $queryString . "b.name like '%" . $request['fname'] . "%'";
-            $firstWhereParameter = false;
-        }
-        if ($request['fathers_name'] != ""){
-            if (!$firstWhereParameter){
-                $queryString = $queryString . " and ";
-            } else {
-                $queryString = $queryString . " where ";
-            }
-            $queryString = $queryString . "b.fathers_name like '%" . $request['fathers_name'] . "%'";
-            $firstWhereParameter = false;
-        }
-        if ($request['telephone'] != ""){
-            if (!$firstWhereParameter){
-                $queryString = $queryString . " and ";
-            } else {
-                $queryString = $queryString . " where ";
-            }
-            $queryString = $queryString . "b.telephone='" . $request['telephone'] . "'";
-            $firstWhereParameter = false;
-        }
-        if ($request['birth_date'] != ""){
-            if (!$firstWhereParameter){
-                $queryString = $queryString . " and ";
-            } else {
-                $queryString = $queryString . " where ";
-            }
-            $queryString = $queryString . "b.birth_date='" . $datesHelper->makeDBSearchFriendlyDate($datesHelper->makeDBFriendlyDate($request['birth_date'])) . "'";
-            $firstWhereParameter = false;
-        }
-        if ($request['origin_country'] != ""){
-            if (!$firstWhereParameter){
-                $queryString = $queryString . " and ";
-            } else {
-                $queryString = $queryString . " where ";
-            }
-            $queryString = $queryString . "b.origin_country='" . $request['origin_country'] . "'";
-            $firstWhereParameter = false;
-        }
-        if ($request['medical_location_id'] != 0){
-            if (!$firstWhereParameter){
-                $queryString = $queryString . " and ";
-            } else {
-                $queryString = $queryString . " where ";
-            }
-            $queryString = $queryString . "mv.medical_location_id=" . $request['medical_location_id'];
-            $firstWhereParameter = false;
-        }
-        if($request['marital_status_id'] != 0) {
-            if (!$firstWhereParameter){
-                $queryString = $queryString . " and ";
-            } else {
-                $queryString = $queryString . " where ";
-            }
-            $queryString = $queryString . 'b.marital_status_id=' . $request['marital_status_id'];
-            $firstWhereParameter = false;
-        }
-        if($request['legal_status_id'] != 0){
-            if(!$firstWhereParameter){
-                $queryString = $queryString . " and ";
-            } else {
-                $queryString = $queryString . " where ";
-            }
-            $queryString = $queryString . 'bls.legal_lookup_id=' . $request['legal_status_id'];
-            $firstWhereParameter = false;
-        }
-        if($request['education_id'] != 0){
-            if(!$firstWhereParameter){
-                $queryString = $queryString . " and ";
-            } else {
-                $queryString = $queryString . " where ";
-            }
-            $queryString = $queryString . 'b.education_id=' . $request['education_id'];
-            $firstWhereParameter = false;
-        }
-        if(!empty($request['gender_id'])){
-            if(!$firstWhereParameter){
-                $queryString = $queryString . " and ";
-            } else {
-                $queryString = $queryString . " where ";
-            }
-            $queryString = $queryString . 'b.gender_id=' . $request['gender_id'];
-            $firstWhereParameter = false;
-        }
-        if($request['work_title_id'] != 0){
-            if(!$firstWhereParameter){
-                $queryString = $queryString . " and ";
-            } else {
-                $queryString = $queryString . " where ";
-            }
-            $queryString = $queryString . 'b.work_title_id=' . $request['work_title_id'];
-            $firstWhereParameter = false;
-        }
-        if($request['drug'] != ""){
-            $drugId = $this->getMedicationIdFromName($request['drug']);
-            if($drugId != null) {
-                if (!$firstWhereParameter) {
-                    $queryString = $queryString . " and ";
-                } else {
-                    $queryString = $queryString . " where ";
-                }
-                $queryString = $queryString . 'mm.medication_lookup_id=' . $drugId;
-                $firstWhereParameter = false;
+        $dbDate = fn (string $date): string => $datesHelper->makeDBSearchFriendlyDate($datesHelper->makeDBFriendlyDate($date));
+        $where = [];
+        $bindings = [];
+        $like = fn (string $text): string => '%' . addcslashes($text, '%_\\') . '%';
+
+        foreach (['folder_number' => 'b.folder_number', 'lastname' => 'b.lastname', 'fname' => 'b.name', 'fathers_name' => 'b.fathers_name'] as $field => $column) {
+            if ($value($field) !== '') {
+                $where[] = "$column like ?";
+                $bindings[] = $like($value($field));
             }
         }
-        if($request['incident_type_id'] != 0){
-            if(!$firstWhereParameter){
-                $queryString = $queryString . " and ";
-            } else {
-                $queryString = $queryString . " where ";
-            }
-            $queryString = $queryString . 'mv.medical_incident_id=' . $request['incident_type_id'];
-            $firstWhereParameter = false;
+        if ($value('telephone') !== '') {
+            $where[] = 'b.telephone = ?';
+            $bindings[] = $value('telephone');
         }
-        if($request['doctor_name'] != ""){
-            $doctors = $this->getDoctorIdFromName($request['doctor_name']);
-            if($doctors != null) {
-                if (!$firstWhereParameter) {
-                    $queryString = $queryString . " and ";
-                } else {
-                    $queryString = $queryString . " where ";
-                }
-                if(count($doctors) > 1) {
-                    $queryString = $queryString . '(';
-                    $firstDoctor = true;
-                    foreach ($doctors as $doctor) {
-                        if(!$firstDoctor){
-                            $queryString = $queryString . ' or ';
-                        }
-                        $queryString = $queryString . 'mv.doctor_id=' . $doctor->id;
-                        $firstDoctor = false;
-                    }
-                    $queryString = $queryString . ')';
-                } else {
-                    $queryString = $queryString . 'mv.doctor_id=' . $doctors[0]->id;
-                }
-                $firstWhereParameter = false;
+        if ($value('birth_date') !== '') {
+            $where[] = 'b.birth_date = ?';
+            $bindings[] = $dbDate($value('birth_date'));
+        }
+        if ($value('origin_country') !== '') {
+            $where[] = 'b.origin_country = ?';
+            $bindings[] = $value('origin_country');
+        }
+        $ids = [
+            'medical_location_id' => 'mv.medical_location_id',
+            'marital_status_id' => 'b.marital_status_id',
+            'legal_status_id' => 'bls.legal_lookup_id',
+            'education_id' => 'b.education_id',
+            'gender_id' => 'b.gender_id',
+            'work_title_id' => 'b.work_title_id',
+            'incident_type_id' => 'mv.medical_incident_id',
+            'examination_results_id' => 'mer.results_lookup_id',
+        ];
+        foreach ($ids as $field => $column) {
+            if ($id($field) !== 0) {
+                $where[] = "$column = ?";
+                $bindings[] = $id($field);
             }
         }
-        if($request['examination_results_id'] != 0){
-            if(!$firstWhereParameter){
-                $queryString = $queryString . " and ";
-            } else {
-                $queryString = $queryString . " where ";
+        if ($value('drug') !== '') {
+            $drugId = $this->getMedicationIdFromName($value('drug'));
+            if ($drugId !== null) {
+                $where[] = 'mm.medication_lookup_id = ?';
+                $bindings[] = $drugId;
             }
-            $queryString = $queryString . 'mer.results_lookup_id=' . $request['examination_results_id'];
-            $firstWhereParameter = false;
         }
-        if($request['incident_from'] != "" and $request['incident_to'] != ""){
-            // if difference in days between the two dates is negative, the incident_to date is earlier
-            if($datesHelper->getDifferenceInDays($request['incident_from'], $request['incident_to']) < 0){
-                $tmp = $request['incident_from'];
-                $request['incident_from'] = $request['incident_to'];
-                $request['incident_to'] = $tmp;
+        if ($value('doctor_name') !== '') {
+            $doctorIds = $this->getDoctorIdFromName($value('doctor_name'));
+            if ($doctorIds !== []) {
+                $where[] = 'mv.doctor_id in (' . implode(',', array_fill(0, legacy_count($doctorIds), '?')) . ')';
+                array_push($bindings, ...$doctorIds);
             }
-            if(!$firstWhereParameter){
-                $queryString = $queryString . " and ";
-            } else {
-                $queryString = $queryString . " where ";
+        }
+        if ($value('incident_from') !== '' && $value('incident_to') !== '') {
+            [$from, $to] = [$value('incident_from'), $value('incident_to')];
+            // When the dates are in the wrong order, swap them.
+            if ($datesHelper->getDifferenceInDays($from, $to) < 0) {
+                [$from, $to] = [$to, $from];
             }
-            $queryString = $queryString . 'mv.medical_visit_date between \'' . $datesHelper->makeDBSearchFriendlyDate($datesHelper->makeDBFriendlyDate($request['incident_from'])) . '\' and \'' . $datesHelper->makeDBSearchFriendlyDate($datesHelper->makeDBFriendlyDate($request['incident_to'])) . '\'';
-            $firstWhereParameter = false;
+            $where[] = 'mv.medical_visit_date between ? and ?';
+            $bindings[] = $dbDate($from);
+            $bindings[] = $dbDate($to);
         }
-        $queryString = "select * from (" . $queryString . $queryString2 . ") as median_table";
-        if($request['age'] != "" and is_numeric($request['age'])) {
-            $queryString = $queryString . " where ";
-            $queryString = $queryString . 'age_in_years=' . $request['age'];
-            $firstWhereParameterExternalSelect = false;
+
+        // Criteria on the computed columns of each beneficiary.
+        $outerWhere = [];
+        $outerBindings = [];
+        if ($value('age') !== '' && ctype_digit($value('age'))) {
+            $outerWhere[] = 'age_in_years = ?';
+            $outerBindings[] = (int) $value('age');
         }
-        if($request['incidents_number'] != ""){
-            if(!$firstWhereParameterExternalSelect){
-                $queryString = $queryString . " and ";
-            } else {
-                $queryString = $queryString . " where ";
-            }
-            $queryString = $queryString . 'incidents_counter=' . $request['incidents_number'];
-            $firstWhereParameterExternalSelect = false;
+        if ($value('incidents_number') !== '' && ctype_digit($value('incidents_number'))) {
+            $outerWhere[] = 'incidents_counter = ?';
+            $outerBindings[] = (int) $value('incidents_number');
         }
-        if($request['insertion_date'] != ""){
-            if(!$firstWhereParameterExternalSelect){
-                $queryString = $queryString . " and ";
-            } else {
-                $queryString = $queryString . " where ";
-            }
-            $queryString = $queryString . 'created_at_date=\'' . $datesHelper->makeDBSearchFriendlyDate($datesHelper->makeDBFriendlyDate($request['insertion_date'])). '\'';
-            $firstWhereParameterExternalSelect = false;
+        if ($value('insertion_date') !== '') {
+            $outerWhere[] = 'created_at_date = ?';
+            $outerBindings[] = $dbDate($value('insertion_date'));
         }
-        // if there is a parameter passed to the query, make a DB query
-        // else return null
-        if(!$firstWhereParameter or !$firstWhereParameterExternalSelect) {
-            Log::info("The search benefiter DB query is: " . $queryString);
-            return \DB::select(\DB::raw($queryString));
-        } else {
+
+        if ($where === [] && $outerWhere === []) {
             Log::info("No parameters passed from benefiter search form!");
             return null;
         }
+
+        $query = "select * from (" . $select . " where " . ($where === [] ? '1=1' : implode(' and ', $where)) . $groupBy . ") as median_table";
+        if ($outerWhere !== []) {
+            $query .= ' where ' . implode(' and ', $outerWhere);
+        }
+
+        return \DB::select($query, array_merge($bindings, $outerBindings));
     }
 
     // returns all the marital statuses stored in DB
@@ -267,7 +151,7 @@ class SearchService{
 
     // get medication id from name
     private function getMedicationIdFromName($drug){
-        $tmp = \DB::table('medical_medication_lookup')->where('description', 'like', '%' . $drug . '%')->first();
+        $tmp = \DB::table('medical_medication_lookup')->where('description', 'like', '%' . addcslashes($drug, '%_\\') . '%')->first();
         if($tmp != null) {
             Log::info("Returning the drug id. [=" . $tmp->id . "]");
             return $tmp->id;
@@ -277,16 +161,20 @@ class SearchService{
         }
     }
 
-    // get doctor id from name
-    private function getDoctorIdFromName($doctorName){
-        $tmp = \DB::select(\DB::raw('select id from users where (user_role_id = 1 or user_role_id = 2) and (lastname like "%' . $doctorName . '%" or name like "%' . $doctorName . '%")'));
-        if($tmp != null) {
-            Log::info("Returning the doctors ids.");
-            return $tmp;
-        } else {
-            Log::error("Couldn't find the doctor's id");
-            return null;
-        }
-    }
+    /**
+     * The ids of the doctors (and administrators) whose first or last name contains the text.
+     *
+     * @return list<int>
+     */
+    private function getDoctorIdFromName(string $doctorName): array
+    {
+        $like = '%' . addcslashes($doctorName, '%_\\') . '%';
 
+        return \DB::table('users')
+            ->whereIn('user_role_id', [1, 2])
+            ->where(fn ($query) => $query->where('lastname', 'like', $like)->orWhere('name', 'like', $like))
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+    }
 }

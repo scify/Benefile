@@ -161,7 +161,7 @@ class LegalFolderService{
             'legal_folder_id' => $legalFolderId,
             'legal_date' => $this->datesHelper->makeDBFriendlyDate($request['legal_date']),
             'legal_comments' => $request['legal_comments'],
-            'user_id' => \Auth::user()->id,
+            'user_id' => auth()->id(),
             'medical_location_id' => $request['medical_location_id'],
         );
     }
@@ -179,7 +179,7 @@ class LegalFolderService{
                 $locations = medical_location_lookup::get()->toArray();
                 // fetch all lawyer actions from DB
                 $lawyerActions = \DB::table('lawyer_action_lookup')->get();
-                if($users != null and $locations != null and $lawyerActions != null) {
+                if($users != null and $locations != null and $lawyerActions->isNotEmpty()) {
                     $this->pushLegalSessionsToHistoryArray(
                         $legalSessions, $users, $locations, $lawyerActions, $history);
                 }
@@ -222,7 +222,7 @@ class LegalFolderService{
             foreach($sessionLawyerActions as $i => $singleSessionLawyerAction){
                 $sessionLawyerActionsDescriptionList .=
                     $lawyerActions[$singleSessionLawyerAction->lawyer_action_id - 1]->description;
-                if($i < count($sessionLawyerActions) - 1){
+                if($i < legacy_count($sessionLawyerActions) - 1){
                     $sessionLawyerActionsDescriptionList .= ", ";
                 }
             }

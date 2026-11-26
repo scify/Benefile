@@ -1,6 +1,6 @@
 <?php
 
-namespace AppModels\Benefiters_Tables_Models;
+namespace App\Models\Benefiters_Tables_Models;
 
 use Illuminate\Database\Eloquent\Model;
 

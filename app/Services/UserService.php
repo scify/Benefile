@@ -6,7 +6,7 @@
  * Time: 3:28 μμ
  */
 
-namespace app\Services;
+namespace App\Services;
 use App\Models\User;
 use App\Http\Requests;
 

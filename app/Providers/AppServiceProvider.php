@@ -2,26 +2,19 @@
 
 namespace App\Providers;
 
+use App\Support\Form;
+use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
-    public function boot()
+    public function register(): void
     {
-        //
+        // The views call Form::text() and others, as with laravelcollective/html.
+        AliasLoader::getInstance()->alias('Form', Form::class);
     }
 
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
+    public function boot(): void
     {
         //
     }

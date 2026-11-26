@@ -74,7 +74,7 @@
             </div>
 
             {{-- Imported files info --}}
-            @if(count($importedCSVFiles_basic_info) != 0)
+            @if(legacy_count($importedCSVFiles_basic_info) != 0)
             <?php
                 $datesHelper = new \App\Services\DatesHelper();
             ?>
@@ -90,7 +90,7 @@
                           </tr>
                       </thead>
                       <tbody>
-                          @for($i=0 ; $i<count($importedCSVFiles_basic_info) ; $i++)
+                          @for($i=0 ; $i<legacy_count($importedCSVFiles_basic_info) ; $i++)
                               <tr>
                                   <td>{{ $i+1 }}</td>
                                   <td>{{ $importedCSVFiles_basic_info[$i]['csv_name'] }}</td>

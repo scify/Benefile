@@ -1,0 +1,11 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app/
+        - routes/
+        - database/seeders/
+    # Raise the level step by step. See the README, section "Static analysis".
+    level: 5
+    tmpDir: storage/framework/cache/phpstan
