@@ -20,6 +20,19 @@ class DataSecurityTest extends FeatureTestCase
         $response->assertOk()->assertSee('Ben-lastname-1');
     }
 
+    public function test_the_search_sends_only_the_columns_of_the_results_table(): void
+    {
+        $reason = DB::table('country_abandon_reasons_lookup')->value('id');
+        $this->assertNotNull($reason);
+        DB::table('benefiters')->where('id', 1)->update(['children_names' => 'Not for the search', 'country_abandon_reason_id' => $reason]);
+
+        $results = $this->actingAs(User::factory()->create())->getJson('/results?fname=Ben-name-1')->assertOk()->json();
+
+        $this->assertArrayNotHasKey('children_names', $results[0]);
+        $this->assertArrayNotHasKey('document_manager_id', $results[0]);
+        $this->assertSame(DB::table('country_abandon_reasons_lookup')->where('id', $reason)->value('description'), $results[0]['country_abandon_reason']);
+    }
+
     public function test_the_search_is_safe_from_sql_injection(): void
     {
         $user = User::factory()->create();
