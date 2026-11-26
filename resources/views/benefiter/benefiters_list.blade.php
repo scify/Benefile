@@ -4,6 +4,8 @@
     $p = "benefiters_list.";
 ?>
 
+@section('menu-item', 'benefiters-list')
+
 @section('panel-headLinks')
     <link href="{{asset('css/main-panel/benefiters-list.css')}}" rel="stylesheet" type="text/css">
 @endsection
@@ -80,8 +82,5 @@
 @stop
 
 @section('panel-scripts')
-    <script src="{{ asset('/bootstrap-3.3.6/js/modal.js') }}"></script>
-    <script src="{{asset('js/main-panel/users-list.js')}}"></script>
-    <script src="{{asset('js/main-panel/selectBenefitersListInMainPanel.js')}}"></script>
     <script src="{{ asset('js/main-panel/benefiters_list.js') }}"></script>
 @stop

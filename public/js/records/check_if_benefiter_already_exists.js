@@ -1,43 +1,67 @@
-function displayPossibleDuplicatedFolders(data){
-    if(data.length <= 0){
-        if(!$("#duplicate-folders").is(":hidden")) {
-            $("#duplicate-folders").toggle("slow");
+/**
+ * New beneficiary: after a change of the name, last name, father's name or birth date,
+ * the server looks for folders with the same values, and the page lists them.
+ */
+(() => {
+    'use strict';
+
+    const { post, show, hide, isHidden } = window.Benefile;
+    const box = document.getElementById('duplicate-folders');
+    const section = document.querySelector('.personal-info[data-url]');
+    if (!box || !section) {
+        return;
+    }
+
+    /** The address of the basic information of another folder. */
+    function folderAddress(id) {
+        const address = new URL(window.location.href);
+        address.pathname = address.pathname.replace('/-1/', `/${encodeURIComponent(id)}/`);
+        address.search = '';
+        return address.href;
+    }
+
+    function displayPossibleDuplicates(folders) {
+        if (!Array.isArray(folders) || folders.length === 0) {
+            hide(box);
+            return;
         }
-    } else {
-        if($("#duplicate-folders").is(":hidden")) {
-            $("#duplicate-folders").toggle("slow");
-        }
-        $("#duplicate-folders").html("<div class=\"alert-header\"><strong>" + $("#duplicate-folders").data("title") + "</strong></div>");
-        for(var i in data){
-            $("#duplicate-folders").append(data[i].name + " " + data[i].lastname + ", " +
-            data[i].fathers_name + ", " + data[i].birth_date +
-            ", <a style=\"color: black;\" href=\"" +
-            $(location).attr("href").replace("-1", data[i].id) + "\">" +
-            $("#duplicate-folders").data("display-link") + "</a>" + "<br/>");
+        const header = document.createElement('div');
+        header.className = 'alert-header';
+        const title = document.createElement('strong');
+        title.textContent = box.dataset.title ?? '';
+        header.append(title);
+        box.replaceChildren(header);
+        folders.forEach((folder) => {
+            const link = document.createElement('a');
+            link.style.color = 'black';
+            link.href = folderAddress(folder.id);
+            link.textContent = box.dataset.displayLink ?? '';
+            const description = [`${folder.name ?? ''} ${folder.lastname ?? ''}`, folder.fathers_name ?? '', folder.birth_date ?? ''].join(', ');
+            box.append(`${description}, `, link, document.createElement('br'));
+        });
+        if (isHidden(box)) {
+            show(box);
         }
     }
-}
 
-function checkIfBenefiterAlreadyExists(){
-    //collect values
-    var data = {};
-    $(".uniqueness").each(function(){
-        if ($(this).val().length>0){
-            data[$(this).attr("name")] = $(this).val();
+    async function checkIfBenefiterAlreadyExists() {
+        const data = {};
+        document.querySelectorAll('.uniqueness').forEach((field) => {
+            if (field.value.length > 0) {
+                data[field.name] = field.value;
+            }
+        });
+        try {
+            const response = await post(section.dataset.url, data);
+            const text = await response.text();
+            displayPossibleDuplicates(text.trim() === '' ? [] : JSON.parse(text));
+        } catch {
+            // The check only helps the user. Without an answer, the form stays as it is.
         }
-    });
-    data["_token"] = $("input[name='_token']").val();
-    //send ajax request
-    $.ajax({
-        url: $(".personal-info").data("url"),
-        data: data,
-        method: "post",
-        success: function(data){
-            displayPossibleDuplicatedFolders(data);
-        }
-    });
-}
+    }
 
-$('.uniqueness').on('change changeDate', checkIfBenefiterAlreadyExists);
-
-$(document).ready(init);
+    document.querySelectorAll('.uniqueness').forEach((field) => {
+        field.addEventListener('change', checkIfBenefiterAlreadyExists);
+        field.addEventListener('changeDate', checkIfBenefiterAlreadyExists);
+    });
+})();

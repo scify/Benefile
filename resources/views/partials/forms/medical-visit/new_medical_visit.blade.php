@@ -284,7 +284,7 @@
 
 
 {{--------------- 4. MODAL: Display Medical visit info from history FOR LATER ---------}}
-<div class="modal fade" id="medicalHistory" role="dialog" tabindex=-1">
+<div class="modal fade" id="medicalHistory" role="dialog" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog width-1000">
         <div class="modal-content">
             <div class="modal-header">

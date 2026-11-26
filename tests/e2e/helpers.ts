@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process';
 /**
  * Shared steps of the interaction tests.
  *
- * The steps that touch a library (tables, date pickers, lists with search)
+ * The steps that touch a library (tables, calendars, lists with search)
  * are here, so that a test describes what the user does, not how a library draws it.
  */
 
@@ -28,15 +28,19 @@ export function watchErrors(page: Page): string[] {
     return errors;
 }
 
-/** The search field of a table with sorting, search and paging. */
+/** The box around a table with sorting, search and paging (simple-datatables). */
+function tableWrapper(page: Page, tableId: string): Locator {
+    return page.locator(`#${tableId}`).locator('xpath=ancestor::div[contains(@class, "datatable-wrapper")][1]');
+}
+
+/** The search field of a table. */
 export function tableSearch(page: Page, tableId: string): Locator {
-    return page.locator(`#${tableId}`).locator('xpath=ancestor::div[contains(@class, "datatable-wrapper") or contains(@class, "dataTables_wrapper")][1]').locator('input[type=search]');
+    return tableWrapper(page, tableId).locator('input[type=search]');
 }
 
 /** The button that shows the next page of a table. */
 export function tableNextPage(page: Page, tableId: string): Locator {
-    return page.locator(`#${tableId}`).locator('xpath=ancestor::div[contains(@class, "datatable-wrapper") or contains(@class, "dataTables_wrapper")][1]')
-        .locator('a.paginate_button.next, .datatable-pagination [data-page]:has-text("›")').first();
+    return tableWrapper(page, tableId).locator('.datatable-pagination [data-page]', { hasText: '›' }).first();
 }
 
 /** The texts of one column of the visible rows of a table. */
@@ -44,21 +48,19 @@ export async function columnTexts(page: Page, tableId: string, column: number): 
     return page.locator(`#${tableId} tbody tr td:nth-child(${column})`).allInnerTexts();
 }
 
-/** Opens the date picker of a date field and chooses a day of the shown month. */
+/** Opens the calendar of a date field and chooses a day of the shown month. The calendar closes. */
 export async function pickDay(page: Page, input: Locator, day: number): Promise<void> {
     await input.click();
-    const picker = page.locator('.datepicker:visible, .datepicker.active');
-    await expect(picker.first()).toBeVisible();
-    await picker.first().locator('td.day:not(.old):not(.new), .datepicker-cell.day:not(.prev):not(.next)')
-        .getByText(String(day), { exact: true }).first().click();
-    // A click outside closes the date picker, as the user does.
-    await page.locator('#header, body').first().click({ position: { x: 5, y: 5 } });
+    const picker = page.locator('.datepicker.active');
+    await expect(picker).toBeVisible();
+    await picker.locator('.datepicker-cell.day:not(.prev):not(.next)').getByText(String(day), { exact: true }).first().click();
+    await expect(picker).toBeHidden();
 }
 
-/** Types into a list with search (a select with remote options) and chooses an option. */
+/** Types into a list with search (Tom Select, with options from the server) and chooses an option. */
 export async function chooseRemoteOption(page: Page, select: Locator, text: string, option: RegExp): Promise<void> {
-    const box = select.locator('xpath=following-sibling::*[contains(@class, "select2") or contains(@class, "ts-wrapper")][1]');
-    await box.click();
-    await page.locator('.select2-container--open .select2-search__field, .ts-wrapper.focus input').first().pressSequentially(text, { delay: 50 });
-    await page.locator('.select2-results__option, .ts-dropdown .option').filter({ hasText: option }).first().click();
+    const list = select.locator('xpath=following-sibling::*[contains(@class, "ts-wrapper")][1]');
+    await list.click();
+    await list.locator('input[role=combobox]').pressSequentially(text, { delay: 50 });
+    await page.locator('.ts-dropdown .option').filter({ hasText: option, visible: true }).first().click();
 }

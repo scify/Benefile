@@ -52,4 +52,9 @@ return [
     'download_folders_history_csv' => 'Download the history of the folders',
     'download_all_benefiters_csv' => 'Download the information of the beneficiaries',
     'download_csv' => 'Download .csv files',
+    'period_10_days' => '10 days',
+    'period_1_month' => '1 month',
+    'period_1_year' => '1 year',
+    'period_max' => 'All',
+    'balloon_benefiters' => 'beneficiaries',
 ];

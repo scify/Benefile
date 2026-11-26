@@ -1,19 +1,27 @@
-$(document).ready(function(){
-    // slide toggle to add a new session
-    $(".new-session").hide();
-    $("#add-new-session").on("click", function(){
-        $(".new-session").slideToggle("slow");
+/**
+ * Psychosocial folder: the forms to add and to change a session open with a button.
+ * A session is deleted after the user confirms it in a dialog.
+ */
+(() => {
+    'use strict';
+
+    const { hide, slideToggle } = window.Benefile;
+    const { openModal } = window.BenefileUi;
+
+    document.querySelectorAll('.new-session, .edit-session-div').forEach(hide);
+
+    document.getElementById('add-new-session')?.addEventListener('click', () => {
+        document.querySelectorAll('.new-session').forEach(slideToggle);
     });
 
-    // slide toggle to edit a session
-    $(".edit-session-div").hide();
-    $(".edit-session").on("click", function(){
-        $(this).parents(".div-table-row:first").next().slideToggle("slow");
+    document.addEventListener('click', (event) => {
+        const button = event.target.closest('button');
+        if (button?.classList.contains('edit-session')) {
+            slideToggle(button.closest('.div-table-row')?.nextElementSibling);
+        } else if (button?.classList.contains('delete-session')) {
+            const modal = document.getElementById('delete-session-modal');
+            modal?.querySelector('.delete-session-form')?.setAttribute('action', button.dataset.url);
+            openModal(modal, button);
+        }
     });
-
-    // display modal asking for session deletion confirmation
-    $(".delete-session").on("click", function(){
-        $("#delete-session-modal").modal('show');
-        $(".delete-session-form").attr("action", $(".delete-session-path").attr("value") + "/" + $(this).attr("name"));
-    });
-});
+})();

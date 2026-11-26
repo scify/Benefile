@@ -891,7 +891,7 @@
                                                 <td>{{ $datesHelper->getFinelyFormattedStringDateFromDBDate($referral['referral_date']) }}</td>
                                                 <td>{{ $referral['user']['name'] . ' ' . $referral['user']['lastname'] }}</td>
                                                 <td>
-                                                    <button class="delete-session btn btn-warning btn-lg" name="{{ $referral->id }}">@lang($p."delete_referral")</button>
+                                                    <button type="button" class="delete-session delete-referral btn btn-warning btn-lg" data-url="{{ url('benefiter/'.$benefiter->id.'/basic-info/referral-delete/'.$referral->id) }}">@lang($p."delete_referral")</button>
                                                 </td>
                                             </tr>
                                         @endif
@@ -1940,7 +1940,7 @@
                                                 <td>{{ $datesHelper->getFinelyFormattedStringDateFromDBDate($referral['referral_date']) }}</td>
                                                 <td>{{ $referral['user']['name'] . ' ' . $referral['user']['lastname'] }}</td>
                                                 <td>
-                                                    <button class="delete-session btn btn-warning btn-lg" name="{{ $referral->id }}">@lang($p."delete_referral")</button>
+                                                    <button type="button" class="delete-session delete-referral btn btn-warning btn-lg" data-url="{{ url('benefiter/'.$benefiter->id.'/basic-info/referral-delete/'.$referral->id) }}">@lang($p."delete_referral")</button>
                                                 </td>
                                             </tr>
                                         @endif
@@ -2074,9 +2074,6 @@
             <div class="modal-content">
                 <form class="delete-session-form" action="" method="post" accept-charset="UTF-8">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    @if(!empty($referral))
-                    <input type="hidden" class="delete-session-path" name="path" value="{{ url("benefiter/".$benefiter->id."/basic-info/referral-delete/".$referral->id) }}">
-                    @endif
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title">@lang($p."delete_session_modal_title")</h4>

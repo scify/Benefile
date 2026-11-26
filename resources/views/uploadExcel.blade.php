@@ -6,11 +6,12 @@
 
     @section('panel-headLinks')
         <link href="{{ asset('/plugins/fontawesome/css/font-awesome.css') }}" rel="stylesheet" type="text/css"/>
-        <link href="{{ asset('plugins/faloading/jquery.faloading.min.css') }}" rel="stylesheet">
         <link href={{asset('css/uploadExcel/uploadExcelPage.css')}} rel="stylesheet" type="text/css">
         <link href={{asset('css/uploadExcel/dropzone.css')}} rel="stylesheet" type="text/css">
         <link href="{{ asset('css/records/validation_errors.css') }}" rel="stylesheet" type="text/css">
     @stop
+
+    @section('menu-item', 'import-file')
 
     @section('panel-title')
         @lang($p.'upload_excel')
@@ -69,7 +70,7 @@
             {{-- Refresh button --}}
             <div class="row">
                 <div class="col-xs-12 text-align-center">
-                    <button class="importButton btn btn-warning" onclick="refreshPage()">@lang($p.'add-another')</button>
+                    <button type="button" id="import-another" class="importButton btn btn-warning">@lang($p.'add-another')</button>
                 </div>
             </div>
 
@@ -106,9 +107,7 @@
     @stop
 
     @section('panel-scripts')
-        <script src="{{ asset('plugins/faloading/jquery.faloading-0.1.min.js') }}"></script>
-        <script src={{ asset('js/dropzone.js')}}></script>
-        <script src="{{asset('js/records/selectImportCSV.js')}}"></script>
-        <script src="{{asset('js/importCSV/importCSV.js')}}"></script>
+        <script src="{{ asset('vendor/dropzone/dropzone.min.js') }}"></script>
+        <script src="{{ asset('js/importCSV/importCSV.js') }}"></script>
     @stop
 

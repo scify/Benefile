@@ -82,7 +82,8 @@ test.describe('lists', () => {
         await expect(rows).toHaveCount(Number(total.trim()));
         await page.locator('#usersTable-to-activate thead th').nth(2).click();
         const ascending = await columnTexts(page, 'usersTable-to-activate', 3);
-        expect(ascending).toEqual([...ascending].sort((a, b) => a.localeCompare(b)));
+        // Numbers inside the texts may sort as numbers.
+        expect(ascending).toEqual([...ascending].sort((a, b) => a.localeCompare(b, 'en', { numeric: true })));
         await page.locator('#usersTable-to-activate thead th').nth(2).click();
         const descending = await columnTexts(page, 'usersTable-to-activate', 3);
         expect(descending).toEqual([...ascending].reverse());
@@ -120,9 +121,12 @@ test.describe('lists', () => {
         const once = (await columnTexts(page, 'benefiter_referrals_history', 1)).map(Number);
         await header.click();
         const twice = (await columnTexts(page, 'benefiter_referrals_history', 1)).map(Number);
-        const ascending = [...once].sort((a, b) => a - b);
-        expect([ascending, [...ascending].reverse()]).toContainEqual(once);
-        expect(twice).toEqual([...once].reverse());
+        // The table may have more than one page, so each click shows its own first page.
+        const up = (list: number[]) => [...list].sort((a, b) => a - b);
+        const down = (list: number[]) => [...list].sort((a, b) => b - a);
+        expect([up(once), down(once)]).toContainEqual(once);
+        expect(twice).toEqual(once[0] <= once[once.length - 1] ? down(twice) : up(twice));
+        expect(twice[0]).not.toBe(once[0]);
         await tableSearch(page, 'benefiter_referrals_history').fill('no such text at all');
         await expect(page.locator('#benefiter_referrals_history tbody tr:has(td:nth-child(2))')).toHaveCount(0);
     });
@@ -172,6 +176,23 @@ test.describe('dialogs', () => {
         await expect(modal).toBeVisible();
         await modal.locator('.modal-header .close').click();
         await expect(modal).toBeHidden();
+    });
+
+    test('Escape and a click outside close a window, and the focus goes back to its button', async ({ page }) => {
+        await page.goto('/benefiter/1/medical-folder');
+        const modal = page.locator('#medicalHistory');
+        const button = page.locator('.medical_visit_from_history').first();
+        await button.click();
+        await expect(modal).toBeVisible();
+        await expect(modal).toHaveAttribute('aria-modal', 'true');
+        await page.keyboard.press('Escape');
+        await expect(modal).toBeHidden();
+        await expect(button).toBeFocused();
+        await button.click();
+        await expect(modal).toBeVisible();
+        await modal.click({ position: { x: 5, y: 5 } });
+        await expect(modal).toBeHidden();
+        await expect(page.locator('.modal-backdrop')).toHaveCount(0);
     });
 });
 
@@ -376,7 +397,8 @@ test.describe('medical visit form', () => {
 
     test('a medical visit is saved with a date from the date picker', async ({ page }) => {
         await page.goto('/benefiter/1/medical-folder');
-        const before = await page.locator('#benefiter_referrals_history tbody tr').count();
+        const visits = () => Number(runPhp('echo \\DB::table("medical_visits")->where("benefiter_id", 1)->count();').trim());
+        const before = visits();
         await page.locator('#new-med-visit-button').click();
         await pickDay(page, page.locator('#new-medical-visit input[name=examination_date]'), 10);
         await expect(page.locator('#new-medical-visit input[name=examination_date]')).toHaveValue(/^10-\d{2}-\d{4}$/);
@@ -385,7 +407,7 @@ test.describe('medical visit form', () => {
         await page.locator('#upload_file input[type=file]').first().setInputFiles({ name: 'e2e.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF-1.4\n%%EOF\n') });
         await page.locator('#medical_visit_submit input[type=submit]').click();
         await expect(page.locator('.alert-success')).toBeVisible();
-        await expect(page.locator('#benefiter_referrals_history tbody tr')).toHaveCount(before + 1);
+        expect(visits()).toBe(before + 1);
     });
 });
 
@@ -544,6 +566,57 @@ test.describe('users', () => {
         await inactive.locator('button').click();
         await page.locator('#active').click();
         await expect(page.locator('#usersTable-active tbody tr', { hasText: 'e2e-social@example.test' })).toHaveCount(1);
+    });
+});
+
+test.describe('safety', () => {
+    test('HTML in the data of a beneficiary shows as text', async ({ page }) => {
+        const name = `<img src=x onerror="window.e2eAttack=1">${unique()}`;
+        await createBenefiter(page, name);
+
+        await page.goto('/search');
+        await page.locator('#search-form input[name=lastname]').fill(`${name}-lastname`);
+        await page.locator('#search-btn').click();
+        await expect(page.locator('#results tbody tr')).toHaveCount(1);
+        await expect(page.locator('#results tbody tr').first()).toContainText(name);
+        await expect(page.locator('#results tbody img')).toHaveCount(0);
+
+        await page.goto('/benefiter/-1/basic-info');
+        await page.locator('input[name=name]').fill(name);
+        await page.locator('input[name=name]').blur();
+        await expect(page.locator('#duplicate-folders')).toContainText(name);
+        await expect(page.locator('#duplicate-folders img')).toHaveCount(0);
+        expect(await page.evaluate(() => (window as unknown as { e2eAttack?: number }).e2eAttack)).toBeUndefined();
+    });
+
+    test('no page loads jQuery or a library that needs it', async ({ page }) => {
+        for (const path of ['/benefiters-list', '/benefiter/1/basic-info', '/benefiter/-1/basic-info', '/benefiter/1/medical-folder', '/benefiter/1/legal-folder',
+            '/benefiter/1/social-folder', '/search', '/reports', '/main-panel/users-list', '/new-location', '/new-benefiter/uploadCSV']) {
+            await page.goto(path);
+            const found = await page.evaluate(() => ({
+                jquery: 'jQuery' in window || '$' in window,
+                scripts: [...document.scripts].map((script) => script.src).filter((src) => /jquery|select2|\/DataTables\/|bootstrap|faloading/.test(src)),
+            }));
+            expect(found, path).toEqual({ jquery: false, scripts: [] });
+        }
+    });
+});
+
+test.describe('language of the scripts', () => {
+    test('tables, lists and calendars use the language of the page', async ({ page }) => {
+        await page.goto('/language/gr');
+        await page.goto('/benefiter/1/basic-info');
+        await expect(tableSearch(page, 'folders-update-history')).toHaveAttribute('placeholder', 'Αναζήτηση...');
+        await expect(page.locator('#folders-update-history').locator('xpath=ancestor::div[contains(@class, "datatable-wrapper")][1]').locator('.datatable-info')).toContainText('Εμφάνιση');
+        await page.locator('#detention-date').click();
+        await expect(page.locator('.datepicker.active .days-of-week')).toContainText('Δε');
+
+        await page.goto('/language/en');
+        await page.goto('/benefiter/1/basic-info');
+        await expect(tableSearch(page, 'folders-update-history')).toHaveAttribute('placeholder', 'Search...');
+        await page.locator('#detention-date').click();
+        await expect(page.locator('.datepicker.active .days-of-week')).toContainText('Mo');
+        await page.goto('/language/gr');
     });
 });
 

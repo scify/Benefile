@@ -1,71 +1,59 @@
-$(document).ready(function(){
-    // at startup check if "asylum" is checked then display the asylum request div
-    if ($("#asylum:checked").val()){
-        $(".asylum-request").removeClass("hide");
+/**
+ * Legal folder: each answer shows or hides the sections that depend on it.
+ * The button "new session" opens the form of a lawyer session.
+ */
+(() => {
+    'use strict';
+
+    const { hide, slideToggle, dataTable } = window.Benefile;
+
+    const sections = (selector) => document.querySelectorAll(selector);
+    const setVisible = (selector, visible) => sections(selector).forEach((section) => section.classList.toggle('hide', !visible));
+    const isChecked = (id) => document.getElementById(id)?.checked ?? false;
+
+    // [radio button, sections it shows, sections it hides]
+    const rules = [
+        ['asylum', ['.asylum-request'], ['.legal-status-div']],
+        ['action-none', [], ['.results']],
+        ['action-refusal', ['.results'], []],
+        ['procedure-old', [], ['.request-status']],
+        ['procedure-new', ['.request-status'], []],
+        ['penalty-no', [], ['.penalty-text']],
+        ['penalty-yes', ['.penalty-text'], []],
+    ];
+
+    // At the start: the state of the saved answers.
+    if (isChecked('asylum')) {
+        setVisible('.asylum-request', true);
+    } else {
+        setVisible('.legal-status-div', true);
     }
-    else{
-        $(".legal-status-div").removeClass("hide");
-    }
-
-    // listeners that decide whether asylum or legal-status form should be displayed
-    $("body").on("change", "#asylum", function(){
-        $(".asylum-request").removeClass("hide");
-        $(".legal-status-div").addClass("hide");
-    });
-    $("body").on("change", ".legal-status", function(){
-        $(".asylum-request").addClass("hide");
-        $(".legal-status-div").removeClass("hide");
+    ['action-refusal', 'procedure-new', 'penalty-yes'].forEach((id) => {
+        const rule = rules.find(([radio]) => radio === id);
+        if (isChecked(id)) {
+            rule[1].forEach((selector) => setVisible(selector, true));
+        }
     });
 
-    // at startup check if "action refusal" is checked then display the results div
-    if ($("#action-refusal:checked").val()){
-        $(".results").removeClass("hide");
-    }
-
-    // listeners that decide whether results div should be displayed
-    $("body").on("change", "#action-none", function(){
-        $(".results").addClass("hide");
-    });
-    $("body").on("change", "#action-refusal", function(){
-        $(".results").removeClass("hide");
-    });
-
-    // at startup check if "procedure new" is checked then display the request status div
-    if ($("#procedure-new:checked").val()){
-        $(".request-status").removeClass("hide");
-    }
-
-    // listeners that decide whether request status div should be displayed
-    $("body").on("change", "#procedure-old", function(){
-        $(".request-status").addClass("hide");
-    });
-    $("body").on("change", "#procedure-new", function(){
-        $(".request-status").removeClass("hide");
+    document.addEventListener('change', (event) => {
+        const radio = event.target;
+        if (!(radio instanceof HTMLInputElement)) {
+            return;
+        }
+        if (radio.classList.contains('legal-status')) {
+            setVisible('.asylum-request', false);
+            setVisible('.legal-status-div', true);
+            return;
+        }
+        const rule = rules.find(([id]) => id === radio.id);
+        if (rule) {
+            rule[1].forEach((selector) => setVisible(selector, true));
+            rule[2].forEach((selector) => setVisible(selector, false));
+        }
     });
 
-    // at startup check if "penalty yes" is checked then display the request status div
-    if ($("#penalty-yes:checked").val()){
-        $(".penalty-text").removeClass("hide");
-    }
+    sections('.new-session').forEach(hide);
+    document.getElementById('add-new-session')?.addEventListener('click', () => sections('.new-session').forEach(slideToggle));
 
-    // listeners that decide whether penalty text area should be displayed
-    $("body").on("change", "#penalty-no", function(){
-        $(".penalty-text").addClass("hide");
-    });
-    $("body").on("change", "#penalty-yes", function(){
-        $(".penalty-text").removeClass("hide");
-    });
-
-    // slide toggle to add a new session
-    $(".new-session").hide();
-    $("#add-new-session").on("click", function(){
-        $(".new-session").slideToggle("slow");
-    });
-
-    // Apply dataTable to legal sessions history
-    $(function() {
-        $('#legal-sessions-history').DataTable( {
-            //"lengthMenu": [ [-1], ["All"] ]
-        });
-    });
-});
+    dataTable('#legal-sessions-history');
+})();

@@ -4,8 +4,10 @@
     @if($benefiter->id == null) @lang('basic_info_form.new_benefiter') @else @lang('basic_info_form.basic_info') @endif
 @stop
 
+@section('menu-item', ($benefiter->id ?? -1) == -1 ? 'new-benefiter' : 'edit-benefiter')
+
 @section('panel-headLinks')
-    <link href="{{ asset('/plugins/datepicker/css/datepicker.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ asset('vendor/vanillajs-datepicker/datepicker.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{asset('css/records/new_record_panel.css')}}" rel="stylesheet" type="text/css">
     <link href="{{ asset('css/records/validation_errors.css') }}" rel="stylesheet" type="text/css">
     <link href="{{asset('css/records/record_form.css')}}" rel="stylesheet" type="text/css">
@@ -50,18 +52,12 @@
 @stop
 
 @section('panel-scripts')
-    <script src="{{ asset('/plugins/datepicker/js/bootstrap-datepicker.js') }}"></script>
-    {{-- select new record in side-panel if you are creating a new benefiter's basic info
-        and include js for checking duplicate benefiters... --}}
+    @include('partials.datepicker-scripts')
+    {{-- A new beneficiary: look for folders with the same name. --}}
     @if($benefiter->id == -1)
-    <script src="{{ asset('js/records/selectNewRecordInMainPanel.js') }}"></script>
     <script src="{{ asset('js/records/check_if_benefiter_already_exists.js') }}"></script>
-    {{-- ...else select the edit benefiter option --}}
-    @else
-    <script src="{{asset('js/records/selectEditRecordInMainPanel.js')}}"></script>
     @endif
-    <script src="{{ asset('/bootstrap-3.3.6/js/modal.js') }}"></script>
-    <script src="{{ asset('js/records/custom_datepicker.js') }}"></script>
     <script src="{{asset('js/forms.js')}}"></script>
+    <script src="{{asset('js/records/dynamic_rows.js')}}"></script>
     <script src="{{asset('js/records/basic_info.js')}}"></script>
 @stop

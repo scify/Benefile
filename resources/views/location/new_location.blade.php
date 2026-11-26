@@ -8,6 +8,8 @@
     @lang($p.'add_location')
 @stop
 
+@section('menu-item', 'new-location')
+
 @section('panel-headLinks')
     <link href="{{asset('css/records/new_record_panel.css')}}" rel="stylesheet" type="text/css">
     <link href="{{ asset('css/records/validation_errors.css') }}" rel="stylesheet" type="text/css">
@@ -54,5 +56,4 @@
 
 @section('panel-scripts')
     <script src="{{asset('js/forms.js')}}"></script>
-    <script src="{{ asset('js/records/selectNewLocationInMainPanel.js') }}"></script>
 @stop

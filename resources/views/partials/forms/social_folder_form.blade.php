@@ -280,7 +280,7 @@
                             <div class="col-xs-4 text-align-center">----------------</div>
                         @endif
                         <!-- ACCESS LEVEL END -->
-                        <div class="col-xs-2">@if(\Auth::user()->user_role_id == 5 || \Auth::user()->user_role_id == 1)<div class="row"><button class="session-button edit-session medical_visit_from_history btn btn-info btn-lg">@lang($p."edit")</button></div><div class="row"><button class="session-button delete-session btn btn-warning btn-lg" name="{{ $benefiter_session->id }}">@lang($p."delete")</button></div>@endif</div>
+                        <div class="col-xs-2">@if(\Auth::user()->user_role_id == 5 || \Auth::user()->user_role_id == 1)<div class="row"><button type="button" class="session-button edit-session medical_visit_from_history btn btn-info btn-lg">@lang($p."edit")</button></div><div class="row"><button type="button" class="session-button delete-session btn btn-warning btn-lg" data-url="{{ url('benefiter/'.$benefiter->id.'/session-delete/'.$benefiter_session->id) }}">@lang($p."delete")</button></div>@endif</div>
 {{--                        <div class="col-xs-2">@if(\Auth::user()->user_role_id == 5 || \Auth::user()->user_role_id == 1)<button class="session-button delete-session btn btn-warning btn-lg" name="{{ $benefiter_session->id }}">@lang($p."delete")</button>@endif</div>--}}
                     </div>
                 </div>
@@ -356,7 +356,6 @@
         <div class="modal-content">
             <form class="delete-session-form" action="" method="post">
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                <input type="hidden" class="delete-session-path" name="path" value="{{ url("benefiter/".$benefiter->id."/session-delete/") }}">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">@lang($p."delete_session_modal_title")</h4>

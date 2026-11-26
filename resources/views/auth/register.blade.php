@@ -81,7 +81,7 @@
             {{-- User Role --}}
             <div class="form-group">
                 <div class="col-md-6 centerDiv">
-                    <select class="inputFields" id="user-role" onchange="showDiv(this)" name="user_role_id">
+                    <select class="inputFields" id="user-role" name="user_role_id">
                       <option value="0" disabled selected>@lang($p.'role')</option>
                       <option value="2">@lang($p.'doctor')</option>
                       <option value="3">@lang($p.'counsel')</option>
@@ -131,14 +131,20 @@
 
 @section('log-scripts')
     <script>
-        $("#user-subrole").hide();
-        function showDiv(elem){
-           if(elem.value == 2){
-              document.getElementById('user-subrole').style.display = "inline";
-          }else{
-                  $("#user-subrole").val("0");
-                  $("#user-subrole").hide();
-               }
-        }
+        // The speciality is only for doctors (role 2).
+        (() => {
+            const role = document.getElementById('user-role');
+            const subrole = document.getElementById('user-subrole');
+            const update = () => {
+                if (role.value === '2') {
+                    subrole.style.display = 'inline';
+                } else {
+                    subrole.value = '0';
+                    subrole.style.display = 'none';
+                }
+            };
+            role.addEventListener('change', update);
+            update();
+        })();
     </script>
 @stop
