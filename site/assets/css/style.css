@@ -496,6 +496,31 @@ a {
     }
 }
 
+/* Why BeneFile. */
+.reasons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+        padding: 1.5rem;
+        border-top: 0.25rem solid var(--purple);
+        border-radius: var(--radius);
+        background-color: var(--mist);
+    }
+
+    h3 {
+        margin-top: 0;
+    }
+
+    p:last-child {
+        margin-bottom: 0;
+    }
+}
+
 /* The roles. */
 .roles {
     display: grid;
