@@ -7,7 +7,7 @@
 - Composer 2
 - A web server whose document root is `public/`, with HTTPS
 
-The application is Laravel 13. Its pages use the files in `public/` (Bootstrap 3 and plain JavaScript): there is no front-end build.
+The application is Laravel. Its pages use the files in `public/` (Bootstrap 3 and plain JavaScript): there is no front-end build.
 
 ## Install
 

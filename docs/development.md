@@ -47,6 +47,8 @@ BASE_URL=https://benefile.ddev.site npx playwright test
 - `app/Services`: the work of the controllers, for example `BeneficiaryRegistrar` (a new beneficiary and its folders, in one transaction), `BenefiterMedicalFolderService` (the medical visits), `FolderHistoryService` and `BeneficiaryCsvExporter`.
 - `app/Models`: the tables. The models of the legal and psychosocial folders are in `app/Models/Folders`.
 - `resources/views/components`: `<x-beneficiary-header>` and `<x-form-messages>`, which the folders share.
+- `app/Support/Form.php`: `Form::text()` and the other form helpers that the views use.
+- `legacy_count()` (`app/Support/helpers.php`) counts as PHP 7 did. The MySQL connection is not strict (`config/database.php`), because the forms send empty dates as `''`. Empty fields stay `''` (`bootstrap/app.php`).
 
 ## Static analysis
 

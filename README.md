@@ -58,7 +58,7 @@ Bug reports, ideas and pull requests are welcome. Open an [issue](https://github
 
 ## About
 
-[SciFY](https://www.scify.org) made BeneFile in 2016, with feedback from the Greek NGO [PRAKSIS](https://www.praksis.gr).
+[SciFY](https://www.scify.org) made BeneFile, with feedback from the Greek NGO [PRAKSIS](https://www.praksis.gr).
 
 ## Licence
 
